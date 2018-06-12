@@ -1,0 +1,17 @@
+{
+  "name": "octopodes",
+  "version": "0.0.1",
+  "description": "SIMS - Sequencing information management system",
+  "main": "octo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nicholas Florek",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^4.1.1",
+    "express": "^4.16.3",
+    "jquery": "^3.3.1",
+    "popper.js": "^1.14.3"
+  }
+}
