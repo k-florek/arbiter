@@ -13,14 +13,14 @@ block content
       each run, i in runs
         tr
           td
-            a(href="#") 
+            a(href="/date/" + run.DATE)
               button.btn.btn-dark(type="button")= run.DATE
           td
-            a(href="#") 
+            a(href= "/machine/" + run.MACHINE) 
               button.btn.btn-dark(type="button")= run.MACHINE
           td 
             a(href="#") 
-              button.btn.btn-secondary(type="button") FastQC
+              button.btn.btn-light(type="button") FastQC
           td 
             a(href="#") 
               button.btn.btn-light(type="button") Kraken

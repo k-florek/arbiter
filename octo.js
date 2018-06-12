@@ -19,6 +19,17 @@ app.get('/', function(req, res){
   readdb.read_db('index',res);
 });
 
+//By MACHINE
+app.get('/machine/:machinename', function(req, res){
+  let machinename = req.params.machinename
+  readdb.read_db('index',res,machinename);
+});
+//By Date
+app.get('/date/:date', function(req, res){
+  let date = req.params.date
+  readdb.read_db('index',res,'',date);
+});
+
 app.get('/updatedb', function(req, res){
   updatedb.update();
   readdb.read_db('index',res);
