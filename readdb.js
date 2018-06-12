@@ -1,0 +1,37 @@
+const sqlite = require('sqlite3');
+
+module.exports = {
+  read_db: function() {
+    //open the database
+    let db = new sqlite.Database('./db/octo.db',sqlite.OPEN_READONLY, (err) => {
+      if (err) {
+        return console.error(err.message);
+      }
+      console.log('Connected to the SQlite database.');
+    });
+
+    //serialize so that each sqlite command is executed before another starts
+    db.serialize(function() {
+      //setup select command
+      let sql = `SELECT (MACHINE,DATE,PATH) FROM seq_runs ORDER BY DATE`;
+      //select items
+      db.all(sql,[],(err,rows)=>{
+        if (err) {
+          throw err;
+        }
+        rows.forEach((row) => {
+          console.log(row);
+        });
+      });
+      
+    });
+
+    // close the database connection
+    db.close((err) => {
+      if (err) {
+        return console.error(err.message);
+      }
+      console.log('Closed the database connection.');
+    });
+  }
+};
