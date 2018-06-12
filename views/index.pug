@@ -1,4 +1,38 @@
 extends main_layout
 
 block content
-  h1 test
+  .container
+    table.table.table-striped
+      thead
+        tr
+          th 
+            H4 Date
+          th 
+            H4 Machine
+      tbody 
+      each run, i in runs
+        tr
+          td
+            a(href="#") 
+              button.btn.btn-dark(type="button")= run.DATE
+          td
+            a(href="#") 
+              button.btn.btn-dark(type="button")= run.MACHINE
+          td 
+            a(href="#") 
+              button.btn.btn-secondary(type="button") FastQC
+          td 
+            a(href="#") 
+              button.btn.btn-light(type="button") Kraken
+          td 
+            a(href="#") 
+              button.btn.btn-light(type="button") Typing/Resistance
+          td 
+            a(href="#") 
+              button.btn.btn-info(type="button") Show
+          td 
+            a(href="#") 
+              button.btn.btn-info(type="button") Edit
+          td 
+            a(href="#") 
+              button.btn.btn-danger(type="button") Delete

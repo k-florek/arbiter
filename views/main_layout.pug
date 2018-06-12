@@ -8,23 +8,21 @@ html
     link(rel='icon', href='../../../../favicon.ico')
     title Octopods
     // Bootstrap core CSS
-    link(href='/bower/bootstrap/dist/css/bootstrap.min.css', rel='stylesheet')
+    link(href='/bower/bootstrap/dist/css/bootstrap.css', rel='stylesheet')
   body
     nav.navbar.navbar-expand-sm.navbar-dark.bg-dark
-      a.navbar-brand(href='#') Octopods
+      a.navbar-brand(href='/') Octopods
       button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbar', aria-controls='navbar', aria-expanded='false', aria-label='Toggle navigation')
         span.navbar-toggler-icon
       #navbar.collapse.navbar-collapse
         ul.navbar-nav.mr-auto
           li.nav-item.active
-            a.nav-link(href='#')
+            a.nav-link(href='/')
               | Home 
               span.sr-only (current)
           li.nav-item
-            a.nav-link(href='updatedb') Link
-          li.nav-item
-            a.nav-link.disabled(href='#') Disabled
-          li.nav-item.dropdown
+            a.nav-link(href='updatedb') Update
+          //li.nav-item.dropdown
             a#dropdown.nav-link.dropdown-toggle(href='#', data-toggle='#dropdown', aria-haspopup='true', aria-expanded='false') Dropdown
             .dropdown-menu(aria-labelledby='dropdown')
               a.dropdown-item(href='#') Action

@@ -1,5 +1,6 @@
 const express = require('express');
 const updatedb = require('./updatedb.js');
+const readdb = require('./readdb.js');
 
 const path = require('path');
 const port = 3000;
@@ -13,13 +14,14 @@ app.locals.pretty = true;
 //set public folder
 app.use(express.static(path.join(__dirname,'public')));
 
+//Home route
 app.get('/', function(req, res){
-  res.render('index');
+  readdb.read_db('index',res);
 });
 
 app.get('/updatedb', function(req, res){
   updatedb.update();
-  res.render('index');
+  readdb.read_db('index',res);
 });
 
 app.listen(port,function(){
