@@ -5,7 +5,7 @@ module.exports = {
   update: function() {
     //setup dir scan
     let file_list = [];
-    const run_directory = '/run/user/3113/gvfs/smb-share:domain=slhdomain,server=slhdatamiseq,share=data,user=floreknx/CDD/Miseq/'
+    const run_directory = 'test_dir'
 
     //open the database
     let db = new sqlite.Database('./db/octo.db', (err) => {
