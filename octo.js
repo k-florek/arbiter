@@ -1,6 +1,7 @@
 const express = require('express');
 const updatedb = require('./updatedb.js');
 const readdb = require('./readdb.js');
+const scaniso = require('./scanIsolates.js');
 
 const path = require('path');
 const port = 3000;
@@ -34,6 +35,12 @@ app.get('/date/:date', function(req, res){
 //update database
 app.get('/updatedb', function(req, res){
   updatedb.update('index',res);
+});
+
+//show run information
+app.get('/status/:isoid',function(req,res){
+  let isoid = req.params.isoid
+  scaniso.scanIsolates('run',res,isoid);
 });
 
 app.listen(port,function(){

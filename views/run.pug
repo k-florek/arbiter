@@ -1,0 +1,49 @@
+extends main_layout
+
+block content
+  .container
+    table.table.table-striped
+      thead
+        tr
+          th.text-center 
+            H4 Isolate
+          th.text-center
+            H4 FastQC
+          th.text-center
+            H4 Kraken 
+          th.text-center
+            H4 Typing/Resistance
+          th.text-center
+            H4 Read 1 Path
+          th.text-center
+            H4 Read 2 Path
+      tbody 
+      each isolate, i in isolates
+        tr
+          td.text-center
+            =isolate.ISOID
+          td.text-center
+            if isolate.STATUSCODE[0] === '0'
+              H5 N/A
+            else
+              a(href="#") 
+                button.btn.btn-light(type="button") Results
+          td.text-center
+            if isolate.STATUSCODE[1] === '0'
+              H5 N/A
+            else
+              a(href="#") 
+                button.btn.btn-light(type="button") Results
+          td.text-center
+            if isolate.STATUSCODE[2] === '0'
+              H5 N/A
+            else
+              a(href="#") 
+                button.btn.btn-light(type="button") Results
+          td 
+            =isolate.READ1
+          td 
+            =isolate.READ2
+          td 
+            a(href="#") 
+              button.btn.btn-danger(type="button") Delete

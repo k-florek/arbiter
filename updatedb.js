@@ -2,7 +2,7 @@ const sqlite = require('sqlite3');
 const fs = require('fs');
 const path = require('path');
 
-const run_directory = '/run/user/3113/gvfs/smb-share:domain=slhdomain,server=slhdatamiseq,share=data,user=floreknx/CDD/Miseq';
+const run_directory = path.join(__dirname,'test_dir');
 
 module.exports.update = update
 
