@@ -19,7 +19,7 @@ module.exports = {
         //select items
         db.all(sql, (err,rows)=>{
           if (err) {
-            throw err;
+            return console.error(err.message);
           }
           res.render(page,{runs:rows})
         });
@@ -28,7 +28,7 @@ module.exports = {
         let sql = `SELECT MACHINE,DATE,PATH FROM seq_runs WHERE MACHINE = ?`;
         db.all(sql,[machinename],(err,rows) => {
           if (err) {
-            throw err;
+            return console.error(err.message);
           }
           console.log(rows);
           res.render(page,{runs:rows})
@@ -37,7 +37,7 @@ module.exports = {
         let sql = `SELECT MACHINE,DATE,PATH FROM seq_runs WHERE DATE = ?`;
         db.all(sql,[date],(err,rows) => {
           if (err) {
-            throw err;
+            return console.error(err.message);
           }
           res.render(page,{runs:rows})
         });

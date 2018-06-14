@@ -1,57 +1,86 @@
 const sqlite = require('sqlite3');
 const fs = require('fs');
+const path = require('path');
 
-module.exports = {
-  update: function() {
-    //setup dir scan
-    let file_list = [];
-    const run_directory = 'test_dir'
+const run_directory = '/run/user/3113/gvfs/smb-share:domain=slhdomain,server=slhdatamiseq,share=data,user=floreknx/CDD/Miseq';
 
-    //open the database
-    let db = new sqlite.Database('./db/octo.db', (err) => {
-      if (err) {
-        return console.error(err.message);
-      }
-      console.log('Connected to the SQlite database.');
-    });
+module.exports.update = update
 
-    //serialize so that each sqlite command is executed before another starts
-    db.serialize(function() {
-      //create table if none exist
-      db.run('CREATE TABLE if not exists seq_runs (ID INTEGER PRIMARY KEY AUTOINCREMENT, MACHINE TEXT NOT NULL, DATE DATE NOT NULL, PATH TEXT UNIQUE NOT NULL)')
+function update (page,res) {
+  //open the database
+  let db = new sqlite.Database('./db/octo.db', cctable);
 
-      //generate list from read location
-      fs.readdirSync(run_directory).forEach(function(file) {
-        let path = run_directory+file;
-        var stat = fs.statSync(path);
+  //handle errors
+  function errors(err){
+    if (err) {
+      return console.error(err.message);
+    }
+  }
 
-        if (stat && stat.isDirectory()) {
-          if (file.includes('WI-')) {
+  //check or create table
+  function cctable (err){
+    errors(err);
+    console.log('Connected to the SQlite database for updates.');
+    db.run(`CREATE TABLE if not exists seq_runs (ID INTEGER PRIMARY KEY AUTOINCREMENT, MACHINE TEXT NOT NULL, DATE DATE NOT NULL, PATH TEXT UNIQUE NOT NULL)`,scanfs);
+  }
+
+  //scan file system
+  function scanfs (err){
+    errors(err);
+    fs.readdir(run_directory,procfs);
+  }
+
+  //process file system and INSERT
+  function procfs (err,files){
+    let rows = [];
+    errors(err);
+    //loop through each file
+    for (let i = 0; i<files.length;i++){
+      //initalize vars
+      let p = path.join(run_directory,files[i]);
+      let stat = fs.statSync(p);
+      //check if dir
+      if (stat && stat.isDirectory()) {
+          if (files[i].includes('WI-')) {
             //console.log(file);
-            file_list.push(file);
+            let machine = files[i].split('-')[1];
+            let date = files[i].split('-')[2];
+            rows.push([machine,date,p]);
           }
-        }
-      });
+      }
+    }
+    insertDB(rows.shift());
 
-      //parse list of runs and add to database if not existant
-      for (var i = 0; i<file_list.length;i++) {
-        let machine = file_list[i].split('-')[1];
-        let date = file_list[i].split('-')[2];
-        let path = run_directory+file_list[i];
-        db.run(`INSERT or IGNORE INTO seq_runs (MACHINE,DATE,PATH) VALUES (?,?,?);`,[machine,date,path], (err) => {
-          if (err) {
-            return console.error(err.message);
-          }
+    //insert into database
+    function insertDB (row){
+      //insert row into database
+      let sql = `INSERT or IGNORE INTO seq_runs (MACHINE,DATE,PATH) VALUES (?,?,?)`;
+      if (row){
+        db.run(sql,row,(err)=>{
+          errors(err);
+          //remove first item and call again
+          return insertDB(rows.shift());
         });
+      }else{
+        let sql = `SELECT MACHINE,DATE,PATH FROM seq_runs ORDER BY DATE DESC`;
+        db.all(sql,renderPage);
       }
-    });
+    }
+  }
 
-    // close the database connection
+  //render the page
+  function renderPage (err,rows) {
+    errors(err);
+    res.render(page,{runs:rows});
+    closedb(err);
+  }
+
+  //close Database
+  function closedb (err){
+    errors(err);
     db.close((err) => {
-      if (err) {
-        return console.error(err.message);
-      }
-      console.log('Closed the database connection.');
+      errors(err);
+      console.log('Successfully updated the database.');
     });
   }
-};
+}
