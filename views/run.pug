@@ -31,7 +31,7 @@ block content
                   button.btn.btn-light(type="button") Results
               else
                 div.checkbox
-                  input.checkbox-input(type="checkbox",name='fastqc_check',)
+                  input.checkbox-input(type="checkbox",name='fastqc_check_'+ isolate.ISOID,)
             td.text-center
               if isolate.STATUSCODE[1] === '1'
                 h5 Submitted

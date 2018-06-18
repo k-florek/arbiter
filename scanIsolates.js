@@ -14,6 +14,9 @@ function scanIsolates (page,res,run_id) {
   /*
   binary status code for runs:
   [fastqc,kraken,serotyping] = "000"
+  0 - not run
+  1 - submitted
+  2 - finished
   */
   //open the database
   let db = new sqlite.Database('./db/octo.db', cctable);
