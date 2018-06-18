@@ -1,8 +1,9 @@
 const sqlite = require('sqlite3');
 const fs = require('fs');
 const path = require('path');
+const config = require('./config.json');
 
-const run_directory = path.join(__dirname,'test_dir');
+const run_directory = config.run_dir;
 
 module.exports.update = update
 

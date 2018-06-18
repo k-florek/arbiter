@@ -1,8 +1,9 @@
 const sqlite = require('sqlite3');
 const fs = require('fs');
 const path = require('path');
+const config = require('./config.json');
 
-const run_directory = path.join(__dirname,'test_dir');
+const run_directory = config.run_dir;
 
 module.exports.scanIsolates = scanIsolates
 
@@ -82,7 +83,7 @@ function scanIsolates (page,res,run_id) {
   //render the page
   function renderPage (err,rows) {
     errors(err);
-    res.render(page,{isolates:rows});
+    res.render(page,{isolates:rows,run_id:run_id});
     closedb(err);
   }
 

@@ -2,10 +2,18 @@ const express = require('express');
 const updatedb = require('./updatedb.js');
 const readdb = require('./readdb.js');
 const scaniso = require('./scanIsolates.js');
+const bodyParser = require('body-parser');
 
 const path = require('path');
 const port = 3000;
 const app = express();
+
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 
 //load view engine
 app.set('views', path.join(__dirname,'views'));
@@ -38,9 +46,16 @@ app.get('/updatedb', function(req, res){
 });
 
 //show run information
-app.get('/status/:isoid',function(req,res){
-  let isoid = req.params.isoid
-  scaniso.scanIsolates('run',res,isoid);
+app.get('/status/:runid',function(req,res){
+  let runid = req.params.runid
+  scaniso.scanIsolates('run',res,runid);
+});
+
+//submit jobs
+app.post('/status/:runid',function(req,res){
+  let runid = req.params.runid;
+  console.log(req.body);
+  scaniso.scanIsolates('run',res,runid);
 });
 
 app.listen(port,function(){

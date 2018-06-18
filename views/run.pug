@@ -1,4 +1,4 @@
-extends main_layout
+extends main_layout_run
 
 block content
   .container
@@ -18,32 +18,42 @@ block content
           th.text-center
             H4 Read 2 Path
       tbody 
-      each isolate, i in isolates
-        tr
-          td.text-center
-            =isolate.ISOID
-          td.text-center
-            if isolate.STATUSCODE[0] === '0'
-              H5 N/A
-            else
+      form(action='/status/'+ run_id ,method='post',id='job')
+        each isolate, i in isolates
+          tr
+            td.text-center
+              =isolate.ISOID
+            td.text-center
+              if isolate.STATUSCODE[0] === '1'
+                h5 Submitted
+              else if isolate.STATUSCODE[0] === '2'
+                a(href="#") 
+                  button.btn.btn-light(type="button") Results
+              else
+                div.checkbox
+                  input.checkbox-input(type="checkbox",name='fastqc_check',)
+            td.text-center
+              if isolate.STATUSCODE[1] === '1'
+                h5 Submitted
+              else if isolate.STATUSCODE[1] === '2'
+                a(href="#") 
+                  button.btn.btn-light(type="button") Results
+              else
+                div.checkbox
+                  input.checkbox-input(type="checkbox",name='kraken_check',)
+            td.text-center
+              if isolate.STATUSCODE[2] === '1'
+                h5 Submitted
+              else if isolate.STATUSCODE[2] === '2'
+                a(href="#") 
+                  button.btn.btn-light(type="button") Results
+              else
+                div.checkbox
+                  input.checkbox-input(type="checkbox",name='typing_check',)
+            td 
+              =isolate.READ1
+            td 
+              =isolate.READ2
+            td 
               a(href="#") 
-                button.btn.btn-light(type="button") Results
-          td.text-center
-            if isolate.STATUSCODE[1] === '0'
-              H5 N/A
-            else
-              a(href="#") 
-                button.btn.btn-light(type="button") Results
-          td.text-center
-            if isolate.STATUSCODE[2] === '0'
-              H5 N/A
-            else
-              a(href="#") 
-                button.btn.btn-light(type="button") Results
-          td 
-            =isolate.READ1
-          td 
-            =isolate.READ2
-          td 
-            a(href="#") 
-              button.btn.btn-danger(type="button") Delete
+                button.btn.btn-danger(type="button") Delete
