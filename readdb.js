@@ -2,13 +2,6 @@ const sqlite = require('sqlite3');
 
 module.exports = {
   read_db: function(page,res,machinename='',date='') {
-    //open the database
-    let db = new sqlite.Database('./db/octo.db',sqlite.OPEN_READONLY, (err) => {
-      if (err) {
-        return console.error(err.message);
-      }
-      console.log('Connected to the SQlite database.');
-    });
 
     //serialize so that each sqlite command is executed before another starts
     db.serialize(function() {
@@ -43,13 +36,6 @@ module.exports = {
         });
       }
 
-    });
-    // close the database connection
-    db.close((err) => {
-      if (err) {
-        return console.error(err.message);
-      }
-      console.log('Closed the database connection.');
     });
   }
 };

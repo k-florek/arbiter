@@ -21,7 +21,7 @@ function update (page,res) {
   //check or create table
   function cctable (err){
     errors(err);
-    console.log('Connected to the SQlite database for updates.');
+    console.log('Updating runs.');
     db.run(`CREATE TABLE if not exists seq_runs (ID INTEGER PRIMARY KEY AUTOINCREMENT, MACHINE TEXT NOT NULL, DATE DATE NOT NULL, PATH TEXT UNIQUE NOT NULL)`,scanfs);
   }
 
@@ -73,15 +73,5 @@ function update (page,res) {
   function renderPage (err,rows) {
     errors(err);
     res.render(page,{runs:rows});
-    closedb(err);
-  }
-
-  //close Database
-  function closedb (err){
-    errors(err);
-    db.close((err) => {
-      errors(err);
-      console.log('Successfully updated the database.');
-    });
   }
 }

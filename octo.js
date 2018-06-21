@@ -4,11 +4,24 @@ const readdb = require('./readdb.js');
 const scaniso = require('./scanIsolates.js');
 const js = require('./job_submit.js');
 const bodyParser = require('body-parser');
+const sqlite = require('sqlite3');
 
 const path = require('path');
 const port = 3000;
 const app = express();
 
+//open the database
+db = new sqlite.Database('./db/octo.db', (err) => {
+  if (err) {
+    return console.error(err.message);
+  }
+  console.log('Connected to the SQlite database.');
+});
+//on terminate close Database
+process.on('SIGINT', () => {
+    console.log('Disconnecting the SQlite database.')
+    db.close();
+});
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));

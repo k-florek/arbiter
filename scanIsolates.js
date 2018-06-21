@@ -31,7 +31,7 @@ function scanIsolates (page,res,run_id) {
   //check or create table
   function cctable (err){
     errors(err);
-    console.log('Connected to the SQlite database for updates.');
+    console.log('Scanning run directory for isolates.');
     let sql = `CREATE TABLE if not exists ${run_id} (ID INTEGER PRIMARY KEY AUTOINCREMENT, ISOID TEXT UNIQUE NOT NULL, STATUSCODE TEXT NOT NULL, READ1 TEXT UNIQUE NOT NULL, READ2 TEXT UNIQUE NOT NULL)`;
     db.run(sql,scanfs);
   }
@@ -87,15 +87,5 @@ function scanIsolates (page,res,run_id) {
   function renderPage (err,rows) {
     errors(err);
     res.render(page,{isolates:rows,run_id:run_id});
-    closedb(err);
-  }
-
-  //close Database
-  function closedb (err){
-    errors(err);
-    db.close((err) => {
-      errors(err);
-      console.log('Successfully updated the database.');
-    });
   }
 }
