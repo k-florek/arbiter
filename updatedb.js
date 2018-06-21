@@ -8,8 +8,6 @@ const run_directory = config.run_dir;
 module.exports.update = update
 
 function update (page,res) {
-  //open the database
-  let db = new sqlite.Database('./db/octo.db', cctable);
 
   //handle errors
   function errors(err){
@@ -17,13 +15,8 @@ function update (page,res) {
       return console.error(err.message);
     }
   }
-
-  //check or create table
-  function cctable (err){
-    errors(err);
-    console.log('Updating runs.');
-    db.run(`CREATE TABLE if not exists seq_runs (ID INTEGER PRIMARY KEY AUTOINCREMENT, MACHINE TEXT NOT NULL, DATE DATE NOT NULL, PATH TEXT UNIQUE NOT NULL)`,scanfs);
-  }
+  console.log('Updating runs.');
+  db.run(`CREATE TABLE if not exists seq_runs (ID INTEGER PRIMARY KEY AUTOINCREMENT, MACHINE TEXT NOT NULL, DATE DATE NOT NULL, PATH TEXT UNIQUE NOT NULL)`,scanfs);
 
   //scan file system
   function scanfs (err){
@@ -72,6 +65,7 @@ function update (page,res) {
   //render the page
   function renderPage (err,rows) {
     errors(err);
+    console.log('Finished updating runs.')
     res.render(page,{runs:rows});
   }
 }
