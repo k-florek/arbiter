@@ -18,22 +18,15 @@ function scanIsolates (page,res,run_id) {
   1 - submitted
   2 - finished
   */
-  //open the database
-  let db = new sqlite.Database('./db/octo.db', cctable);
+  console.log('Scanning run directory for isolates.');
+  let sql = `CREATE TABLE if not exists ${run_id} (ID INTEGER PRIMARY KEY AUTOINCREMENT, ISOID TEXT UNIQUE NOT NULL, STATUSCODE TEXT NOT NULL, READ1 TEXT UNIQUE NOT NULL, READ2 TEXT UNIQUE NOT NULL)`;
+  db.run(sql,scanfs);
 
   //handle errors
   function errors(err){
     if (err) {
       return console.error(err.message);
     }
-  }
-
-  //check or create table
-  function cctable (err){
-    errors(err);
-    console.log('Scanning run directory for isolates.');
-    let sql = `CREATE TABLE if not exists ${run_id} (ID INTEGER PRIMARY KEY AUTOINCREMENT, ISOID TEXT UNIQUE NOT NULL, STATUSCODE TEXT NOT NULL, READ1 TEXT UNIQUE NOT NULL, READ2 TEXT UNIQUE NOT NULL)`;
-    db.run(sql,scanfs);
   }
 
   //scan file system
@@ -86,6 +79,7 @@ function scanIsolates (page,res,run_id) {
   //render the page
   function renderPage (err,rows) {
     errors(err);
+    console.log('Finished run scan.')
     res.render(page,{isolates:rows,run_id:run_id});
   }
 }
