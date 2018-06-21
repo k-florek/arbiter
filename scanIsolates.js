@@ -77,7 +77,7 @@ function scanIsolates (page,res,run_id) {
           return insertDB(rows.shift());
         });
       }else{
-        let sql = `SELECT ISOID,STATUSCODE,READ1,READ2 FROM ${run_id} ORDER BY ISOID DESC`;
+        let sql = `SELECT ISOID,STATUSCODE,READ1,READ2 FROM ${run_id} ORDER BY ISOID ASC`;
         db.all(sql,renderPage);
       }
     }
