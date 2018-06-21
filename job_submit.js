@@ -15,7 +15,7 @@ function jobSubmit (page,res,job_selection,run_id) {
       return console.error(err.message);
     }
   }
-  
+
   let machine = run_id.split('_')[0];
   let date = run_id.split('_')[1];
   let run_dir = path.join(run_directory,'WI-'+machine+'-'+date)
@@ -93,7 +93,7 @@ function jobSubmit (page,res,job_selection,run_id) {
         let sql = `SELECT ISOID,STATUSCODE,READ1,READ2 FROM ${run_id} ORDER BY ISOID DESC`;
         db.all(sql,renderPage);
       }
-  }
+    }
   }
   //render the page
   function renderPage (err,rows) {

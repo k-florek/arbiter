@@ -27,8 +27,10 @@ block content
               if isolate.STATUSCODE[0] === '1'
                 h5 Submitted
               else if isolate.STATUSCODE[0] === '2'
-                a(href="#") 
-                  button.btn.btn-light(type="button") Results
+                a(href= '/results/' + isolate.FASTQC2)
+                  button.btn.btn-light(type="button") Read 1
+                a(href= '/results/' + isolate.FASTQC2) 
+                  button.btn.btn-light(type="button") Read 2
               else
                 div.checkbox
                   input.checkbox-input(type="checkbox",name='fastqc_check_'+ isolate.ISOID,)
@@ -36,7 +38,7 @@ block content
               if isolate.STATUSCODE[1] === '1'
                 h5 Submitted
               else if isolate.STATUSCODE[1] === '2'
-                a(href="#") 
+                a(href='#')
                   button.btn.btn-light(type="button") Results
               else
                 div.checkbox
