@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const config = require('./config.json');
 const child = require('child_process');
-const exist = require('./ensureExists.js');
+const exist = require('./ensureExists');
 
 const run_directory = config.run_dir;
 
@@ -21,7 +21,7 @@ function fastqcSubmit (ids,run_id) {
   }
   //determine if results file exists in run dir, if not create it
   let result_dir = path.join(__dirname,'/public/results/');
-  exist.ensureExists(result_dir,readDB);
+  exist.ensureExists(path.join(result_dir,run_id),readDB);
 
   function readDB(err){
     errors(err);
@@ -40,7 +40,9 @@ function fastqcSubmit (ids,run_id) {
       }
     }
     reads.push('-o');
-    reads.push(path.join(result_dir));
+    reads.push(path.join(result_dir,run_id));
+    reads.push('-t');
+    reads.push('6');
     let fqc_process = child.spawn('fastqc',reads);
     fqc_process.on('error',finishedFastqc);
     fqc_process.on('close',finishedFastqc);

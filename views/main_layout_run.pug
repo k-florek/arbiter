@@ -20,7 +20,7 @@ html
             a.nav-link(href='/')
               button.btn.btn-dark(type="button") Home
           li.nav-item
-            a.nav-link(href='updatedb')
+            a.nav-link(href='updatedb/'+run_id)
               button.btn.btn-dark(type="button") Update
           li.nav-item
             a.nav-link(href='#')
@@ -34,8 +34,7 @@ html
         form.form-inline.my-2.my-md-0
           input.form-control(type='text', placeholder='Search')
 
-  block content
-  // /.container
+    block content
   //
     Bootstrap core JavaScript
     ==================================================

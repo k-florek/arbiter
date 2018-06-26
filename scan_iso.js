@@ -5,9 +5,9 @@ const config = require('./config.json');
 
 const run_directory = config.run_dir;
 
-module.exports.scanIsolates = scanIsolates
+module.exports.scanIso = scanIso;
 
-function scanIsolates (page,res,run_id) {
+function scanIso (page,res,run_id) {
   let machine = run_id.split('_')[0];
   let date = run_id.split('_')[1];
   let run_dir = path.join(run_directory,'WI-'+machine+'-'+date)

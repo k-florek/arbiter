@@ -16,13 +16,9 @@ function update (page,res) {
     }
   }
   console.log('Updating runs.');
-  db.run(`CREATE TABLE if not exists seq_runs (ID INTEGER PRIMARY KEY AUTOINCREMENT, MACHINE TEXT NOT NULL, DATE DATE NOT NULL, PATH TEXT UNIQUE NOT NULL)`,scanfs);
-
-  //scan file system
-  function scanfs (err){
-    errors(err);
-    fs.readdir(run_directory,procfs);
-  }
+  
+  //scan run directory for new runs
+  fs.readdir(run_directory,procfs);
 
   //process file system and INSERT
   function procfs (err,files){

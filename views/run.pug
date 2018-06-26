@@ -1,61 +1,76 @@
 extends main_layout_run
-
 block content
-  .container
-    table.table.table-striped
-      thead
+  script.
+    !function($) {
+      $('input[type=checkbox][class=cb-selector]').click(function() {
+        var cb = $(this),
+          name = cb.attr('data-for');
+        
+        if(name == null)
+          return false;
+        $('input[type=checkbox][id=name]')
+          .prop('checked', cb.prop('checked'))
+          .click(function() {
+            if(!$(this).prop('checked'))
+              cb.prop('checked', false);
+          });
+      });
+      }(jQuery);
+  table.table.table-striped
+    thead
+      tr
+        th.text-center 
+          H4 Isolate
+        th.text-center
+          H4 FastQC
+          input.cb-selector(type='checkbox', data-for="fastqc")
+        th.text-center
+          H4 Kraken 
+        th.text-center
+          H4 Typing/Resistance
+        th.text-center
+          H4 Read 1 Path
+        th.text-center
+          H4 Read 2 Path
+    tbody 
+    form(action='/status/'+ run_id ,method='post',id='job')
+      each isolate, i in isolates
         tr
-          th.text-center 
-            H4 Isolate
-          th.text-center
-            H4 FastQC
-          th.text-center
-            H4 Kraken 
-          th.text-center
-            H4 Typing/Resistance
-          th.text-center
-            H4 Read 1 Path
-          th.text-center
-            H4 Read 2 Path
-      tbody 
-      form(action='/status/'+ run_id ,method='post',id='job')
-        each isolate, i in isolates
-          tr
-            td.text-center
-              =isolate.ISOID
-            td.text-center
-              if isolate.STATUSCODE[0] === '1'
-                h5 Submitted
-              else if isolate.STATUSCODE[0] === '2'
-                a(href= '/results/' + isolate.FASTQC2)
-                  button.btn.btn-light(type="button") Read 1
-                a(href= '/results/' + isolate.FASTQC2) 
-                  button.btn.btn-light(type="button") Read 2
-              else
-                div.checkbox
-                  input.checkbox-input(type="checkbox",name='fastqc_check_'+ isolate.ISOID,)
-            td.text-center
-              if isolate.STATUSCODE[1] === '1'
-                h5 Submitted
-              else if isolate.STATUSCODE[1] === '2'
-                a(href='#')
-                  button.btn.btn-light(type="button") Results
-              else
-                div.checkbox
-                  input.checkbox-input(type="checkbox",name='kraken_check_'+ isolate.ISOID,)
-            td.text-center
-              if isolate.STATUSCODE[2] === '1'
-                h5 Submitted
-              else if isolate.STATUSCODE[2] === '2'
-                a(href="#") 
-                  button.btn.btn-light(type="button") Results
-              else
-                div.checkbox
-                  input.checkbox-input(type="checkbox",name='typing_check_'+ isolate.ISOID,)
-            td 
-              =isolate.READ1
-            td 
-              =isolate.READ2
-            td 
+          td.text-center
+            =isolate.ISOID
+          td.text-center
+            if isolate.STATUSCODE[0] === '1'
+              h5 Submitted
+            else if isolate.STATUSCODE[0] === '2'
+              a(href= '/results/'+run_id+'/'+ isolate.FASTQC2)
+                button.btn.btn-light(type="button") Read 1
+              a(href= '/results/'+run_id+'/'+ isolate.FASTQC2) 
+                button.btn.btn-light(type="button") Read 2
+            else
+              div.checkbox
+                input.checkbox-input(type="checkbox",id='fastqc',name='fastqc_check_'+ isolate.ISOID,)
+          td.text-center
+            if isolate.STATUSCODE[1] === '1'
+              h5 Submitted
+            else if isolate.STATUSCODE[1] === '2'
+              a(href='#')
+                button.btn.btn-light(type="button") Results
+            else
+              div.checkbox
+                input.checkbox-input(type="checkbox",id='kraken',name='kraken_check_'+ isolate.ISOID,)
+          td.text-center
+            if isolate.STATUSCODE[2] === '1'
+              h5 Submitted
+            else if isolate.STATUSCODE[2] === '2'
               a(href="#") 
-                button.btn.btn-danger(type="button") Delete
+                button.btn.btn-light(type="button") Results
+            else
+              div.checkbox
+                input.checkbox-input(type="checkbox",id='typing',name='typing_check_'+ isolate.ISOID,)
+          td 
+            =isolate.READ1
+          td 
+            =isolate.READ2
+          td 
+            a(href="#") 
+              button.btn.btn-danger(type="button") Delete

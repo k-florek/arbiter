@@ -1,8 +1,9 @@
 const express = require('express');
-const updatedb = require('./updatedb.js');
-const readdb = require('./readdb.js');
-const scaniso = require('./scanIsolates.js');
-const js = require('./job_submit.js');
+const updatedb = require('./updatedb');
+const getruns = require('./get_runs');
+const getiso = require('./get_iso');
+const scaniso = require('./scan_iso');
+const js = require('./job_submit');
 const bodyParser = require('body-parser');
 const sqlite = require('sqlite3');
 
@@ -15,7 +16,12 @@ db = new sqlite.Database('./db/octo.db', (err) => {
   if (err) {
     return console.error(err.message);
   }
-  console.log('Connected to the SQlite database.');
+  db.run(`CREATE TABLE if not exists seq_runs (ID INTEGER PRIMARY KEY AUTOINCREMENT, MACHINE TEXT NOT NULL, DATE DATE NOT NULL, PATH TEXT UNIQUE NOT NULL)`, (err) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log('Connected to the SQlite database.');
+  });
 });
 //on terminate close Database
 process.on('SIGINT', () => {
@@ -39,19 +45,19 @@ app.use(express.static(path.join(__dirname,'public')));
 
 //Home route
 app.get('/', function(req, res){
-  readdb.read_db('index',res);
+  getruns.getRuns('index',res);
 });
 
 //By MACHINE
 app.get('/machine/:machinename', function(req, res){
   let machinename = req.params.machinename;
-  readdb.read_db('index',res,machinename);
+  getruns.getRuns('index',res,machinename);
 });
 
 //By Date
 app.get('/date/:date', function(req, res){
   let date = req.params.date;
-  readdb.read_db('index',res,'',date);
+  getruns.getRuns('index',res,'',date);
 });
 
 //update database
@@ -62,7 +68,13 @@ app.get('/updatedb', function(req, res){
 //show run information
 app.get('/status/:runid',function(req,res){
   let runid = req.params.runid;
-  scaniso.scanIsolates('run',res,runid);
+  getiso.getIso('run',res,runid);
+});
+
+//update run isolates
+app.get('/status/updatedb/:runid',function(req,res){
+  let runid = req.params.runid;
+  scaniso.scanIso('run',res,runid);
 });
 
 //submit jobs
