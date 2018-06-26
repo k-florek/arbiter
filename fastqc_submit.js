@@ -4,6 +4,8 @@ const path = require('path');
 const config = require('./config.json');
 const child = require('child_process');
 const exist = require('./ensureExists');
+const jsa = require("js-alert");
+
 
 const run_directory = config.run_dir;
 
@@ -83,6 +85,9 @@ function fastqcSubmit (ids,run_id) {
           //remove first item and call again
           return updateStatus(rows.shift());
         });
+      }else{
+        let alertMsg = 'Compleated fastQC on isolates from ' +'WI-'+machine+'-'+date;
+        io.emit('message', alertMsg);
       }
     }
   }

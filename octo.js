@@ -7,9 +7,12 @@ const js = require('./job_submit');
 const bodyParser = require('body-parser');
 const sqlite = require('sqlite3');
 
+
 const path = require('path');
 const port = 3000;
 const app = express();
+let server = require('http').Server(app);
+io = require('socket.io').listen(server);
 
 //open the database
 db = new sqlite.Database('./db/octo.db', (err) => {
@@ -83,6 +86,6 @@ app.post('/status/:runid',function(req,res){
   js.jobSubmit('run',res,req.body,runid);
 });
 
-app.listen(port,function(){
+server.listen(port,function(){
   console.log('Octopods started on port: '+port);
 });
