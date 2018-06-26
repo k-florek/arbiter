@@ -1,21 +1,19 @@
 extends main_layout_run
 block content
   script.
-    !function($) {
-      $('input[type=checkbox][class=cb-selector]').click(function() {
-        var cb = $(this),
-          name = cb.attr('data-for');
-        
-        if(name == null)
-          return false;
-        $('input[type=checkbox][id=name]')
-          .prop('checked', cb.prop('checked'))
-          .click(function() {
-            if(!$(this).prop('checked'))
-              cb.prop('checked', false);
-          });
-      });
-      }(jQuery);
+    function toggle(source,_id) {
+      let all_checkboxes = document.getElementsByClassName('checkbox-input');
+      let checkboxes = [];
+      for (let i=0;i<all_checkboxes.length;i++){
+        console.log(all_checkboxes[i].id);
+        if (all_checkboxes[i].id == _id) {
+            checkboxes.push(all_checkboxes[i]);
+          }
+      }
+      for (let i=0;i<checkboxes.length;i++) {
+        checkboxes[i].checked = source.checked;
+      }
+    }
   table.table.table-striped
     thead
       tr
@@ -23,11 +21,13 @@ block content
           H4 Isolate
         th.text-center
           H4 FastQC
-          input.cb-selector(type='checkbox', data-for="fastqc")
+          input.checkbox-input(type="checkbox",name='fastqc_check_all',onClick="toggle(this,'fastqc')") 
         th.text-center
           H4 Kraken 
+          input.checkbox-input(type="checkbox",name='kraken_check_all',onClick="toggle(this,'kraken')")
         th.text-center
           H4 Typing/Resistance
+          input.checkbox-input(type="checkbox",name='typing_check_all',onClick="toggle(this,'typing')")
         th.text-center
           H4 Read 1 Path
         th.text-center
@@ -38,7 +38,7 @@ block content
         tr
           td.text-center
             =isolate.ISOID
-          td.text-center
+          td.text-center(id='fastqc')
             if isolate.STATUSCODE[0] === '1'
               h5 Submitted
             else if isolate.STATUSCODE[0] === '2'
