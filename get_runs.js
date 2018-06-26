@@ -21,7 +21,7 @@ function getRuns (page,res,machinename='',date='') {
   } else if (machinename!='' && date===''){
     let sql = `SELECT MACHINE,DATE,PATH FROM seq_runs WHERE MACHINE = ?`;
     db.all(sql,[machinename],(err,rows) => {
-      erros(err);
+      errors(err);
       res.render(page,{runs:rows})
     });
   } else {
