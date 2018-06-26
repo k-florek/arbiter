@@ -90,15 +90,9 @@ function jobSubmit (page,res,job_selection,run_id) {
           return insertDB(rows.shift());
         });
       }else{
-        let sql = `SELECT ISOID,STATUSCODE,READ1,READ2 FROM ${run_id} ORDER BY ISOID ASC`;
-        db.all(sql,renderPage);
+        res.redirect(path.join('/status/',run_id));
+        fastqcSubmit.fqcSubmit(res.locals.fastqc_ids,run_id);
       }
     }
-  }
-  //render the page
-  function renderPage (err,rows) {
-    errors(err);
-    res.render(page,{isolates:rows,run_id:run_id});
-    fastqcSubmit.fqcSubmit(res.locals.fastqc_ids,run_id);
   }
 }
