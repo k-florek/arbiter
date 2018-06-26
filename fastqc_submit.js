@@ -86,7 +86,7 @@ function fastqcSubmit (ids,run_id) {
           return updateStatus(rows.shift());
         });
       }else{
-        let alertMsg = 'Compleated fastQC on isolates from ' +'WI-'+machine+'-'+date;
+        let alertMsg = 'Compleated FastQC on isolates from ' +'WI-'+machine+'-'+date;
         io.emit('message', alertMsg);
       }
     }
