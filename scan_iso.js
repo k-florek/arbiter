@@ -48,6 +48,10 @@ function scanIso (page,res,run_id) {
       //check if dir
       if (stat && stat.isFile()) {
         if (files[i].includes('R1_001.fastq.gz')) {
+          //don't include undertimined reads
+          if (files[i].includes('Undetermined')){
+            continue;
+          }
           let isoid = files[i].split('-')[0];
           let read1 = p;
           let read2 = path.join(run_dir,files[i].split('_')[0]+'_'+files[i].split('_')[1]+'_'+files[i].split('_')[2]+'_'+'R2'+'_'+files[i].split('_')[4]);
