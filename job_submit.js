@@ -121,9 +121,14 @@ function jobSubmit (page,res,job_selection,run_id) {
           //remove first item and call again
           return insertDB(rows.shift());
         });
+       //insertion finished upadate page and submit jobs
       }else{
+        //reload the run page
         res.redirect(path.join('/status/',run_id));
-        fastqcSubmit.fqcSubmit(res.locals.fastqc_ids,run_id);
+        //check to see if items are in fastqc job submission
+        if (Array.isArray(res.locals.fastqc_ids) && res.locals.fastqc_ids.length > 0){
+          fastqcSubmit.fqcSubmit(res.locals.fastqc_ids,run_id);
+        }
       }
     }
   }
