@@ -4,6 +4,7 @@ const path = require('path');
 const config = require('./config.json');
 const child = require('child_process');
 const exist = require('./ensureExists');
+const replaceAt = require('./replaceAt');
 const jsa = require("js-alert");
 
 
@@ -60,7 +61,7 @@ function fastqcSubmit (ids,run_id) {
   function update_codes (err,data) {
     for (let i = 0; i<data.length;i++){
       if (ids.includes(data[i]['ISOID'])) {
-        data[i]['STATUSCODE'] = '2'+data[i]['STATUSCODE'].slice(1);
+        data[i]['STATUSCODE'] = replaceAt.replaceAt(0,'2',data[i]['STATUSCODE']);
       }
     }
     let rows = [];
