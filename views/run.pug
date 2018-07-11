@@ -26,12 +26,17 @@ block content
           H4 Kraken 
           input.checkbox-input(type="checkbox",name='kraken_check_all',onClick="toggle(this,'kraken')")
         th.text-center
-          H4 Typing/Resistance
-          input.checkbox-input(type="checkbox",name='typing_check_all',onClick="toggle(this,'typing')")
+          H4 Sal Serotyping
+          input.checkbox-input(type="checkbox",name='typing_check_all',onClick="toggle(this,'sal')")
         th.text-center
-          H4 Read 1 Path
+          H4 E coli Serotyping
+          input.checkbox-input(type="checkbox",name='typing_check_all',onClick="toggle(this,'ecoli')")
         th.text-center
-          H4 Read 2 Path
+          H4 Strep Serotyping
+          input.checkbox-input(type="checkbox",name='typing_check_all',onClick="toggle(this,'strep')")
+        th.text-center
+          H4 AR Detection
+          input.checkbox-input(type="checkbox",name='typing_check_all',onClick="toggle(this,'ar')")
     tbody 
     form(action='/status/'+ run_id ,method='post',id='job')
       each isolate, i in isolates
@@ -66,11 +71,34 @@ block content
                 button.btn.btn-light(type="button") Results
             else
               div.checkbox
-                input.checkbox-input(type="checkbox",id='typing',name='typing_check_'+ isolate.ISOID,)
-          td 
-            =isolate.READ1
-          td 
-            =isolate.READ2
+                input.checkbox-input(type="checkbox",id='sal',name='sal_check_'+ isolate.ISOID,)
+          td.text-center
+            if isolate.STATUSCODE[2] === '1'
+              h5 Submitted
+            else if isolate.STATUSCODE[2] === '2'
+              a(href="#") 
+                button.btn.btn-light(type="button") Results
+            else
+              div.checkbox
+                input.checkbox-input(type="checkbox",id='ecoli',name='ecoli_check_'+ isolate.ISOID,)
+          td.text-center
+            if isolate.STATUSCODE[2] === '1'
+              h5 Submitted
+            else if isolate.STATUSCODE[2] === '2'
+              a(href="#") 
+                button.btn.btn-light(type="button") Results
+            else
+              div.checkbox
+                input.checkbox-input(type="checkbox",id='strep',name='strep_check_'+ isolate.ISOID,)
+          td.text-center
+            if isolate.STATUSCODE[2] === '1'
+              h5 Submitted
+            else if isolate.STATUSCODE[2] === '2'
+              a(href="#") 
+                button.btn.btn-light(type="button") Results
+            else
+              div.checkbox
+                input.checkbox-input(type="checkbox",id='ar',name='ar_check_'+ isolate.ISOID,)
           td 
             a(href="#") 
               button.btn.btn-danger(type="button") Delete

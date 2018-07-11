@@ -13,7 +13,7 @@ function scanIso (page,res,run_id) {
   let run_dir = path.join(run_directory,'WI-'+machine+'-'+date)
   /*
   binary status code for runs:
-  [fastqc,kraken,serotyping] = "000"
+  [fastqc,kraken,sal,ecoli,strep,ar] = "000000"
   0 - not run
   1 - submitted
   2 - finished
@@ -38,7 +38,7 @@ function scanIso (page,res,run_id) {
   //process file system and INSERT
   function procfs (err,files){
     let rows = [];
-    let statuscode = '000';
+    let statuscode = '000000';
     errors(err);
     //loop through each file
     for (let i = 0; i<files.length;i++){
