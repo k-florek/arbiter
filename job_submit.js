@@ -1,8 +1,10 @@
 const sqlite = require('sqlite3');
 const fs = require('fs');
+const csv = require('fast-csv');
 const path = require('path');
 const config = require('./config.json');
 const fastqcSubmit = require('./fastqc_submit');
+const clusterSubmit = require('./cluster_submit');
 const replaceAt = require('./replaceAt')
 
 const run_directory = config.run_dir;
@@ -109,7 +111,11 @@ function jobSubmit (page,res,job_selection,run_id) {
       let read2 = data[i]['READ2'];
       rows.push([isoid,statuscode,read1,read2]);
     }
-    insertDB(rows.shift());
+    //write to csv for grid submission
+    csv.writeToPath("job_submission/"+machine+'_'+date+'.csv',rows,{headers: false}).on("finish",function(){
+      //update database
+      insertDB(rows.shift());
+    });
 
     //insert into database
     function insertDB (row){
@@ -128,6 +134,13 @@ function jobSubmit (page,res,job_selection,run_id) {
         //check to see if items are in fastqc job submission
         if (Array.isArray(res.locals.fastqc_ids) && res.locals.fastqc_ids.length > 0){
           fastqcSubmit.fqcSubmit(res.locals.fastqc_ids,run_id);
+        }
+        //check to see if items in submission for serotyping/ar_detection
+        if (res.locals.ecoli_ids > 0 ||
+          res.locals.sal_ids.length > 0 ||
+          res.locals.strep_ids.length > 0 ||
+          res.locals.ar_ids.length > 0 ){
+          clusterSubmit.clusterSubmit([machine+'_'+date+'.csv']);
         }
       }
     }
