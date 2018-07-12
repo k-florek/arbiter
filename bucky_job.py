@@ -19,8 +19,8 @@ with open(csvfile,'r') as cfile:
         ecoli = code[3]
         strep = code[4]
         ar = code[5]
-        submission.append([row[0],ar,strep,ecoli,sal])
         if (sal == '1' or ecoli == '1' or strep == '1' or ar == '1'):
+            submission.append([row[0],ar,strep,ecoli,sal])
             file_list.append(row[2])
             file_list.append(row[3])
 
@@ -61,7 +61,7 @@ sub.Popen(ssh_string).wait()
 #make output stage
 ssh_string = shlex.split('ssh chtc5 "cat {0}.dir.list"'.format(run_id))
 tree = sub.Popen(ssh_string,stdout=sub.PIPE)
-ssh_string = shlex.split('ssh chtc5 "cd output;xargs mkdir')
+ssh_string = shlex.split('ssh chtc5 "cd output;xargs mkdir"')
 sub.Popen(ssh_string,stdin=tree.stdout).wait()
 
 #submit jobs
