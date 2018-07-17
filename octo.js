@@ -3,6 +3,7 @@ const updatedb = require('./updatedb');
 const getruns = require('./get_runs');
 const getiso = require('./get_iso');
 const scaniso = require('./scan_iso');
+const session = require('express-session');
 const js = require('./job_submit');
 const bodyParser = require('body-parser');
 const sqlite = require('sqlite3');
@@ -43,33 +44,39 @@ app.set('views', path.join(__dirname,'views'));
 app.set('view engine', 'pug');
 app.locals.pretty = true;
 
+//start session
+app.use(session({secret: "123456"}));
+
 //set public folder
 app.use(express.static(path.join(__dirname,'public')));
 
 //authentication
-function checkAuth(req,res){
-  if(req.session.user){
-    next();
+function checkAuth(req,res,next){
+  if(!req.session.user_id){
+    res.redirect('/login');
   } else {
-    console.log('req.session.user');
-    res.redirect('/login')
+    next();
   }
 }
 
-app.post('/login'), function (req, res) {
+app.post('/login', function (req, res) {
   var post = req.body;
   if (post.user === 'cddbact' && post.password === '465') {
     req.session.user_id = 'cddbact';
     res.redirect('/');
   } else {
-    res.send('Bad username or password');
+    res.render('login',{message:'Bad Username or Password'});
   }
-}
+});
 
-app.get('/logout'), function (req,res) {
+app.get('/login', function (req, res) {
+  res.render('login',{message:'Please sign in'});
+});
+
+app.get('/logout', function (req,res) {
   delete req.session.user_id;
-  res.redirect('/login')
-}
+  res.redirect('/login');
+});
 
 //Home route
 app.get('/',checkAuth, function(req, res){
