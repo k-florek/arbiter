@@ -15,20 +15,20 @@ function getRuns (page,res,machinename='',date='') {
     //select items
     db.all(sql, (err,rows)=>{
       errors(err);
-      res.render(page,{runs:rows})
+      res.render(page,{runs:rows});
     });
 
   } else if (machinename!='' && date===''){
     let sql = `SELECT MACHINE,DATE,PATH FROM seq_runs WHERE MACHINE = ?`;
     db.all(sql,[machinename],(err,rows) => {
       errors(err);
-      res.render(page,{runs:rows})
+      res.render(page,{runs:rows});
     });
   } else {
     let sql = `SELECT MACHINE,DATE,PATH FROM seq_runs WHERE DATE = ?`;
     db.all(sql,[date],(err,rows) => {
       errors(err);
-      res.render(page,{runs:rows})
+      res.render(page,{runs:rows});
     });
   }
 }
