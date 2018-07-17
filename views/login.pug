@@ -1,0 +1,8 @@
+extends main_layout
+
+if(message)
+  h4 #(message)
+  form(action = "/login" method = "POST")
+  input(name = "user" type = "text" required placeholder = "User ID")
+  input(name = "password" type = "password" required placeholder = "Password")
+  button(type = "Submit") Login

@@ -46,42 +46,67 @@ app.locals.pretty = true;
 //set public folder
 app.use(express.static(path.join(__dirname,'public')));
 
+//authentication
+function checkAuth(req,res){
+  if(req.session.user){
+    next();
+  } else {
+    console.log('req.session.user');
+    res.redirect('/login')
+  }
+}
+
+app.post('/login'), function (req, res) {
+  var post = req.body;
+  if (post.user === 'cddbact' && post.password === '465') {
+    req.session.user_id = 'cddbact';
+    res.redirect('/');
+  } else {
+    res.send('Bad username or password');
+  }
+}
+
+app.get('/logout'), function (req,res) {
+  delete req.session.user_id;
+  res.redirect('/login')
+}
+
 //Home route
-app.get('/', function(req, res){
+app.get('/',checkAuth, function(req, res){
   getruns.getRuns('index',res);
 });
 
 //By MACHINE
-app.get('/machine/:machinename', function(req, res){
+app.get('/machine/:machinename',checkAuth, function(req, res){
   let machinename = req.params.machinename;
   getruns.getRuns('index',res,machinename);
 });
 
 //By Date
-app.get('/date/:date', function(req, res){
+app.get('/date/:date',checkAuth, function(req, res){
   let date = req.params.date;
   getruns.getRuns('index',res,'',date);
 });
 
 //update database
-app.get('/updatedb', function(req, res){
+app.get('/updatedb',checkAuth, function(req, res){
   updatedb.update('index',res);
 });
 
 //show run information
-app.get('/status/:runid',function(req,res){
+app.get('/status/:runid',checkAuth, function(req,res){
   let runid = req.params.runid;
   getiso.getIso('run',res,runid);
 });
 
 //update run isolates
-app.get('/status/updatedb/:runid',function(req,res){
+app.get('/status/updatedb/:runid',checkAuth, function(req,res){
   let runid = req.params.runid;
   scaniso.scanIso('run',res,runid);
 });
 
 //submit jobs
-app.post('/status/:runid',function(req,res){
+app.post('/status/:runid',checkAuth, function(req,res){
   let runid = req.params.runid;
   js.jobSubmit('run',res,req.body,runid);
 });
