@@ -5,6 +5,7 @@ import subprocess as sub
 import shlex
 import os
 import shutil
+import time
 
 csvfile = sys.argv[1]
 submission = []
@@ -70,3 +71,18 @@ sub.Popen(ssh_string).wait()
 
 #remove local staged reads
 shutil.rmtree(run_id)
+
+#monitor job progress
+ssh_string = shlex.split('ssh chtc5 "cat {0}.bucky-tr.dag.dagman.log"'.format{run_id})
+job_complete = False
+while job_complete == False:
+    time.sleep(600)
+    p = sub.Popen(ssh_string,stdout=sub.PIPE).wait()
+    for line in p.stdout:
+        if "Job finished" in line.decode('utf-8'):
+            job_complete = True
+
+#move move results back to local disk
+ssh_string = shlex.split('ssh chtc5 "cd output;tar -cz {0}"'.format(run_id))
+compress = sub.Popen(ssh_string,stdout=sub.PIPE)
+sub.Popen(['tar','-xz'],stdin=compress.stdout).wait()
