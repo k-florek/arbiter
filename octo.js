@@ -7,6 +7,7 @@ const session = require('express-session');
 const js = require('./job_submit');
 const bodyParser = require('body-parser');
 const sqlite = require('sqlite3');
+const nodeCleanup = require('node-cleanup');
 
 
 const path = require('path');
@@ -27,10 +28,11 @@ db = new sqlite.Database('./db/octo.db', (err) => {
     console.log('Connected to the SQlite database.');
   });
 });
-//on terminate close Database
-process.on('SIGINT', () => {
-    console.log('Disconnecting the SQlite database.')
-    db.close();
+//on terminate cleanup
+nodeCleanup(function (exitCode,signal){
+  //close the database
+  db.close();
+}, {ctrl_C: "Keyboard interuption signal, exiting.",uncaughtException: "There was an error:"
 });
 
 // parse application/x-www-form-urlencoded
@@ -45,7 +47,7 @@ app.set('view engine', 'pug');
 app.locals.pretty = true;
 
 //start session
-app.use(session({secret: "123456"}));
+app.use(session({secret: "123456",resave: true,saveUninitialized: true}));
 
 //set public folder
 app.use(express.static(path.join(__dirname,'public')));
