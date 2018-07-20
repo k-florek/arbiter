@@ -6,6 +6,7 @@ import shlex
 import os
 import shutil
 import time
+from bucky_result_parse import parseResult
 
 csvfile = sys.argv[1]
 submission = []
@@ -73,16 +74,42 @@ sub.Popen(ssh_string).wait()
 shutil.rmtree(run_id)
 
 #monitor job progress
-ssh_string = shlex.split('ssh chtc5 "cat {0}.bucky-tr.dag.dagman.log"'.format{run_id})
+ssh_string = shlex.split('ssh chtc5 "cat {0}.bucky-tr.dag.dagman.log"'.format(run_id))
 job_complete = False
 while job_complete == False:
     time.sleep(600)
-    p = sub.Popen(ssh_string,stdout=sub.PIPE).wait()
+    p = sub.Popen(ssh_string,stdout=sub.PIPE)
     for line in p.stdout:
-        if "Job finished" in line.decode('utf-8'):
+        if "Job terminated" in line.decode('utf-8'):
             job_complete = True
 
 #move move results back to local disk
 ssh_string = shlex.split('ssh chtc5 "cd output;tar -cz {0}"'.format(run_id))
 compress = sub.Popen(ssh_string,stdout=sub.PIPE)
 sub.Popen(['tar','-xz'],stdin=compress.stdout).wait()
+
+#compile results
+os.chdir(run_id)
+#get all resistance information
+cmd = shlex.split('''find . -name "*_resFind.csv" | xargs cat > resFind_all.csv;
+find . -name "*_CARD.csv" | xargs cat > card_all.csv;
+find . -name "*_NCBIres.csv" | xargs cat > NCBIres_all.csv;
+find . -name "*_mlst.csv" | xargs cat > mlst_all.csv;
+find . -name "*_vf.csv" | xargs cat > vf_all.csv"''')
+sub.Popen(cmd).wait()
+#compile resistance information
+cmd = shlex.split('ar_analysis.py -s resFind_all.csv card_all.csv NCBIres_all.csv')
+sub.Popen(cmd).wait()
+#summerize sal serotype
+cmd = shlex.split('sistr_sum.py -d .')
+sub.Popen(cmd).wait()
+
+#parse the results
+parseResult(run_id)
+
+#define cleanup phase
+def cleanup(rid):
+    os.remove('{0}.bucky-tr.dag'.format(rid))
+    os.remove('{0}.csv'.format(rid))
+    os.remove('{0}.dir.list'.format(rid))
+    
