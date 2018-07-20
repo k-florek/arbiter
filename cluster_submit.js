@@ -5,6 +5,7 @@ module.exports.clusterSubmit = clusterSubmit;
 function clusterSubmit (run_file) {
   //setup child process to execute bucky submission script
   let fqc_process = child.execFile('./bucky_job.py',run_file,finishedSubmit);
+  console.log('Submitted Job to Cluster.')
   function finishedSubmit (error,stdout,stderr){
     if (!error) {
       console.log('Finished cluster submit.');
