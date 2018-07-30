@@ -80,7 +80,7 @@ while job_complete == False:
     time.sleep(600)
     p = sub.Popen(ssh_string,stdout=sub.PIPE)
     for line in p.stdout:
-        if "Job terminated" in line.decode('utf-8'):
+        if "(1) Normal termination" in line.decode('utf-8'):
             job_complete = True
 
 #move move results back to local disk
@@ -91,12 +91,7 @@ sub.Popen(['tar','-xz'],stdin=compress.stdout).wait()
 #compile results
 os.chdir(run_id)
 #get all resistance information
-cmd = shlex.split('''find . -name "*_resFind.csv" | xargs cat > resFind_all.csv;
-find . -name "*_CARD.csv" | xargs cat > card_all.csv;
-find . -name "*_NCBIres.csv" | xargs cat > NCBIres_all.csv;
-find . -name "*_mlst.csv" | xargs cat > mlst_all.csv;
-find . -name "*_vf.csv" | xargs cat > vf_all.csv"''')
-sub.Popen(cmd).wait()
+sub.Popen('../../compileResults.sh').wait()
 #compile resistance information
 cmd = shlex.split('ar_analysis.py -s resFind_all.csv card_all.csv NCBIres_all.csv')
 sub.Popen(cmd).wait()
@@ -112,4 +107,3 @@ def cleanup(rid):
     os.remove('{0}.bucky-tr.dag'.format(rid))
     os.remove('{0}.csv'.format(rid))
     os.remove('{0}.dir.list'.format(rid))
-    
