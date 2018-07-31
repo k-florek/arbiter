@@ -6,7 +6,7 @@ import shlex
 import os
 import shutil
 import time
-from bucky_result_parse import parseResult
+from octopy.parseresult import parseResult
 
 csvfile = sys.argv[1]
 submission = []
@@ -41,7 +41,7 @@ except FileExistsError:
     pass
 for file in file_list:
     sub.Popen(['cp',file,run_id]).wait()
-sub.Popen(['../sequencing_prep.py',run_id]).wait()
+sub.Popen(['../scripts/sequencing_prep.py',run_id]).wait()
 
 #create dag files
 args = ['/home/floreknx/bucky-tr/dag_creator.py',csvfile]
@@ -91,12 +91,12 @@ sub.Popen(['tar','-xz'],stdin=compress.stdout).wait()
 #compile results
 os.chdir(run_id)
 #get all resistance information
-sub.Popen('../../compileResults.sh').wait()
+sub.Popen('../../scripts/compileResults.sh').wait()
 #compile resistance information
-cmd = shlex.split('ar_analysis.py -s resFind_all.csv card_all.csv NCBIres_all.csv')
+cmd = shlex.split('../../scripts/ar_analysis.py -s resFind_all.csv card_all.csv NCBIres_all.csv')
 sub.Popen(cmd).wait()
 #summerize sal serotype
-cmd = shlex.split('sistr_sum.py -d .')
+cmd = shlex.split('../../scripts/sistr_sum.py -d .')
 sub.Popen(cmd).wait()
 
 #parse the results
