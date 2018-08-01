@@ -76,7 +76,7 @@ def parseResult(run_id):
 
     #insert into database TODO add checking for existing rows
     for id in ids:
-        c.execute('''INSERT OR REPLACE INTO {run_id}(ISOID,AR,SALTYPE,STREPTYPE,ECOLITYPE,STATS) VALUES(?,?,?,?)'''.format(run_id=run_id),(id,results_ar[id],sal_sero[id],strep_sero[id],ecoli[id],assem_stats[id]))
+        c.execute('''INSERT OR REPLACE INTO {run_id}(ISOID,AR,SALTYPE,STREPTYPE,ECOLITYPE,STATS) VALUES(?,?,?,?,?,?)'''.format(run_id=run_id),(id,results_ar[id],sal_sero[id],strep_sero[id],ecoli[id],assem_stats[id]))
     #save changes to database
     conn.commit()
     #close the database
@@ -97,17 +97,17 @@ def parseResult(run_id):
 
         #update status code to change submitted to finished
         newcode = ''
-        c = 0
+        count = 0
         for code in statuscode:
-            if c < 2:
+            if count < 2:
                 newcode += code
-                c += 1
+                count += 1
             elif code == 1:
                 newcode += '2'
-                c += 1
+                count += 1
             else:
                 newcode += code
-                c += 1
+                count += 1
 
         c.execute('''UPDATE {run_id} SET STATUSCODE = ? WHERE ISOID = ?'''.format(run_id=run_id),[newcode,id])
 
