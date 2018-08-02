@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #sequencing_prep.py
 #Nick Florek
-#This script will prep a folder full of seqncing files by putting each paired data set into subfolders renaming and unzipping them.
+#This script will prep a folder full of seqncing files by putting each paired data set into subfolders renaming them.
 
 import subprocess as sub
 import sys

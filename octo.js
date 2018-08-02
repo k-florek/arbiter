@@ -120,6 +120,28 @@ app.post('/status/:runid',checkAuth, function(req,res){
   js.jobSubmit('run',res,req.body,runid);
 });
 
+//delete a record from runs
+app.get('/delete/:machine/:date', function(req,res){
+  db.run(`DELETE FROM seq_runs WHERE MACHINE=? AND DATE=?`,[req.params.machine,req.params.date], (err) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log('Deleted '+req.params.machine+'_'+req.params.date);
+    res.redirect('/');
+  });
+});
+
+//delete a record from isolates
+app.get('/status/:runid/delete/:isoid', function(req,res){
+  db.run(`DELETE FROM ${req.params.runid} WHERE ISOID=?`,[req.params.isoid], (err) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log('Deleted '+req.params.isoid+'from'+req.params.runid);
+    res.redirect('/status/'+req.params.runid);
+  });
+});
+
 server.listen(port,function(){
   console.log('Octopods started on port: '+port);
 });
