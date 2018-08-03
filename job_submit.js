@@ -4,6 +4,7 @@ const csv = require('fast-csv');
 const path = require('path');
 const config = require('./config.json');
 const fastqcSubmit = require('./fastqc_submit');
+const krakenSubmit = require('./kraken_submit');
 const clusterSubmit = require('./cluster_submit');
 const replaceAt = require('./replaceAt')
 
@@ -141,6 +142,10 @@ function jobSubmit (page,res,job_selection,run_id) {
           res.locals.strep_ids.length > 0 ||
           res.locals.ar_ids.length > 0 ){
           clusterSubmit.clusterSubmit([machine+'_'+date+'.csv']);
+        }
+        //check to see if items in the submission for kraken
+        if (Array.isArray(res.locals.kraken_ids) && res.locals.kraken_ids.length > 0){
+          krakenSubmit.krakenSubmit(res.locals.kraken_ids,run_id);
         }
       }
     }

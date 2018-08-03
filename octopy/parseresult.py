@@ -60,27 +60,16 @@ def parseResult(run_id):
             ecoli[id] = None
 
     #setup database
-    conn = sqlite3.connect('../../db/rundata.db')
+    conn = sqlite3.connect('../../db/octo.db')
     c = conn.cursor()
 
-    #create table in database for run
-    c.execute('''CREATE TABLE if not exists {run_id}
-    (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    ISOID TEXT NOT NULL UNIQUE,
-    AR TEXT,
-    SALTYPE TEXT,
-    STREPTYPE TEXT,
-    ECOLITYPE TEXT,
-    STATS TEXT)
-    '''.format(run_id=run_id))
-
-    #insert into database TODO add checking for existing rows
+    #update database
     for id in ids:
-        c.execute('''INSERT OR REPLACE INTO {run_id}(ISOID,AR,SALTYPE,STREPTYPE,ECOLITYPE,STATS) VALUES(?,?,?,?,?,?)'''.format(run_id=run_id),(id,results_ar[id],sal_sero[id],strep_sero[id],ecoli[id],assem_stats[id]))
-    #save changes to database
-    conn.commit()
-    #close the database
-    conn.close()
+        c.execute('''UPDATE {run_id} SET SALTYPE = ?,
+            STREPTYPE = ?,
+            ECOLITYPE = ?,
+            STATS = ?
+            WHERE ISOID = ?'''.format(run_id=run_id),(id,sal_sero[id],strep_sero[id],ecoli[id],assem_stats[id],id))
 
     #update submission status in octo.db
     #binary status code for runs:
@@ -88,8 +77,6 @@ def parseResult(run_id):
     #0 - not run
     #1 - submitted
     #2 - finished
-    conn = sqlite3.connect('../../db/octo.db')
-    c = conn.cursor()
     for id in ids:
         c.execute('''SELECT * FROM {run_id} WHERE ISOID=?'''.format(run_id=run_id),[id])
         row = c.fetchone()
@@ -111,6 +98,7 @@ def parseResult(run_id):
 
         c.execute('''UPDATE {run_id} SET STATUSCODE = ? WHERE ISOID = ?'''.format(run_id=run_id),[newcode,id])
 
-    #save and close
+    #save changes to database
     conn.commit()
+    #close the database
     conn.close()

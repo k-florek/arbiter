@@ -129,6 +129,12 @@ app.get('/delete/:machine/:date', function(req,res){
     console.log('Deleted '+req.params.machine+'_'+req.params.date);
     res.redirect('/');
   });
+  let run_id = req.params.machine+'_'+req.params.date
+  db.run(`DELETE FROM ${run_id}`,(err) => {
+    if (err) {
+      return console.error(err.message);
+    }
+  });
 });
 
 //delete a record from isolates
@@ -137,7 +143,7 @@ app.get('/status/:runid/delete/:isoid', function(req,res){
     if (err) {
       return console.error(err.message);
     }
-    console.log('Deleted '+req.params.isoid+'from'+req.params.runid);
+    console.log('Deleted '+req.params.isoid+' from '+req.params.runid);
     res.redirect('/status/'+req.params.runid);
   });
 });
