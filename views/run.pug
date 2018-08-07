@@ -38,63 +38,63 @@ block content
           H4 AR Detection
           input.checkbox-input(type="checkbox",name='typing_check_all',onClick="toggle(this,'ar')")
     tbody 
-    form(action='/status/'+ run_id ,method='post',id='job')
-      each isolate, i in isolates
-        tr
-          td.text-center
-            =isolate.ISOID
-          td.text-center(id='fastqc')
-            if isolate.STATUSCODE[0] === '1'
-              h5 Submitted
-            else if isolate.STATUSCODE[0] === '2'
-              a(href= '/results/'+run_id+'/'+ isolate.FASTQC2)
-                button.btn.btn-light(type="button") Read 1
-              a(href= '/results/'+run_id+'/'+ isolate.FASTQC2) 
-                button.btn.btn-light(type="button") Read 2
-            else
-              div.checkbox
-                input.checkbox-input(type="checkbox",id='fastqc',name='fastqc_check_'+ isolate.ISOID,)
-          td.text-center
-            if isolate.STATUSCODE[1] === '1'
-              h5 Submitted
-            else if isolate.STATUSCODE[1] === '2'
-              a(href='#')
-                button.btn.btn-light(type="button") Results
-            else
-              div.checkbox
-                input.checkbox-input(type="checkbox",id='kraken',name='kraken_check_'+ isolate.ISOID,)
-          td.text-center
-            if isolate.STATUSCODE[2] === '1'
-              h5 Submitted
-            else if isolate.STATUSCODE[2] === '2'
-              p #{isolate.SALTYPE}
-            else
-              div.checkbox
-                input.checkbox-input(type="checkbox",id='sal',name='sal_check_'+ isolate.ISOID,)
-          td.text-center
-            if isolate.STATUSCODE[3] === '1'
-              h5 Submitted
-            else if isolate.STATUSCODE[3] === '2'
-              p #{isolate.ECOLITYPE}
-            else
-              div.checkbox
-                input.checkbox-input(type="checkbox",id='ecoli',name='ecoli_check_'+ isolate.ISOID,)
-          td.text-center
-            if isolate.STATUSCODE[4] === '1'
-              h5 Submitted
-            else if isolate.STATUSCODE[4] === '2'
-              p #{isolate.STREPTYPE}
-            else
-              div.checkbox
-                input.checkbox-input(type="checkbox",id='strep',name='strep_check_'+ isolate.ISOID,)
-          td.text-center
-            if isolate.STATUSCODE[5] === '1'
-              h5 Submitted
-            else if isolate.STATUSCODE[5] === '2'
-              p #{isolate.STATS}
-            else
-              div.checkbox
-                input.checkbox-input(type="checkbox",id='ar',name='ar_check_'+ isolate.ISOID,)
-          td 
-            a(href='/status/'+ run_id+'/delete/'+isolate.ISOID)
-              button.btn.btn-danger(type="button") Delete
+      form(action='/status/'+ run_id ,method='post',id='job')
+        each isolate, i in isolates
+          tr
+            td.text-center
+              =isolate.ISOID
+            td.text-center(id='fastqc')
+              if isolate.STATUSCODE[0] === '1'
+                h5 Submitted
+              else if isolate.STATUSCODE[0] === '2'
+                a(href= '/results/'+run_id+'/'+ isolate.FASTQC2)
+                  button.btn.btn-light(type="button") Read 1
+                a(href= '/results/'+run_id+'/'+ isolate.FASTQC2) 
+                  button.btn.btn-light(type="button") Read 2
+              else
+                div.checkbox
+                  input.checkbox-input(type="checkbox",id='fastqc',name='fastqc_check_'+ isolate.ISOID,)
+            td.text-center
+              if isolate.STATUSCODE[1] === '1'
+                h5 Submitted
+              else if isolate.STATUSCODE[1] === '2'
+                a(href=isolate.KRAKEN)
+                  button.btn.btn-light(type="button") Results
+              else
+                div.checkbox
+                  input.checkbox-input(type="checkbox",id='kraken',name='kraken_check_'+ isolate.ISOID,)
+            td.text-center
+              if isolate.STATUSCODE[2] === '1'
+                h5 Submitted
+              else if isolate.STATUSCODE[2] === '2'
+                p #{isolate.SALTYPE}
+              else
+                div.checkbox
+                  input.checkbox-input(type="checkbox",id='sal',name='sal_check_'+ isolate.ISOID,)
+            td.text-center
+              if isolate.STATUSCODE[3] === '1'
+                h5 Submitted
+              else if isolate.STATUSCODE[3] === '2'
+                p #{isolate.ECOLITYPE}
+              else
+                div.checkbox
+                  input.checkbox-input(type="checkbox",id='ecoli',name='ecoli_check_'+ isolate.ISOID,)
+            td.text-center
+              if isolate.STATUSCODE[4] === '1'
+                h5 Submitted
+              else if isolate.STATUSCODE[4] === '2'
+                p #{isolate.STREPTYPE}
+              else
+                div.checkbox
+                  input.checkbox-input(type="checkbox",id='strep',name='strep_check_'+ isolate.ISOID,)
+            td.text-center
+              if isolate.STATUSCODE[5] === '1'
+                h5 Submitted
+              else if isolate.STATUSCODE[5] === '2'
+                p #{isolate.STATS}
+              else
+                div.checkbox
+                  input.checkbox-input(type="checkbox",id='ar',name='ar_check_'+ isolate.ISOID,)
+            td 
+              a(href='/status/'+ run_id+'/delete/'+isolate.ISOID)
+                button.btn.btn-danger(type="button") Delete

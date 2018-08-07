@@ -53,6 +53,9 @@ function krakenSubmit (ids,run_id) {
     function finishedKraken (error,stdout,stderr){
       if (!error) {
         console.log('Finished kraken on '+run_id);
+        //send alert to viewer
+        let alertMsg = 'Compleated Kraken on isolates from ' +'WI-'+machine+'-'+date;
+        io.emit('message', alertMsg);
       }else{
         console.log('There was an error when starting kraken on '+run_id);
         console.log(error);
