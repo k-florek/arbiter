@@ -6,4 +6,3 @@ public/results/
 lib/
 job_submission/
 octopy/__pycache*
-config.json
