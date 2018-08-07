@@ -69,7 +69,7 @@ def parseResult(run_id):
             STREPTYPE = ?,
             ECOLITYPE = ?,
             STATS = ?
-            WHERE ISOID = ?'''.format(run_id=run_id),(id,sal_sero[id],strep_sero[id],ecoli[id],assem_stats[id],id))
+            WHERE ISOID = ?'''.format(run_id=run_id),(sal_sero[id],strep_sero[id],ecoli[id],assem_stats[id],id))
 
     #update submission status in octo.db
     #binary status code for runs:
@@ -78,7 +78,7 @@ def parseResult(run_id):
     #1 - submitted
     #2 - finished
     for id in ids:
-        c.execute('''SELECT * FROM {run_id} WHERE ISOID=?'''.format(run_id=run_id),[id])
+        c.execute('''SELECT * FROM {run_id} WHERE ISOID=?'''.format(run_id=run_id),(id,))
         row = c.fetchone()
         statuscode = row[2]
 
@@ -89,14 +89,14 @@ def parseResult(run_id):
             if count < 2:
                 newcode += code
                 count += 1
-            elif code == 1:
+            elif code == '1':
                 newcode += '2'
                 count += 1
             else:
                 newcode += code
                 count += 1
 
-        c.execute('''UPDATE {run_id} SET STATUSCODE = ? WHERE ISOID = ?'''.format(run_id=run_id),[newcode,id])
+        c.execute('''UPDATE {run_id} SET STATUSCODE = ? WHERE ISOID = ?'''.format(run_id=run_id),(newcode,id))
 
     #save changes to database
     conn.commit()
