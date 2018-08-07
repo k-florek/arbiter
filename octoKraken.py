@@ -27,6 +27,7 @@ for pair in read_pairs:
         --output {0}.kraken.out
         --report {0}.report
         --paired
+        --use-mpa-style
         --gzip-compressed {1} {2}'''.format(isoid,read1,read2)
     cmd = shlex.split(cmd_str)
     kraken = sub.Popen(cmd,stdout=sub.PIPE,stderr=sub.PIPE).wait()

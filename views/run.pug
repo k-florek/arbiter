@@ -67,8 +67,7 @@ block content
             if isolate.STATUSCODE[2] === '1'
               h5 Submitted
             else if isolate.STATUSCODE[2] === '2'
-              a(href="#") 
-                button.btn.btn-light(type="button") Results
+              p #{isolate.SALTYPE}
             else
               div.checkbox
                 input.checkbox-input(type="checkbox",id='sal',name='sal_check_'+ isolate.ISOID,)
@@ -76,7 +75,7 @@ block content
             if isolate.STATUSCODE[3] === '1'
               h5 Submitted
             else if isolate.STATUSCODE[3] === '2'
-              h5 isolate.SALTYPE
+              p #{isolate.ECOLITYPE}
             else
               div.checkbox
                 input.checkbox-input(type="checkbox",id='ecoli',name='ecoli_check_'+ isolate.ISOID,)
@@ -84,7 +83,7 @@ block content
             if isolate.STATUSCODE[4] === '1'
               h5 Submitted
             else if isolate.STATUSCODE[4] === '2'
-              h5 isolate.ECOLITYPE
+              p #{isolate.STREPTYPE}
             else
               div.checkbox
                 input.checkbox-input(type="checkbox",id='strep',name='strep_check_'+ isolate.ISOID,)
@@ -92,7 +91,7 @@ block content
             if isolate.STATUSCODE[5] === '1'
               h5 Submitted
             else if isolate.STATUSCODE[5] === '2'
-              h5 isolate.STREPTYPE
+              p #{isolate.STATS}
             else
               div.checkbox
                 input.checkbox-input(type="checkbox",id='ar',name='ar_check_'+ isolate.ISOID,)

@@ -101,6 +101,7 @@ sub.Popen(cmd).wait()
 
 #parse the results
 parseResult(run_id)
+cleanup(run_id)
 
 #define cleanup phase
 def cleanup(run_id):
