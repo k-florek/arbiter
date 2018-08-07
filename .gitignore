@@ -4,3 +4,5 @@ db/
 test_dir/
 public/results/
 lib/
+job_submission/
+octopy/__pycache*
