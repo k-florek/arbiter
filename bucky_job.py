@@ -105,12 +105,13 @@ parseResult(run_id)
 #cleanup remote directories
 ssh_string = shlex.split('ssh chtc5 "rm {0}.*"'.format(run_id))
 sub.Popen(ssh_string)
-ssh_string = shlex.split('ssh chtc5 "cd output rm -r {0}"'.format(run_id))
+ssh_string = shlex.split('ssh chtc5 "cd output; rm -r {0}"'.format(run_id))
 sub.Popen(ssh_string)
-ssh_string = shlex.split('ssh chtc5 "cd /mnt/gluster/nwflorek rm -r {0}"'.format(run_id))
+ssh_string = shlex.split('ssh chtc5 "cd /mnt/gluster/nwflorek; rm -r {0}"'.format(run_id))
 sub.Popen(ssh_string)
 
 #cleanup local directory
+os.chdir('../')
 os.remove('{0}.bucky-tr.dag'.format(run_id))
 os.remove('{0}.csv'.format(run_id))
 os.remove('{0}.dir.list'.format(run_id))

@@ -18,19 +18,20 @@ function getRunStats (page,res,run_id) {
   db.all(sql, (err,rows)=>{
     errors(err);
     if (rows == null){
-      let rows = {ISOID:'',STATS:''};
-      console.log(rows);
+      res.redirect('/')
     }
-    //clean data for view
-    for (let r = 0;r<rows.length;r++){
-      let row = rows[r]
-      let stats = row["STATS"].split(", ")
-      for (let i = 0;i<stats.length;i++) {
-        stats[i] = stats[i].split("= ")[1]
+    if (rows != null){
+      //clean data for view
+      for (let r = 0;r<rows.length;r++){
+        let row = rows[r]
+        let stats = row["STATS"].split(", ")
+        for (let i = 0;i<stats.length;i++) {
+          stats[i] = stats[i].split("= ")[1]
+        }
+        row["STATS"] = stats
+        rows[r] = row
       }
-      row["STATS"] = stats
-      rows[r] = row
+      res.render(page,{isolates:rows,run_id:run_id})
     }
-    res.render(page,{isolates:rows,run_id:run_id})
   });
 }

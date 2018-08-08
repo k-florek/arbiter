@@ -8,7 +8,7 @@ const js = require('./job_submit');
 const bodyParser = require('body-parser');
 const sqlite = require('sqlite3');
 const nodeCleanup = require('node-cleanup');
-const getrunStats = require('./get_runstats')
+const getrunstats = require('./get_runstats')
 
 const path = require('path');
 const port = 3000;
@@ -157,3 +157,7 @@ app.get('/status/:runid/delete/:isoid', function(req,res){
 server.listen(port,function(){
   console.log('Octopods started on port: '+port);
 });
+
+app.use(function (req, res, next) {
+  res.status(404).send("Sorry can't find that!")
+})
