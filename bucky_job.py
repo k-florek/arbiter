@@ -101,19 +101,16 @@ sub.Popen(cmd).wait()
 
 #parse the results
 parseResult(run_id)
-cleanup(run_id)
 
-#define cleanup phase
-def cleanup(run_id):
-    #cleanup remote directories
-    ssh_string = shlex.split('ssh chtc5 "rm {0}.*"'.format(run_id))
-    sub.Popen(ssh_string)
-    ssh_string = shlex.split('ssh chtc5 "cd output rm -r {0}"'.format(run_id))
-    sub.Popen(ssh_string)
-    ssh_string = shlex.split('ssh chtc5 "cd /mnt/gluster/nwflorek rm -r {0}"'.format(run_id))
-    sub.Popen(ssh_string)
+#cleanup remote directories
+ssh_string = shlex.split('ssh chtc5 "rm {0}.*"'.format(run_id))
+sub.Popen(ssh_string)
+ssh_string = shlex.split('ssh chtc5 "cd output rm -r {0}"'.format(run_id))
+sub.Popen(ssh_string)
+ssh_string = shlex.split('ssh chtc5 "cd /mnt/gluster/nwflorek rm -r {0}"'.format(run_id))
+sub.Popen(ssh_string)
 
-    #cleanup local directory
-    os.remove('{0}.bucky-tr.dag'.format(run_id))
-    os.remove('{0}.csv'.format(run_id))
-    os.remove('{0}.dir.list'.format(run_id))
+#cleanup local directory
+os.remove('{0}.bucky-tr.dag'.format(run_id))
+os.remove('{0}.csv'.format(run_id))
+os.remove('{0}.dir.list'.format(run_id))
