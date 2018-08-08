@@ -8,7 +8,7 @@ const js = require('./job_submit');
 const bodyParser = require('body-parser');
 const sqlite = require('sqlite3');
 const nodeCleanup = require('node-cleanup');
-
+const getrunStats = require('./get_runstats')
 
 const path = require('path');
 const port = 3000;
@@ -100,6 +100,12 @@ app.get('/date/:date',checkAuth, function(req, res){
 //update database
 app.get('/updatedb',checkAuth, function(req, res){
   updatedb.update('index',res);
+});
+
+//Get stats
+app.get('/stats/:runid',checkAuth, function(req, res){
+  let runid = req.params.runid;
+  getrunstats.getRunStats('stats',res,runid);
 });
 
 //show run information
