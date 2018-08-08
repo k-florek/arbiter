@@ -10,7 +10,6 @@ import sqlite3
 
 reads = sys.argv[1:]
 read_pairs = []
-ids = []
 for i in range(0,len(reads),2):
     read_pairs.append([reads[i],reads[i+1]])
 
@@ -21,7 +20,6 @@ for pair in read_pairs:
     machine = os.path.basename(read1).split('-')[2]
     date = os.path.basename(read1).split('-')[3].split('_')[0]
     isoid = os.path.basename(read1).split('-')[0]
-    ids.append(isoid)
     run_id = machine+'_'+date
     os.chdir('public/results/'+run_id+'/kraken')
     #kraken command
@@ -39,27 +37,26 @@ for pair in read_pairs:
     kraken = sub.Popen(cmd,stdout=sub.PIPE,stderr=sub.PIPE).wait()
     os.chdir('../../../../')
 
-#update database
-#setup database
-conn = sqlite3.connect('db/octo.db')
-c = conn.cursor()
+    #update database
+    #setup database
+    conn = sqlite3.connect('db/octo.db')
+    c = conn.cursor()
 
-#update submission status in octo.db
-#binary status code for runs:
-#[fastqc,kraken,sal,ecoli,strep,ar] = "000000"
-#0 - not run
-#1 - submitted
-#2 - finished
-for id in ids:
-    c.execute('''SELECT * FROM {run_id} WHERE ISOID=?'''.format(run_id=run_id),(id,))
+    #update submission status in octo.db
+    #binary status code for runs:
+    #[fastqc,kraken,sal,ecoli,strep,ar] = "000000"
+    #0 - not run
+    #1 - submitted
+    #2 - finished
+    c.execute('''SELECT * FROM {run_id} WHERE ISOID=?'''.format(run_id=run_id),(isoid,))
     row = c.fetchone()
     statuscode = row[2]
-    kraken_path = '/results/{run_id}/kraken/{id}_krona.html'.format(run_id=run_id,id=id)
+    kraken_path = '/results/{run_id}/kraken/{id}_krona.html'.format(run_id=run_id,id=isoid)
     if statuscode[1] == '1':
         newcode = statuscode[0] + '2' + statuscode[2:]
-        c.execute('''UPDATE {run_id} SET STATUSCODE = ?,KRAKEN = ? WHERE ISOID = ?'''.format(run_id=run_id),(newcode,kraken_path,id))
+        c.execute('''UPDATE {run_id} SET STATUSCODE = ?,KRAKEN = ? WHERE ISOID = ?'''.format(run_id=run_id),(newcode,kraken_path,isoid))
 
-#save changes to database
-conn.commit()
-#close the database
-conn.close()
+    #save changes to database
+    conn.commit()
+    #close the database
+    conn.close()
