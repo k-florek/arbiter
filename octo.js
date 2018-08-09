@@ -140,6 +140,11 @@ app.get('/delete/:machine/:date', function(req,res){
     if (err) {
       return console.error(err.message);
     }
+    fs.rmdir(`/public/results/${run_id}`,(err) => {
+      if (err){
+        console.error(err.message);
+      }
+    });
   });
 });
 
