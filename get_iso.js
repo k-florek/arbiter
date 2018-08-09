@@ -20,7 +20,7 @@ function getIso (page,res,run_id) {
     FASTQC1 TEXT,
     FASTQC2 TEXT,
     KRAKEN TEXT,
-    AR,
+    AR TEXT,
     SALTYPE TEXT,
     STREPTYPE TEXT,
     ECOLITYPE TEXT,
