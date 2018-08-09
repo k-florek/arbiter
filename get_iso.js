@@ -20,6 +20,7 @@ function getIso (page,res,run_id) {
     FASTQC1 TEXT,
     FASTQC2 TEXT,
     KRAKEN TEXT,
+    AR,
     SALTYPE TEXT,
     STREPTYPE TEXT,
     ECOLITYPE TEXT,
@@ -27,12 +28,12 @@ function getIso (page,res,run_id) {
   db.run(sql,(err)=>{
     errors(err);
     //setup select command
-    let sql = `SELECT ISOID,STATUSCODE,READ1,READ2,FASTQC1,FASTQC2,KRAKEN,SALTYPE,STREPTYPE,ECOLITYPE,STATS FROM ${run_id} ORDER BY ISOID ASC`;
+    let sql = `SELECT ISOID,STATUSCODE,READ1,READ2,FASTQC1,FASTQC2,KRAKEN,SALTYPE,STREPTYPE,ECOLITYPE,STATS,AR FROM ${run_id} ORDER BY ISOID ASC`;
     //select items
     db.all(sql, (err,rows)=>{
       errors(err);
       if (rows == null){
-        let rows = {ISOID:'',STATUSCODE:'',READ1:'',READ2:'',FASTQC1:'',FASTQC2:'',KRAKKEN:'',SALTYPE:'',STREPTYPE:'',ECOLITYPE:'',STATS:''};
+        let rows = {ISOID:'',STATUSCODE:'',READ1:'',READ2:'',FASTQC1:'',FASTQC2:'',KRAKKEN:'',SALTYPE:'',STREPTYPE:'',ECOLITYPE:'',STATS:'',AR:''};
         console.log(rows);
       }
       res.render(page,{isolates:rows,run_id:run_id})

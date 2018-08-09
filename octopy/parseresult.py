@@ -68,8 +68,9 @@ def parseResult(run_id):
         c.execute('''UPDATE {run_id} SET SALTYPE = ?,
             STREPTYPE = ?,
             ECOLITYPE = ?,
-            STATS = ?
-            WHERE ISOID = ?'''.format(run_id=run_id),(sal_sero[id],strep_sero[id],ecoli[id],assem_stats[id],id))
+            STATS = ?,
+            AR = ?,
+            WHERE ISOID = ?'''.format(run_id=run_id),(sal_sero[id],strep_sero[id],ecoli[id],assem_stats[id],results_ar,id))
 
     #update submission status in octo.db
     #binary status code for runs:
