@@ -46,7 +46,7 @@ function krakenSubmit (ids,run_id) {
       }
     }
     let kraken_process = child.execFile('./octoKraken.py',reads);
-    kraken_process.stdout.on('data',function(data){
+    kraken_process.stderr.on('data',function(data){
       console.log(data.toString());
     });
     kraken_process.on('error',finishedKraken);

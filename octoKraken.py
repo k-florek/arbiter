@@ -12,21 +12,22 @@ reads = sys.argv[1:]
 read_pairs = []
 for i in range(0,len(reads),2):
     read_pairs.append([reads[i],reads[i+1]])
+#get the output path
+machine = os.path.basename(reads[0]).split('-')[2]
+date = os.path.basename(reads[0]).split('-')[3].split('_')[0]
+run_id = machine+'_'+date
+if os.path.exists('public/results/'+run_id+'/kraken'):
+    os.chdir('public/results/'+run_id+'/kraken')
+else:
+    os.mkdir('public/results/'+run_id)
+    os.mkdir('public/results/'+run_id+'/kraken')
+    os.chdir('public/results/'+run_id+'/kraken')
 
+#set up kraken for running on read pairs
 for pair in read_pairs:
     read1 = pair[0]
     read2 = pair[1]
-    #get the output path
-    machine = os.path.basename(read1).split('-')[2]
-    date = os.path.basename(read1).split('-')[3].split('_')[0]
     isoid = os.path.basename(read1).split('-')[0]
-    run_id = machine+'_'+date
-    if os.path.exists('public/results/'+run_id+'/kraken'):
-        os.chdir('public/results/'+run_id+'/kraken')
-    else:
-        os.mkdir('public/results/'+run_id)
-        os.mkdir('public/results/'+run_id+'/kraken')
-        os.chdir('public/results/'+run_id+'/kraken')
     #kraken command
     cmd_str = '''kraken2 --db bacteria_180803
         --threads 10
@@ -40,11 +41,10 @@ for pair in read_pairs:
     cmd_str = "../../../../lib/KronaTools-2.7/bin/ktImportTaxonomy -t 3 -q 2 {0}.kraken.out -o {0}_krona.html".format(isoid)
     cmd = shlex.split(cmd_str)
     kraken = sub.Popen(cmd,stdout=sub.PIPE,stderr=sub.PIPE).wait()
-    os.chdir('../../../../')
 
     #update database
     #setup database
-    conn = sqlite3.connect('db/octo.db')
+    conn = sqlite3.connect('../../../../db/octo.db')
     c = conn.cursor()
 
     #update submission status in octo.db
