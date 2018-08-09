@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const sqlite = require('sqlite3');
 const nodeCleanup = require('node-cleanup');
 const getrunstats = require('./get_runstats')
+const fs = require('fs-extra');
 
 const path = require('path');
 const port = 3000;
@@ -140,7 +141,7 @@ app.get('/delete/:machine/:date', function(req,res){
     if (err) {
       return console.error(err.message);
     }
-    fs.rmdir(`/public/results/${run_id}`,(err) => {
+    fs.remove(`public/results/${run_id}`,(err) => {
       if (err){
         console.error(err.message);
       }
