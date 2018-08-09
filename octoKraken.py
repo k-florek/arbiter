@@ -21,7 +21,12 @@ for pair in read_pairs:
     date = os.path.basename(read1).split('-')[3].split('_')[0]
     isoid = os.path.basename(read1).split('-')[0]
     run_id = machine+'_'+date
-    os.chdir('public/results/'+run_id+'/kraken')
+    if os.path.exists('public/results/'+run_id+'/kraken'):
+        os.chdir('public/results/'+run_id+'/kraken')
+    else:
+        os.mkdir('public/results/'+run_id)
+        os.mkdir('public/results/'+run_id+'/kraken')
+        os.chdir('public/results/'+run_id+'/kraken')
     #kraken command
     cmd_str = '''kraken2 --db bacteria_180803
         --threads 10

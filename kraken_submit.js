@@ -23,7 +23,8 @@ function krakenSubmit (ids,run_id) {
   }
   //determine if results file exists in run dir, if not create it
   let result_dir = path.join(__dirname,'/public/results/');
-  exist.ensureExists(path.join(result_dir,run_id), function() {
+  exist.ensureExists(path.join(result_dir,run_id), function(err) {
+    errors(err);
     result_dir = path.join(__dirname,'/public/results/');
     exist.ensureExists(path.join(result_dir,run_id,'kraken'),readDB);
   });
