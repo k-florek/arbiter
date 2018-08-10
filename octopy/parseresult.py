@@ -70,7 +70,7 @@ def parseResult(run_id):
             ECOLITYPE = ?,
             STATS = ?,
             AR = ?
-            WHERE ISOID = ?'''.format(run_id=run_id),(sal_sero[id],strep_sero[id],ecoli[id],assem_stats[id],results_ar,id))
+            WHERE ISOID = ?'''.format(run_id=run_id),(sal_sero[id],strep_sero[id],ecoli[id],assem_stats[id],results_ar[id],id))
 
     #update submission status in octo.db
     #binary status code for runs:
