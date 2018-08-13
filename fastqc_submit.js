@@ -28,7 +28,7 @@ function fastqcSubmit (ids,run_id) {
 
   function readDB(err){
     errors(err);
-    console.log('Setting up for FastQC.');
+    console.log(`Setting up for FastQC on ${run_id}.`);
     let sql = `SELECT ISOID,STATUSCODE,READ1,READ2 FROM ${run_id} ORDER BY ISOID ASC`;
     db.all(sql,setJob);
   }
@@ -53,7 +53,7 @@ function fastqcSubmit (ids,run_id) {
 
   function finishedFastqc (code,signal){
     if (code == 0) {
-      console.log('Finished FastQC job.');
+      console.log(`Finished FastQC on ${run_id}.`);
       let sql = `SELECT ISOID,STATUSCODE,READ1,READ2 FROM ${run_id}`;
       db.all(sql,update_codes);
     }
