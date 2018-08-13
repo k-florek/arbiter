@@ -8,10 +8,10 @@ function clusterSubmit (run_file) {
   let date = run_id.split('_')[1];
   //setup child process to execute bucky submission script
   let fqc_process = child.execFile('./bucky_job.py',run_file,finishedSubmit);
-  console.log(`Submitted job to cluster with PID: ${fqc_process.pid}`)
+  console.log(`Submitted ${run_id} to cluster with PID: ${fqc_process.pid}`)
   function finishedSubmit (error,stdout,stderr){
     if (!error) {
-      console.log('Finished cluster submit.');
+      console.log(`Finished ${run_id} job.`);
       //send alert to viewer
       let alertMsg = 'Compleated Job on isolates from ' +'WI-'+machine+'-'+date;
       io.emit('message', alertMsg);
