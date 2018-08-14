@@ -8,7 +8,7 @@ function clusterSubmit (run_file) {
   let date = run_id.split('_')[1];
   //setup child process to execute bucky submission script
   let cluster_process = child.execFile('./bucky_job.py',run_file);
-  console.log(`Submitted ${run_id} to cluster with PID: ${fqc_process.pid}`)
+  console.log(`Submitted ${run_id} to cluster with PID: ${cluster_process.pid}`)
   cluster_process.stderr.on('data',function(data){
     console.log(data.toString());
   });
