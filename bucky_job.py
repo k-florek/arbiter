@@ -93,7 +93,7 @@ os.chdir(run_id)
 #get all resistance information
 sub.Popen('../../scripts/compileResults.sh').wait()
 #compile resistance information
-cmd = shlex.split('../../scripts/ar_analysis.py -s resFind_all.csv card_all.csv NCBIres_all.csv')
+cmd = shlex.split('../../scripts/ar_compile.py {0} resFind_all.csv card_all.csv NCBIres_all.csv'.format(run_id))
 sub.Popen(cmd).wait()
 #summerize sal serotype
 cmd = shlex.split('../../scripts/sistr_sum.py -d .')
@@ -112,6 +112,8 @@ sub.Popen(ssh_string)
 
 #cleanup local directory
 os.chdir('../')
+
 os.remove('{0}.bucky-tr.dag'.format(run_id))
 os.remove('{0}.csv'.format(run_id))
 os.remove('{0}.dir.list'.format(run_id))
+shutil.rmtree('{0}'.format(run_id))
