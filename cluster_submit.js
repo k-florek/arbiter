@@ -7,8 +7,13 @@ function clusterSubmit (run_file) {
   let machine = run_id.split('_')[0];
   let date = run_id.split('_')[1];
   //setup child process to execute bucky submission script
-  let fqc_process = child.execFile('./bucky_job.py',run_file,finishedSubmit);
+  let cluster_process = child.execFile('./bucky_job.py',run_file);
   console.log(`Submitted ${run_id} to cluster with PID: ${fqc_process.pid}`)
+  cluster_process.stderr.on('data',function(data){
+    console.log(data.toString());
+  });
+  cluster_process.on('error',finishedSubmit);
+  cluster_process.on('close',finishedSubmit);
   function finishedSubmit (error,stdout,stderr){
     if (!error) {
       console.log(`Finished ${run_id} job.`);
