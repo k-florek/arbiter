@@ -48,7 +48,8 @@ function fastqcSubmit (ids,run_id) {
     reads.push('6');
     let fqc_process = child.spawn('fastqc',reads);
     fqc_process.stderr.on('data',function(data){
-      console.log(data.toString());
+      //uncomment for extensive logging
+      //console.log(data.toString());
     });
     fqc_process.on('error',finishedFastqc);
     fqc_process.on('close',finishedFastqc);
