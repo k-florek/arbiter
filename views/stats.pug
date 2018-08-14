@@ -19,18 +19,19 @@ block content
           H4 Gaps
     tbody
       each isolate, i in isolates
-        tr
-          td.text-center
-            =isolate.ISOID
-          td.text-center
-            =isolate.STATS[0]
-          td.text-center
-            =isolate.STATS[1]
-          td.text-center
-            =isolate.STATS[2]
-          td.text-center
-            =isolate.STATS[4]
-          td.text-center
-            =isolate.STATS[5]
-          td.text-center
-            =isolate.STATS[6]
+        if isolate.STATS
+          tr
+            td.text-center
+              =isolate.ISOID
+            td.text-center
+              =isolate.STATS[0]
+            td.text-center
+              =isolate.STATS[1]
+            td.text-center
+              =isolate.STATS[2]
+            td.text-center
+              =isolate.STATS[4]
+            td.text-center
+              =isolate.STATS[5]
+            td.text-center
+              =isolate.STATS[6]
