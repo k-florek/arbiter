@@ -13,6 +13,7 @@ def parseResult(run_id):
     ecoli = {}
     ids = []
     #parse ar
+    '''
     with open('resistance_analysis.csv','r') as resin:
         reader = csv.reader(resin,delimiter=',')
         for row in reader:
@@ -23,7 +24,7 @@ def parseResult(run_id):
                     results_ar[row[0]] = row[1]
                 if row[0] not in ids:
                     ids.append(row[0])
-
+    '''
     #parse assembly stats
     for id in ids:
         with open('{0}/{0}_assembly.stats'.format(id)) as statin:
