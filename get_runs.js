@@ -10,7 +10,7 @@ function getRuns (page,res,machinename='',date='') {
   }
   //setup select command
   if (machinename==='' && date===''){
-    let sql = `SELECT MACHINE,DATE,PATH FROM seq_runs ORDER BY DATE DESC`;
+    let sql = `SELECT * FROM seq_runs ORDER BY DATE DESC`;
 
     //select items
     db.all(sql, (err,rows)=>{
@@ -19,13 +19,13 @@ function getRuns (page,res,machinename='',date='') {
     });
 
   } else if (machinename!='' && date===''){
-    let sql = `SELECT MACHINE,DATE,PATH FROM seq_runs WHERE MACHINE = ? ORDER BY DATE DESC`;
+    let sql = `SELECT * FROM seq_runs WHERE MACHINE = ? ORDER BY DATE DESC`;
     db.all(sql,[machinename],(err,rows) => {
       errors(err);
       res.render(page,{runs:rows});
     });
   } else {
-    let sql = `SELECT MACHINE,DATE,PATH FROM seq_runs WHERE DATE = ? ORDER BY DATE DESC`;
+    let sql = `SELECT * FROM seq_runs WHERE DATE = ? ORDER BY DATE DESC`;
     db.all(sql,[date],(err,rows) => {
       errors(err);
       res.render(page,{runs:rows});
