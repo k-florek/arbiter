@@ -59,11 +59,11 @@ function fastqcSubmit (ids,run_id) {
     if (code == 0) {
       console.log(`Finished FastQC on ${run_id}.`);
       let sql = `SELECT ISOID,STATUSCODE,READ1,READ2 FROM ${run_id}`;
-      db.all(sql,multiqc);
+      multiqc();
+      db.all(sql,update_codes);
     }
   }
-  function multiqc (err){
-    errors(err);
+  function multiqc (){
     let mqc_process = child.spawn('multiqc '+path.join(result_dir,run_id)+' -o ' +path.join(result_dir,run_id));
     mqc_process.on('error',multiqc_update);
     mqc_process.on('close',multiqc_update);
