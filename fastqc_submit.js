@@ -59,10 +59,23 @@ function fastqcSubmit (ids,run_id) {
     if (code == 0) {
       console.log(`Finished FastQC on ${run_id}.`);
       let sql = `SELECT ISOID,STATUSCODE,READ1,READ2 FROM ${run_id}`;
-      db.all(sql,update_codes);
+      db.all(sql,multiqc);
     }
   }
+  function multiqc (err){
+    errors(err);
+    let mqc_process = child.spawn('multiqc '+path.join(result_dir,run_id)+' -o ' +path.join(result_dir,run_id));
+    fqc_process.on('error',multiqc_update);
+    fqc_process.on('close',multiqc_update);
+  }
+  function multiqc_update (err){
+    errors(err);
+    let multiqc_path = path.join(result_dir,run_id);
+    let sql = `UPDATE seq_runs SET FASQC = ${multiqc_path} WHERE MACHINE = ? AND DATE = ?`;
+    db.run(sql,[machine,date],update_codes)
+  }
   function update_codes (err,data) {
+    errors(err);
     for (let i = 0; i<data.length;i++){
       if (ids.includes(data[i]['ISOID'])) {
         data[i]['STATUSCODE'] = replaceAt.replaceAt(0,'2',data[i]['STATUSCODE']);
