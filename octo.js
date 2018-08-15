@@ -22,7 +22,7 @@ db = new sqlite.Database('./db/octo.db', (err) => {
   if (err) {
     return console.error(err.message);
   }
-  db.run(`CREATE TABLE if not exists seq_runs (ID INTEGER PRIMARY KEY AUTOINCREMENT, MACHINE TEXT NOT NULL, DATE DATE NOT NULL, PATH TEXT UNIQUE NOT NULL)`, (err) => {
+  db.run(`CREATE TABLE if not exists seq_runs (ID INTEGER PRIMARY KEY AUTOINCREMENT, MACHINE TEXT NOT NULL, DATE DATE NOT NULL, PATH TEXT UNIQUE NOT NULL,FASTQC TEXT,KRAKEN TEXT,STATS TEXT)`, (err) => {
     if (err) {
       return console.error(err.message);
     }
@@ -64,7 +64,7 @@ function checkAuth(req,res,next){
 
 app.post('/login', function (req, res) {
   var post = req.body;
-  if (post.user === 'cddbact' && post.password === '465') {
+  if (post.user === 'cddbacti' && post.password === '465') {
     req.session.user_id = 'cddbact';
     res.redirect('/');
   } else {
