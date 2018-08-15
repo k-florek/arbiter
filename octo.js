@@ -141,10 +141,12 @@ app.get('/delete/:machine/:date', function(req,res){
     if (err) {
       return console.error(err.message);
     }
-    fs.remove(`public/results/${run_id}`,(err) => {
-      if (err){
-        console.error(err.message);
-      }
+    db.run(`DELETE FROM AR WHERE RUNID = ?`,[run_id],(err) => {
+      fs.remove(`public/results/${run_id}`,(err) => {
+        if (err){
+          console.error(err.message);
+        }
+      });
     });
   });
 });
@@ -155,8 +157,13 @@ app.get('/status/:runid/delete/:isoid', function(req,res){
     if (err) {
       return console.error(err.message);
     }
-    console.log('Deleted '+req.params.isoid+' from '+req.params.runid);
-    res.redirect('/status/'+req.params.runid);
+    db.run(`DELETE FROM AR WHERE RUNID = ? AND ISOID = ?`,[req.params.runid,req.params.isoid], (err) => {
+      if (err) {
+        return console.error(err.message);
+      }
+      console.log('Deleted '+req.params.isoid+' from '+req.params.runid);
+      res.redirect('/status/'+req.params.runid);
+    });
   });
 });
 
