@@ -72,7 +72,7 @@ function fastqcSubmit (ids,run_id) {
     errors(err);
     let multiqc_path = path.join(result_dir,run_id);
     let sql = `UPDATE seq_runs SET FASQC = ${multiqc_path} WHERE MACHINE = ? AND DATE = ?`;
-    db.run(sql,[machine,date],update_codes)
+    db.run(sql,[machine,date])
   }
   function update_codes (err,data) {
     errors(err);
