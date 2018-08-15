@@ -5,26 +5,12 @@ import os
 import sqlite3
 
 def parseResult(run_id):
-    #init data struct TODO develop data structure class to hold information for this
-    results_ar = {}
+    #init data struct
     assem_stats = {}
     sal_sero = {}
     strep_sero = {}
     ecoli = {}
     ids = []
-    #parse ar
-    '''
-    with open('resistance_analysis.csv','r') as resin:
-        reader = csv.reader(resin,delimiter=',')
-        for row in reader:
-            if "PNUSA" in row[0] or "ARLN" in row[0]:
-                if row[0] in results_ar:
-                    results_ar[row[0]] = '; '.join([results_ar[row[0]],row[1]])
-                else:
-                    results_ar[row[0]] = row[1]
-                if row[0] not in ids:
-                    ids.append(row[0])
-    '''
     #parse assembly stats
     for id in ids:
         with open('{0}/{0}_assembly.stats'.format(id)) as statin:
@@ -69,10 +55,13 @@ def parseResult(run_id):
         c.execute('''UPDATE {run_id} SET SALTYPE = ?,
             STREPTYPE = ?,
             ECOLITYPE = ?,
-            STATS = ?,
-            AR = ?
-            WHERE ISOID = ?'''.format(run_id=run_id),(sal_sero[id],strep_sero[id],ecoli[id],assem_stats[id],results_ar[id],id))
+            STATS = ?
+            WHERE ISOID = ?'''.format(run_id=run_id),(sal_sero[id],strep_sero[id],ecoli[id],assem_stats[id],id))
 
+    #update assembly stats in seq_runs database
+    machine = run_id.split('_')[0]
+    date = run_id.split('_')[1]
+    c.execute('''UPDATE seq_runs SET STATS = 'True' WHERE MACHINE = ? AND DATE = ?''',(machine,date))
     #update submission status in octo.db
     #binary status code for runs:
     #[fastqc,kraken,sal,ecoli,strep,ar] = "000000"
