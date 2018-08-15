@@ -65,8 +65,8 @@ function fastqcSubmit (ids,run_id) {
   function multiqc (err){
     errors(err);
     let mqc_process = child.spawn('multiqc '+path.join(result_dir,run_id)+' -o ' +path.join(result_dir,run_id));
-    fqc_process.on('error',multiqc_update);
-    fqc_process.on('close',multiqc_update);
+    mqc_process.on('error',multiqc_update);
+    mqc_process.on('close',multiqc_update);
   }
   function multiqc_update (err){
     errors(err);
