@@ -19,14 +19,22 @@ block content
             a(href= "/machine/" + run.MACHINE) 
               button.btn.btn-dark(type="button")= run.MACHINE
           td 
-            a(href="#") 
-              button.btn.btn-light(type="button") FastQC
+            if run.FASQC
+              a(href="/results/"+run.MACHINE+"_"+run.DATE+"/multiqc.html") 
+                button.btn.btn-success(type="button") FastQC
+            else 
+              a(href="#") 
+                button.btn.btn-light(type="button") FastQC
           td 
             a(href="#") 
               button.btn.btn-light(type="button") Kraken
           td 
-            a(href="/stats/"+run.MACHINE+"_"+run.DATE) 
-              button.btn.btn-light(type="button") Run Statistics
+            if run.STATS
+              a(href="/stats/"+run.MACHINE+"_"+run.DATE) 
+                button.btn.btn-success(type="button") Run Statistics
+            else
+              a(href="#") 
+                button.btn.btn-light(type="button") Run Statistics
           td 
             a(href="/status/"+run.MACHINE+"_"+run.DATE) 
               button.btn.btn-info(type="button") Show
