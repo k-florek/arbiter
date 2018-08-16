@@ -35,8 +35,6 @@ def parseResult(run_id):
 
     #check if dictonary contains all ids, if not set empty
     for id in ids:
-        if id not in results_ar:
-            results_ar[id] = None
         if id not in assem_stats:
             assem_stats[id] = None
         if id not in sal_sero:
