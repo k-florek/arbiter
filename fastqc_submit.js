@@ -64,14 +64,14 @@ function fastqcSubmit (ids,run_id) {
     }
   }
   function multiqc (){
-    let mqc_process = child.spawn('multiqc '+path.join(result_dir,run_id)+' -o ' +path.join(result_dir,run_id));
+    let mqc_process = child.spawn('multiqc',[path.join(result_dir,run_id),'-o',path.join(result_dir,run_id)]);
     mqc_process.on('error',multiqc_update);
     mqc_process.on('close',multiqc_update);
   }
   function multiqc_update (err){
     errors(err);
     let multiqc_path = path.join(result_dir,run_id);
-    let sql = `UPDATE seq_runs SET FASQC = ${multiqc_path} WHERE MACHINE = ? AND DATE = ?`;
+    let sql = `UPDATE seq_runs SET FASTQC = "${multiqc_path}" WHERE MACHINE = ? AND DATE = ?`;
     db.run(sql,[machine,date])
   }
   function update_codes (err,data) {

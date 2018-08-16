@@ -16,7 +16,7 @@ function update (page,res) {
     }
   }
   console.log('Updating runs.');
-  
+
   //scan run directory for new runs
   fs.readdir(run_directory,procfs);
 
@@ -62,6 +62,6 @@ function update (page,res) {
   function renderPage (err,rows) {
     errors(err);
     console.log('Finished updating runs.')
-    res.render(page,{runs:rows});
+    res.redirect('/');
   }
 }

@@ -19,8 +19,8 @@ block content
             a(href= "/machine/" + run.MACHINE) 
               button.btn.btn-dark(type="button")= run.MACHINE
           td 
-            if run.FASQC
-              a(href="/results/"+run.MACHINE+"_"+run.DATE+"/multiqc.html") 
+            if run.FASTQC
+              a(href="/results/"+run.MACHINE+"_"+run.DATE+"/multiqc_report.html") 
                 button.btn.btn-success(type="button") FastQC
             else 
               a(href="#") 
