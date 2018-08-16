@@ -74,13 +74,22 @@ sub.Popen(ssh_string).wait()
 shutil.rmtree(run_id)
 
 #monitor job progress
-ssh_string01 = shlex.split('ssh chtc5 "cat {0}.bucky-tr.dag.dagman.log"'.format(run_id))
-ssh_string02 = shlex.split('ssh chtc5 "condor_release nwflorek"')
+ssh_string_finished = shlex.split('ssh chtc5 "cat {0}.bucky-tr.dag.dagman.log"'.format(run_id))
+ssh_string_held = shlex.split('ssh chtc5 "condor_q"')
+ssh_string_release = shlex.split('ssh chtc5 "condor_release nwflorek"')
 job_complete = False
 while job_complete == False:
+    #check every 10 min
     time.sleep(600)
-    sub.Popen(ssh_string02).wait()
-    p = sub.Popen(ssh_string01,stdout=sub.PIPE)
+
+    #check for held jobs
+    p = sub.Popen(ssh_string_held,stdout=sub.PIPE)
+    for line in p.stdout:
+        if "held" in line.decode('utf-8'):
+            sub.Popen(ssh_string_release).wait()
+
+    #check for finished jobs
+    p = sub.Popen(ssh_string_finished,stdout=sub.PIPE)
     for line in p.stdout:
         if "(1) Normal termination" in line.decode('utf-8'):
             job_complete = True
