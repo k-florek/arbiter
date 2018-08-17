@@ -11,6 +11,11 @@ def parseResult(run_id):
     strep_sero = {}
     ecoli = {}
     ids = []
+    #get ids
+    for root,dir,file in os.walk("."):
+        for item in dir:
+            if item:
+                ids.append(item)
     #parse assembly stats
     for id in ids:
         with open('{0}/{0}_assembly.stats'.format(id)) as statin:
@@ -29,9 +34,10 @@ def parseResult(run_id):
     with open('sistr_summary.tsv','r') as salin:
         reader = csv.reader(salin,delimiter='\t')
         for row in reader:
-            sal_sero[row[0]] = '; '.join([row[1],row[2],row[5]])
-            if row[0] not in ids:
-                ids.append(row[0])
+            if '/' not in row[0]:
+                sal_sero[row[0]] = '; '.join([row[1],row[2],row[5]])
+                if row[0] not in ids:
+                    ids.append(row[0])
 
     #check if dictonary contains all ids, if not set empty
     for id in ids:
