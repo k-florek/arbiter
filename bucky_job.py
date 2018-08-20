@@ -84,9 +84,11 @@ while job_complete == False:
 
     #check for held jobs
     p = sub.Popen(ssh_string_held,stdout=sub.PIPE)
-    for line in p.stdout:
-        if "held" in line.decode('utf-8'):
-            sub.Popen(ssh_string_release).wait()
+    for l in p.stdout:
+        line = l.decode('utf-8')
+        if "jobs;" in line:
+            if line.split(',')[4] != ' 0 held':
+                sub.Popen(ssh_string_release).wait()
 
     #check for finished jobs
     p = sub.Popen(ssh_string_finished,stdout=sub.PIPE)
