@@ -38,7 +38,7 @@ function krakenSubmit (ids,run_id) {
   //craft execution command
   function setJob (err,rows){
     errors(err);
-    reads = []
+    reads = [run_id]
     for (let i = 0;i<rows.length;i++) {
       if (ids.includes(rows[i]['ISOID'])) {
         reads.push(rows[i]['READ1']);

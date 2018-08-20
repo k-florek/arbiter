@@ -8,14 +8,12 @@ import shutil
 import time
 import sqlite3
 
-reads = sys.argv[1:]
+run_id = sys.argv[1]
+reads = sys.argv[2:]
 read_pairs = []
 for i in range(0,len(reads),2):
     read_pairs.append([reads[i],reads[i+1]])
-#get the output path
-machine = os.path.basename(reads[0]).split('-')[2]
-date = os.path.basename(reads[0]).split('-')[3].split('_')[0]
-run_id = machine+'_'+date
+#check output path
 if os.path.exists('public/results/'+run_id+'/kraken'):
     os.chdir('public/results/'+run_id+'/kraken')
 else:
