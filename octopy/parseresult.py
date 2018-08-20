@@ -12,10 +12,16 @@ def parseResult(run_id):
     ecoli = {}
     ids = []
     #get ids
-    for root,dir,file in os.walk("."):
-        for item in dir:
-            if item:
-                ids.append(item)
+    conn = sqlite3.connect('../../db/octo.db')
+    c = conn.cursor()
+    c.execute('''SELECT ISOID FROM {run_id}'''.format(run_id=run_id))
+    ISOIDS = c.fetchall()
+    conn.close()
+    #check to see if all assemblies were completed
+    for ISOID in ISOIDS:
+        id = ISOID[0]
+        if os.path.isfile('{0}/{0}_assembly.stats'.format(id)):
+            ids.append(id)
     #parse assembly stats
     for id in ids:
         with open('{0}/{0}_assembly.stats'.format(id)) as statin:
@@ -30,6 +36,7 @@ def parseResult(run_id):
                 elif "Gaps" in line:
                     result += line
             assem_stats[id] = result
+    #TODO add section to parse serotype from sqlite database rather than scanning dir
     #parse sal serotype
     with open('sistr_summary.tsv','r') as salin:
         reader = csv.reader(salin,delimiter='\t')
