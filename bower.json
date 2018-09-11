@@ -1,0 +1,22 @@
+{
+  "name": "octopodes",
+  "description": "SIMS - Sequencing information management system",
+  "main": "octo.js",
+  "authors": [
+    "Nicholas Florek"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/nwflorek/octopodes",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/bower",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.3.1",
+    "bootstrap": "^4.1.1"
+  }
+}
