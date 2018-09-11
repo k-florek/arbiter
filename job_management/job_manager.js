@@ -83,6 +83,6 @@ function jobSubmit (page,res,job_selection,run_id) {
 }
 
 //start processing things in the queue
-trimQueue.process(4,'./fastqc_processor.js');
-krakenQueue.process(1,'./kraken_processor.js');
-clusterQueue.process(4,'./cluster_processor.js');
+trimQueue.process(4,'./job_management/fastqc_processor.js');
+krakenQueue.process(1,'./job_management/kraken_processor.js');
+clusterQueue.process(4,'./job_management/cluster_processor.js');

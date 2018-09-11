@@ -28,7 +28,7 @@ function statusCodeUpdater(run,isolate,job,code){
       console.log(err);
     }
     //for the rows obtained (should be just 1) update the statuscode
-    rows.forEach(function(element)){
+    rows.forEach(function(element){
       statuscode = element['STATUSCODE'];
       switch(job){
         case 'fastqc':
@@ -51,7 +51,7 @@ function statusCodeUpdater(run,isolate,job,code){
           console.log(err);
       //bad programming call back hell -_-
         }
-      }
-    }
-  }
+      });
+    });
+  });
 }
