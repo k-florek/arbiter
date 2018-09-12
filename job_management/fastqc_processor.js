@@ -4,22 +4,22 @@ const exist = require('../ensureExists');
 
 const run_directory = config.run_dir;
 
-module.exports = function(job){
+module.exports = function(job,done){
   let id = job.data['id'];
   let run_id = job.data['run'];
-  let path = job.data['run'];
+  let path = job.data['path'];
 
-  let fqc_process = child.spawn('../octopy/fastqc.py',[id,run_id,path],{cwd:'../'});
-
-  fqc_process.on('error', function(err){
-    if (err){
-      return err;
-    }
+  let ch = child.execFile('octopy/fastqc.py',[id,run_id,path]);
+  ch.stdout.on('data',(data)=>{
+    job.progress(data);
   });
-  fqc_process.on('close',function(err){
-    if (err){
-      return err;
-    }
+  ch.stderr.on('data',(data)=>{
+    job.progress(data);
   });
-
+  ch.on('error',(err)=>{
+    done(err);
+  });
+  ch.on('close',(code)=>{
+    done(null,code);
+  });
 }

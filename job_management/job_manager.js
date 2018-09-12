@@ -25,7 +25,7 @@ function jobSubmit (page,res,job_selection,run_id) {
   //determine information from the provided run_id
   let machine = run_id.split('_')[0];
   let date = run_id.split('_')[1];
-  let run_dir = path.join(run_directory,'WI-'+machine+'-'+date)
+  let run_dir = path.join(run_directory,'WI-'+machine+'-'+date);
 
   //create lists for each cluster job
   let sal_ids = [];
@@ -90,9 +90,7 @@ trimQueue.process(4,require('./fastqc_processor'))
 trimQueue.on('completed', function(job,result){
   //do something on completion
   console.log('Completed fastqc on:',job.data['id'],'from:',job.data['run']);
-  if(result){
-    console.log(result);
-  }
+  job.remove();
 });
 trimQueue.on('active',function(job,jobPromise){
   //do something when job has started
