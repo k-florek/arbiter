@@ -1,5 +1,5 @@
 module.exports = function(job){
   // Do some heavy work
-
-  return Promise.resolve(result);
+  console.log(job);
+  return job;
 }

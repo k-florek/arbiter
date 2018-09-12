@@ -10,6 +10,10 @@ const sqlite = require('sqlite3');
 const nodeCleanup = require('node-cleanup');
 const getrunstats = require('./get_runstats')
 const fs = require('fs-extra');
+const redis = require('redis');
+
+//setup redis
+var client = redis.createClient();
 
 const path = require('path');
 const port = 3000;
@@ -56,7 +60,9 @@ app.use(express.static(path.join(__dirname,'public')));
 //authentication
 function checkAuth(req,res,next){
   if(!req.session.user_id){
-    res.redirect('/login');
+    //temp skip login
+    req.session.user_id = 'cddbact';
+    res.redirect('/');
   } else {
     next();
   }

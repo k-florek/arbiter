@@ -4,9 +4,8 @@ const path = require('path');
 const scu = require('../status_code_updater');
 const config = require('../config.json');
 
-
 //trimmomatic queue
-let trimQueue = new Queue('trim');
+let trimQueue = new Queue('fastqc');
 //kraken queue
 let krakenQueue = new Queue('kraken');
 //cluster based pipeline for typing/serotyping
@@ -34,7 +33,7 @@ function jobSubmit (page,res,job_selection,run_id) {
   let strep_ids = [];
   let ar_ids = [];
   //status for cluster
-  clusterJob = false;
+  let clusterJob = false;
 
   //parse job selection and add ids to selected jobs
   for (let key in job_selection){
@@ -80,9 +79,72 @@ function jobSubmit (page,res,job_selection,run_id) {
   if (clusterJob){
     clusterQueue.add({run_id: run_id, path: run_dir, sal: sal_ids, ecoli: ecoli_ids, strep: strep_ids, ar: ar_ids})
   }
-}
 
-//start processing things in the queue
-trimQueue.process(4,'./job_management/fastqc_processor.js');
-krakenQueue.process(1,'./job_management/kraken_processor.js');
-clusterQueue.process(4,'./job_management/cluster_processor.js');
+  //reload the run page
+  res.redirect(path.join('/status/',run_id));
+}
+//start processing things in the trim queue
+trimQueue.process(4,require('./fastqc_processor'))
+
+//actions for trim queue events
+trimQueue.on('completed', function(job,result){
+  //do something on completion
+  console.log('Completed fastqc on:',job.data['id'],'from:',job.data['run']);
+  if(result){
+    console.log(result);
+  }
+});
+trimQueue.on('active',function(job,jobPromise){
+  //do something when job has started
+  console.log('Started fastqc on:',job.data['id'],'from:',job.data['run']);
+});
+trimQueue.on('error', function(error) {
+  // An error occured.
+  console.log(error);
+});
+trimQueue.on('failed', function(job, err){
+  // A job failed with reason `err`!
+  console.log(err)
+});
+
+//start processing things in the kraken queue
+krakenQueue.process('kraken_processor',1,require('./kraken_processor'));
+
+//actions for kraken queue events
+krakenQueue.on('completed', function(job,result){
+  //do something on completion
+  console.log('Completed kraken on:',job.data['id'],'from:',job.data['run']);
+});
+krakenQueue.on('active',function(job,jobPromise){
+  //do something when job has started
+  console.log('Started kraken on:',job.data['id'],'from:',job.data['run']);
+});
+krakenQueue.on('error', function(error) {
+  // An error occured.
+  console.log(error);
+});
+krakenQueue.on('failed', function(job, err){
+  // A job failed with reason `err`!
+  console.log(err)
+});
+
+//start processing things in the cluster queue
+clusterQueue.process('cluster_processor',4,require('./cluster_processor'));
+
+//actions for cluster queue events
+clusterQueue.on('completed', function(job,result){
+  //do something on completion
+  console.log('Completed cluster job:',job.data['run']);
+});
+clusterQueue.on('active',function(job,jobPromise){
+  //do something when job has started
+  console.log('Started cluster job:',job.data['run']);
+});
+clusterQueue.on('error', function(error) {
+  // An error occured.
+  console.log(error);
+});
+clusterQueue.on('failed', function(job, err){
+  // A job failed with reason `err`!
+  console.log(err)
+});
