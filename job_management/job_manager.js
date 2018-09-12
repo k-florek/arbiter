@@ -4,6 +4,7 @@ const path = require('path');
 const scu = require('../status_code_updater');
 const config = require('../config.json');
 
+
 //trimmomatic queue
 let trimQueue = new Queue('fastqc');
 //kraken queue
@@ -13,6 +14,8 @@ let clusterQueue = new Queue('cluster');
 
 const run_directory = config.run_dir;
 module.exports.jobSubmit = jobSubmit;
+
+let runidList = [];
 
 //parse data provided by form and add processes to the queue
 function jobSubmit (page,res,job_selection,run_id) {
@@ -26,6 +29,7 @@ function jobSubmit (page,res,job_selection,run_id) {
   let machine = run_id.split('_')[0];
   let date = run_id.split('_')[1];
   let run_dir = path.join(run_directory,'WI-'+machine+'-'+date);
+  runidList.push(run_id);
 
   //create lists for each cluster job
   let sal_ids = [];
@@ -90,11 +94,13 @@ trimQueue.process(4,require('./fastqc_processor'))
 trimQueue.on('completed', function(job,result){
   //do something on completion
   console.log('Completed fastqc on:',job.data['id'],'from:',job.data['run']);
+  scu.statusCodeUpdater(job.data['run'],job.data['id'],'fastqc','3');
   job.remove();
 });
 trimQueue.on('active',function(job,jobPromise){
   //do something when job has started
   console.log('Started fastqc on:',job.data['id'],'from:',job.data['run']);
+  scu.statusCodeUpdater(job.data['run'],job.data['id'],'fastqc','2');
 });
 trimQueue.on('error', function(error) {
   // An error occured.
@@ -103,6 +109,10 @@ trimQueue.on('error', function(error) {
 trimQueue.on('failed', function(job, err){
   // A job failed with reason `err`!
   console.log(err)
+});
+trimQueue.on('drained', function(jobs,type){
+  let alertMsg = 'Compleated FastQC on isolates from '+runidList.join(',');
+  io.emit('message', alertMsg);
 });
 
 //start processing things in the kraken queue
