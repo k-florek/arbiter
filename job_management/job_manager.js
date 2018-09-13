@@ -111,7 +111,7 @@ trimQueue.on('failed', function(job, err){
   console.log(err)
 });
 trimQueue.on('drained', function(jobs,type){
-  let alertMsg = 'Compleated FastQC on isolates from '+runidList.join(',');
+  let alertMsg = 'Compleated FastQC on isolates from '+runidList.pop();
   io.emit('message', alertMsg);
 });
 

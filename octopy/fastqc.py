@@ -4,6 +4,7 @@ import sys
 import os
 import subprocess as sub
 import shlex
+import sqlite3
 
 id = sys.argv[1]
 run_id = sys.argv[2]
@@ -34,3 +35,22 @@ else:
 cmd = f'fastqc {fwd_read} {rev_read} -o {outpath}'
 cmd = shlex.split(cmd)
 sub.Popen(cmd).wait()
+
+#update database
+#setup database
+conn = sqlite3.connect('db/octo.db')
+c = conn.cursor()
+
+#reformat path to just read name
+fwd_read = os.path.basename(fwd_read)
+rev_read = os.path.basename(rev_read)
+
+#put fastqc information into database
+fastqc1 = fwd_read.split('.')[0]+'_fastqc.html'
+fastqc2 = rev_read.split('.')[0]+'_fastqc.html'
+c.execute(f'UPDATE {run_id} SET FASTQC1 = ?,FASTQC2 = ? WHERE ISOID = ?',(fastqc1,fastqc2,id))
+
+#save changes to database
+conn.commit()
+#close the database
+conn.close()
