@@ -87,6 +87,9 @@ function jobSubmit (page,res,job_selection,run_id) {
   //reload the run page
   res.redirect(path.join('/status/',run_id));
 }
+
+//###########################
+
 //start processing things in the trim queue
 trimQueue.process(4,require('./fastqc_processor'))
 
@@ -110,10 +113,14 @@ trimQueue.on('failed', function(job, err){
   // A job failed with reason `err`!
   console.log(err)
 });
-trimQueue.on('drained', function(jobs,type){
-  let alertMsg = 'Compleated FastQC on isolates from '+runidList.pop();
-  io.emit('message', alertMsg);
-});
+
+//TODO find a better way to handle the finishing of jobs
+//trimQueue.on('drained', function(jobs,type){
+//  let alertMsg = 'Compleated FastQC on isolates from '+runidList.pop();
+//  io.emit('message', alertMsg);
+//});
+
+//###########################
 
 //start processing things in the kraken queue
 krakenQueue.process('kraken_processor',1,require('./kraken_processor'));
@@ -135,6 +142,8 @@ krakenQueue.on('failed', function(job, err){
   // A job failed with reason `err`!
   console.log(err)
 });
+
+//###########################
 
 //start processing things in the cluster queue
 clusterQueue.process('cluster_processor',4,require('./cluster_processor'));
