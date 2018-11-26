@@ -5,10 +5,17 @@ import os
 import subprocess as sub
 import shlex
 import sqlite3
+import json
 
 id = sys.argv[1]
 run_id = sys.argv[2]
 path = sys.argv[3]
+
+#load config variables
+with open('config.json') as j:
+    config = json.load(j)
+
+database_path=os.path.join(config["db_path"],'octo.db')
 
 #path to fwd and reverse read for unpaired only fwd read will be used
 fwd_read = ''
@@ -38,7 +45,7 @@ sub.Popen(cmd).wait()
 
 #update database
 #setup database
-conn = sqlite3.connect('db/octo.db')
+conn = sqlite3.connect(database_path)
 c = conn.cursor()
 
 #reformat path to just read name
