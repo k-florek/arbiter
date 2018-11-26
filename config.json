@@ -1,7 +1,7 @@
 {
   "run_dir": "",
   "lib_path": "",
-  "db_location":,
+  "db_path":"",
   "job_staging_path": "",
   "kraken_aws_json": "",
   "bucky-tr_aws_json": ""
