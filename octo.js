@@ -1,20 +1,28 @@
 const express = require('express');
+//local modules
 const updatedb = require('./updatedb');
 const getruns = require('./get_runs');
 const getiso = require('./get_iso');
 const scaniso = require('./scan_iso');
-const session = require('express-session');
+const getrunstats = require('./get_runstats')
 const js = require('./job_management/job_manager');
+
+//standard modules
+const session = require('express-session');
 const bodyParser = require('body-parser');
 const sqlite = require('sqlite3');
 const nodeCleanup = require('node-cleanup');
-const getrunstats = require('./get_runstats')
 const fs = require('fs-extra');
 const redis = require('redis');
+const path = require('path');
 
-//setup redis
+//configuration file
+const config = require('./config.json');
+
+//setup redis database for job management
 var client = redis.createClient();
 
+//setup express listening on port 3000
 const path = require('path');
 const port = 3000;
 const app = express();
@@ -22,7 +30,7 @@ let server = require('http').Server(app);
 io = require('socket.io').listen(server);
 
 //open the database
-db = new sqlite.Database('./db/octo.db', (err) => {
+db = new sqlite.Database(path.join(config.db_location,'octo.db'), (err) => {
   if (err) {
     return console.error(err.message);
   }
@@ -68,6 +76,7 @@ function checkAuth(req,res,next){
   }
 }
 
+//login function TODO: change to more secure format
 app.post('/login', function (req, res) {
   var post = req.body;
   if (post.user === 'cddbacti' && post.password === '465') {
