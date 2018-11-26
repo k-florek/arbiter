@@ -30,7 +30,7 @@ let server = require('http').Server(app);
 io = require('socket.io').listen(server);
 
 //open the database
-db = new sqlite.Database(path.join(config.db_location,'octo.db'), (err) => {
+db = new sqlite.Database(path.join(config.db_path,'octo.db'), (err) => {
   if (err) {
     return console.error(err.message);
   }
