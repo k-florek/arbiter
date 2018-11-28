@@ -1,0 +1,28 @@
+const config = require('../config.json');
+const child = require('child_process');
+const exist = require('../ensureExists');
+
+const run_directory = config.run_dir;
+
+module.exports = function(job,done){
+  let run_id = job.data['run_id'];
+  let path = job.data['path'];
+  let sal = job.data['sal'];
+  let ecoli = job.data['ecoli'];
+  let strep = job.data['strep'];
+  let ar = job.data['ar'];
+
+  let ch = child.execFile('octopy/bucky_job.py',[run_id,path,sal,ecoli,strep,ar]);
+  ch.stdout.on('data',(data)=>{
+    job.progress(data);
+  });
+  ch.stderr.on('data',(data)=>{
+    job.progress(data);
+  });
+  ch.on('error',(err)=>{
+    done(err);
+  });
+  ch.on('close',(code)=>{
+    done(null,code);
+  });
+}

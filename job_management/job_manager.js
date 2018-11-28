@@ -9,8 +9,8 @@ const config = require('../config.json');
 let fastqcQueue = new Queue('fastqc');
 //kraken queue
 let krakenQueue = new Queue('kraken');
-//cluster based pipeline for typing/serotyping
-let clusterQueue = new Queue('cluster');
+//bucky pipeline for typing/serotyping
+let buckyQueue = new Queue('bucky');
 
 const run_directory = config.run_dir;
 module.exports.jobSubmit = jobSubmit;
@@ -38,8 +38,8 @@ function jobSubmit (page,res,job_selection,run_id) {
   let ecoli_ids = [];
   let strep_ids = [];
   let ar_ids = [];
-  //status for cluster
-  let clusterJob = false;
+  //status for bucky
+  let buckyJob = false;
 
   //parse job selection and add ids to selected jobs
   for (let key in job_selection){
@@ -55,31 +55,31 @@ function jobSubmit (page,res,job_selection,run_id) {
       //add isolate to queue
       kraken_ids.push(key.split('_')[2]);
     }
-    //generate id list for cluster jobs
+    //generate id list for bucky jobs
     if (key.includes('sal_check_')) {
       sal_ids.push(key.split('_')[2]);
-      clusterJob = true;
+      buckyJob = true;
     }
     if (key.includes('ecoli_check_')) {
       ecoli_ids.push(key.split('_')[2]);
-      clusterJob = true;
+      buckyJob = true;
     }
     if (key.includes('strep_check_')) {
       strep_ids.push(key.split('_')[2]);
-      clusterJob = true;
+      buckyJob = true;
     }
     if (key.includes('ar_check_')) {
       ar_ids.push(key.split('_')[2])
-      clusterJob = true;
+      buckyJob = true;
     }
-  }
-  clusterJob = false;
-  if (clusterJob){
-    clusterQueue.add({run_id: run_id, path: run_dir, sal: sal_ids, ecoli: ecoli_ids, strep: strep_ids, ar: ar_ids})
   }
 
   //update all of the statuscodes
   scu.multiCodeUpdate(run_id,fastqc_ids, kraken_ids, sal_ids, ecoli_ids, strep_ids, ar_ids,'1')
+
+  if (buckyJob){
+    buckyQueue.add({run_id: run_id, path: run_dir})
+  }
 
   //reload the run page
   res.redirect(path.join('/status/',run_id));
@@ -120,7 +120,7 @@ fastqcQueue.on('failed', function(job, err){
 //###########################
 
 //start processing things in the kraken queue
-krakenQueue.process('kraken_processor',1,require('./kraken_processor'));
+krakenQueue.process(1,require('./kraken_processor'));
 
 //actions for kraken queue events
 krakenQueue.on('completed', function(job,result){
@@ -143,24 +143,24 @@ krakenQueue.on('failed', function(job, err){
 
 //###########################
 
-//start processing things in the cluster queue
-clusterQueue.process('cluster_processor',1,require('./cluster_processor'));
+//start processing things in the bucky queue
+buckyQueue.process(1,require('./bucky_processor'));
 
-//actions for cluster queue events
-clusterQueue.on('completed', function(job,result){
+//actions for bucky queue events
+buckyQueue.on('completed', function(job,result){
   //do something on completion
-  console.log('Completed cluster job:',job.data['run']);
+  console.log('Completed bucky job:',job.data['run_id']);
   job.remove();
 });
-clusterQueue.on('active',function(job,jobPromise){
+buckyQueue.on('active',function(job,jobPromise){
   //do something when job has started
-  console.log('Started cluster job:',job.data['run']);
+  console.log('Started bucky job:',job.data['run_id']);
 });
-clusterQueue.on('error', function(error) {
+buckyQueue.on('error', function(error) {
   // An error occured.
   console.log(error);
 });
-clusterQueue.on('failed', function(job, err){
+buckyQueue.on('failed', function(job, err){
   // A job failed with reason `err`!
   console.log(err)
 });
