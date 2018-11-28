@@ -23,7 +23,6 @@ const config = require('./config.json');
 var client = redis.createClient();
 
 //setup express listening on port 3000
-const path = require('path');
 const port = 3000;
 const app = express();
 let server = require('http').Server(app);
