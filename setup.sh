@@ -3,3 +3,4 @@
 bower install
 npm install
 mkdir db
+pip3 install awscli boto3
