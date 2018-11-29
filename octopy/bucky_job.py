@@ -6,6 +6,7 @@ from itertools import zip_longest
 from parseresult import parseResult
 from bucky_prep import preprocess_reads
 import sqlite3
+import paramiko
 
 run_id = sys.argv[1]
 path = sys.argv[2]
@@ -36,12 +37,32 @@ with open(job_file,'w') as csvout:
         row.extend(list(statuscodes[key]))
         wr.writerow(row)
 
+#Start up aws instance
+ec2 = boto3.resource('ec2')
+
+BDM = [{"DeviceName": "/dev/sda1",
+"Ebs": {
+"DeleteOnTermination": True,
+"VolumeType": "gp2",
+"VolumeSize": 100}}]
+
+instance_id = ec2.create_instances(
+    BlockDeviceMappings=BDM,
+    ImageId="ami-0f1fcf3405db98a19",
+    MinCount=1,
+    MaxCount=1,
+    InstanceType="c4.2xlarge",
+    KeyName='octopodes',
+    SecurityGroups=['program_access',]
+)[0].id
+instance = ec2.Instance(instance_id)
+
 #transfer the raw files from storage and preprocess them
 stage_path = os.path.join(config["job_staging_path"],run_id)
 try:
     os.mkdir(stage_path)
 except FileExistsError:
-    os.rmtree(stage_path)
+    shutil.rmtree(stage_path)
     os.mkdir(stage_path)
 
 conn = sqlite3.connect(db_path)
@@ -57,41 +78,15 @@ for row in rows:
 
 preprocess_reads(stage_path)
 
-#start up the amazon isntance
-'''
-##Start up aws instance
-ec2 = boto3.resource('ec2')
-
-BDM = [{"DeviceName": "/dev/sda1",
-"Ebs": {
-"DeleteOnTermination": True,
-"VolumeType": "gp2",
-"VolumeSize": 100}}]
-
-instances = ec2.create_instances(
-    BlockDeviceMappings=BDM,
-    ImageId="ami-0f1fcf3405db98a19",
-    MinCount=1,
-    MaxCount=1,
-    InstanceType="c4.2xlarge",
-    KeyName='octopodes'
-)
-instance_ids = []
-for instance in instances:
-    instance_ids.append(instance.id)
-    print('The instance id is:')
-    print(instance.id)
-    print('The list of instances is:')
-    print(instance_ids)
-
-time.sleep(60)
-print('Shutting down',instance_ids)
-ec2.instances.filter(InstanceIds=instance_ids).terminate()
-'''
+#check to see if instance is running
+state = instance.state['Code']
+if state<16:
+    state = instance.state['Code']
+    time.sleep(10)
 
 #transfer the files to the amazon instance
-host = 'submit-1.chtc.wisc.edu'
-key = paramiko.RSAKey.from_private_key_file("/home/floreknx/.ssh/id_rsa")
+host = instance.public_dns_name
+key = paramiko.RSAKey.from_private_key_file(config["aws_key"])
 
 while True:
     print("Connecting to {}".format(host))
@@ -99,7 +94,7 @@ while True:
     try:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(hostname=host,username="nwflorek",password='')
+        ssh.connect(hostname=host,username="ubuntu",pkey=key)
         print("Connected")
         break
     except paramiko.AuthenticationException:
@@ -113,19 +108,17 @@ while True:
         print("Tried 5 times, quitting.")
         sys.exit()
 
-stdin,stdout,stderr = ssh.exec_command("ls")
-
-output = stdout.read().decode("utf-8")
-if output:
-    print('there is output')
-print(output)
-
-stdin,stdout,stderr = ssh.exec_command("ls /mnt/gluster/")
-
-output = stdout.read().decode("utf-8")
-if output:
-    print('there is output')
-print(output)
+#setup for sftp
+#compress the read folder
+cmd = 'tar -czf {run_id}.tar.gz {path}'.format(run_id=os.path.join(config["job_staging_path"],run_id),path=stage_path)
+cmd = shlex.split(cmd)
+sub.Popen(cmd).wait()
+ftp_client = ssh.open_sftp()
+ftp_client.put(os.path.join(config["job_staging_path"],'{run_id}.tar.gz'.format(run_id=run_id)),'/home/ubuntu/{run_id}.tar.gz'.format(run_id=run_id))
+ftp_client.put(os.path.join(config["job_staging_path"],'{run_id}.csv'.format(run_id=run_id)),'/home/ubuntu/{run_id}.csv'.format(run_id=run_id))
+ftp_client.close()
+#decompress remote files
+ssh.exec_command("tar -xzf /home/ubuntu/{run_id}.tar.gz".format(run_id=run_id))
 
 print('Done')
 ssh.close()
@@ -137,5 +130,8 @@ ssh.close()
 #transfer the result files back
 
 #terminate the instance
+
+#print('Shutting down',instance_ids)
+#ec2.instances.filter(InstanceIds=instance_ids).terminate()
 
 #parse results, update database, complete job
