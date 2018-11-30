@@ -1,0 +1,74 @@
+extends main_layout_queue
+block content
+  table.table.table-striped
+    thead
+      tr
+        th.text-left
+          H4 FastQC Queue
+        th.text-center 
+          H6 Number in Queue
+        th.text-center
+          H6 Run ID
+        th.text-center
+          H6 Isolate ID
+        th.text-center
+          H6 Status
+    tbody
+      each job,i in fastqc
+        tr
+          td.text-left
+             
+          td.text-center
+            =job[0]
+          td.text-center
+            =job[1]
+          td.text-center
+            =job[2]
+          td.text-center
+            =job[3]
+    thead
+      tr
+        th.text-left
+          H4 Kraken Queue
+        th.text-center 
+          H6 Number in Queue
+        th.text-center
+          H6 Run ID
+        th.text-center
+          H6 Isolate ID
+        th.text-center
+          H6 Status
+    tbody
+      each job,i in kraken
+        tr
+          td.text-left
+             
+          td.text-center
+            =job[0]
+          td.text-center
+            =job[1]
+          td.text-center
+            =job[2]
+          td.text-center
+            =job[3]
+    thead
+      tr
+        th.text-left
+          H4 Bucky-TR Queue
+        th.text-center 
+          H6 Number in Queue
+        th.text-center
+          H6 Run ID
+        th.text-center
+          H6 Status
+    tbody
+      each job,i in bucky
+        tr
+          td.text-left
+             
+          td.text-center
+            =job[0]
+          td.text-center
+            =job[1]
+          td.text-center
+            =job[2]

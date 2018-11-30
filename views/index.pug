@@ -21,24 +21,17 @@ block content
           td 
             if run.FASTQC
               a(href="/results/"+run.MACHINE+"_"+run.DATE+"/multiqc_report.html") 
-                button.btn.btn-success(type="button") FastQC
+                button.btn.btn-success(type="button") MultiQC
             else 
               a(href="#") 
-                button.btn.btn-light(type="button") FastQC
+                button.btn.btn-light(type="button") MultiQC
           td 
             a(href="#") 
               button.btn.btn-light(type="button") Kraken
           td 
-            if run.STATS
-              a(href="/stats/"+run.MACHINE+"_"+run.DATE) 
-                button.btn.btn-success(type="button") Run Statistics
-            else
-              a(href="#") 
-                button.btn.btn-light(type="button") Run Statistics
-          td 
             a(href="/status/"+run.MACHINE+"_"+run.DATE) 
               button.btn.btn-info(type="button") Show
-          td 
+          //td 
             a(href="#") 
               button.btn.btn-info(type="button") Edit
           td

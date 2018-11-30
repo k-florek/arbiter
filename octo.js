@@ -4,8 +4,8 @@ const updatedb = require('./updatedb');
 const getruns = require('./get_runs');
 const getiso = require('./get_iso');
 const scaniso = require('./scan_iso');
-const getrunstats = require('./get_runstats')
 const js = require('./job_management/job_manager');
+const jobQueue = require('./get_jobQueue');
 
 //standard modules
 const session = require('express-session');
@@ -117,16 +117,14 @@ app.get('/updatedb',checkAuth, function(req, res){
   updatedb.update('index',res);
 });
 
-//Get stats
-app.get('/stats/:runid',checkAuth, function(req, res){
-  let runid = req.params.runid;
-  getrunstats.getRunStats('stats',res,runid);
-});
-
 //show run information
 app.get('/status/:runid',checkAuth, function(req,res){
   let runid = req.params.runid;
   getiso.getIso('run',res,runid);
+});
+
+app.get('/job_queue',checkAuth,function(req,res){
+  jobQueue.getJobStatus('job_queue',res);
 });
 
 //update run isolates
