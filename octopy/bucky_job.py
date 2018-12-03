@@ -48,7 +48,7 @@ BDM = [{"DeviceName": "/dev/sda1",
 
 instance_id = ec2.create_instances(
     BlockDeviceMappings=BDM,
-    ImageId="ami-0f1fcf3405db98a19",
+    ImageId="ami-02a5aab546fb4d3c4",
     MinCount=1,
     MaxCount=1,
     InstanceType="c4.2xlarge",
@@ -109,7 +109,7 @@ while True:
         sys.exit()
 
 #setup for sftp
-#compress the read folder
+#compress the raw reads folder
 cmd = 'tar -czf {run_id}.tar.gz {path}'.format(run_id=os.path.join(config["job_staging_path"],run_id),path=stage_path)
 cmd = shlex.split(cmd)
 sub.Popen(cmd).wait()
@@ -120,18 +120,32 @@ ftp_client.close()
 #decompress remote files
 ssh.exec_command("tar -xzf /home/ubuntu/{run_id}.tar.gz".format(run_id=run_id))
 
-print('Done')
-ssh.close()
-
 #start the bucky pipeline
+stdin,stdout,stderr = ssh.exec_command("bucky-tr.py -t 8 -c {run_id}/{run_id}.csv {run_id}".format(run_id=run_id))
+#TODO add logging of stdout and stderr
 
 #montior for completion of the pipeline
+while True:
+    stdin,stdout,stderr = ssh.exec_command("ls {run_id}".format(run_id=run_id))
+    stderr = stderr.read().decode('utf-8').split()
+    stdout = stdout.read().decode('utf-8').split()
+    if stderr:
+        with open('bucky_jobMon_error.log','a') as error:
+            error.write(stderr)
+        break
+    for line in stdout:
+        if '_results' in line:
+            time.sleep(300)
+            break
 
 #transfer the result files back
+ssh.exec_command("tar -czf {run_id}_results.tar.gz {run_id}/{run_id}_results".format(run_id=run_id))
+ftp_client = ssh.open_sftp()
+ftp_client.get("/home/ubuntu/{run_id}_results.tar.gz".format(run_id=run_id),os.path.join(config["job_staging_path"],"{run_id}_results.tar.gz".format(run_id=run_id))
 
 #terminate the instance
-
-#print('Shutting down',instance_ids)
-#ec2.instances.filter(InstanceIds=instance_ids).terminate()
+ssh.close()
+print('Shutting down',instance_id)
+ec2.instances.filter(InstanceIds=[instance_id]).terminate()
 
 #parse results, update database, complete job
