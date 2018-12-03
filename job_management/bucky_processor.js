@@ -12,7 +12,7 @@ module.exports = function(job,done){
   let strep = job.data['strep'];
   let ar = job.data['ar'];
 
-  let ch = child.execFile('octopy/bucky_job.py',[run_id,path,sal,ecoli,strep,ar]);
+  let ch = child.execFile('octopy/bucky_job.py',[run_id,path]);
   ch.stdout.on('data',(data)=>{
     job.progress(data);
   });
