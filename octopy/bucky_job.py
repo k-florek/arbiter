@@ -110,9 +110,9 @@ while True:
 
 #setup for sftp
 #compress the raw reads folder
-cmd = 'tar -czf {run_id}.tar.gz {path}'.format(run_id=os.path.join(config["job_staging_path"],run_id),path=stage_path)
+cmd = 'tar -czf {run_id_path}.tar.gz {run_id}'.format(run_id_path=os.path.join(config["job_staging_path"],run_id),run_id=run_id)
 cmd = shlex.split(cmd)
-sub.Popen(cmd).wait()
+sub.Popen(cmd,cwd=stage_path).wait()
 ftp_client = ssh.open_sftp()
 ftp_client.put(os.path.join(config["job_staging_path"],'{run_id}.tar.gz'.format(run_id=run_id)),'/home/ubuntu/{run_id}.tar.gz'.format(run_id=run_id))
 ftp_client.put(os.path.join(config["job_staging_path"],'{run_id}.csv'.format(run_id=run_id)),'/home/ubuntu/{run_id}.csv'.format(run_id=run_id))
@@ -139,7 +139,7 @@ while True:
             break
 
 #transfer the result files back
-ssh.exec_command("tar -czf {run_id}_results.tar.gz {run_id}/{run_id}_results".format(run_id=run_id))
+ssh.exec_command("cd {run_id} && tar -czf ../{run_id}_results.tar.gz {run_id}_results".format(run_id=run_id))
 ftp_client = ssh.open_sftp()
 ftp_client.get("/home/ubuntu/{run_id}_results.tar.gz".format(run_id=run_id),os.path.join(config["job_staging_path"],"{run_id}_results.tar.gz".format(run_id=run_id)))
 
