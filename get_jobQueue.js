@@ -30,7 +30,7 @@ function getJobStatus (page,res) {
       let queue_number = job['id'];
       let status = 'In Queue';
       if (job.hasOwnProperty('processedOn')){
-        status = 'Completed';
+        status = 'In Progress';
       }
       fastqcJobs.push([queue_number,run_id,isoid,status]);
     }
@@ -42,7 +42,7 @@ function getJobStatus (page,res) {
         let queue_number = job.id;
         let status = 'In Queue';
         if (job.hasOwnProperty('processedOn')){
-          status = 'Completed';
+          status = 'In Progress';
         }
         krakenJobs.push([queue_number,run_id,isoid,status])
       }
@@ -53,7 +53,7 @@ function getJobStatus (page,res) {
           let queue_number = job['id'];
           let status = 'In Queue';
           if (job.hasOwnProperty('processedOn')){
-            status = 'Completed';
+            status = 'In Progress';
           }
           buckyJobs.push([queue_number,run_id,status])
         }
