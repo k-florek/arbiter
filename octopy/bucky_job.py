@@ -141,7 +141,7 @@ while True:
 #transfer the result files back
 ssh.exec_command("tar -czf {run_id}_results.tar.gz {run_id}/{run_id}_results".format(run_id=run_id))
 ftp_client = ssh.open_sftp()
-ftp_client.get("/home/ubuntu/{run_id}_results.tar.gz".format(run_id=run_id),os.path.join(config["job_staging_path"],"{run_id}_results.tar.gz".format(run_id=run_id))
+ftp_client.get("/home/ubuntu/{run_id}_results.tar.gz".format(run_id=run_id),os.path.join(config["job_staging_path"],"{run_id}_results.tar.gz".format(run_id=run_id)))
 
 #terminate the instance
 ssh.close()
