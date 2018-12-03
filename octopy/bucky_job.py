@@ -110,9 +110,9 @@ while True:
 
 #setup for sftp
 #compress the raw reads folder
-cmd = 'tar -czf {run_id_path}.tar.gz {run_id}'.format(run_id_path=os.path.join(config["job_staging_path"],run_id),run_id=run_id)
+cmd = 'tar -czf {run_id_path}.tar.gz {run_id}'.format(run_id_path=stage_path,run_id=run_id)
 cmd = shlex.split(cmd)
-sub.Popen(cmd,cwd=stage_path).wait()
+sub.Popen(cmd,cwd=config["job_staging_path"]).wait()
 ftp_client = ssh.open_sftp()
 ftp_client.put(os.path.join(config["job_staging_path"],'{run_id}.tar.gz'.format(run_id=run_id)),'/home/ubuntu/{run_id}.tar.gz'.format(run_id=run_id))
 ftp_client.put(os.path.join(config["job_staging_path"],'{run_id}.csv'.format(run_id=run_id)),'/home/ubuntu/{run_id}.csv'.format(run_id=run_id))
