@@ -17,17 +17,34 @@ with open("config.json",'r') as readjson:
     config = json.loads(reader)
 
 #connect to the db and get the status codes
-db_path = os.path.join(config["db_path"],'octo.db')
-conn = sqlite3.connect(db_path)
-c = conn.cursor()
-c.execute('''SELECT ISOID,STATUSCODE FROM {run_id}'''.format(run_id=run_id))
-rows = c.fetchall()
-conn.close()
+def getStatusCodes():
+    db_path = os.path.join(config["db_path"],'octo.db')
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute('''SELECT ISOID,STATUSCODE FROM {run_id}'''.format(run_id=run_id))
+    rows = c.fetchall()
+    conn.close()
+    codes = {}
+    for row in rows:
+        codes[row[0]] = row[1]
+    return codes
 
 #write the status codes to a csv file that can be used by bucky-tr to run the pipeline
-statuscodes = {}
-for row in rows:
-    statuscodes[row[0]] = row[1]
+#check to see if we have a job
+statuscodes = getStatusCodes()
+check_job = False
+i = 0
+while check_job == False:
+    for key in statuscodes:
+        if '1' in statuscodes[key]:
+            check_job == True
+    time.sleep(30)
+    statuscodes = getStatusCodes()
+    #exit if nothing done after 5 checks
+    i += 1
+    if i > 5:
+        sys.exit(1)
+
 job_file = os.path.join(config["job_staging_path"],run_id+".csv")
 with open(job_file,'w') as csvout:
     wr = csv.writer(csvout,delimiter=',')
@@ -121,7 +138,7 @@ ftp_client.close()
 ssh.exec_command("tar -xzf /home/ubuntu/{run_id}.tar.gz".format(run_id=run_id))
 
 #start the bucky pipeline
-stdin,stdout,stderr = ssh.exec_command("bucky-tr.py -t 8 -c {run_id}/{run_id}.csv {run_id}".format(run_id=run_id))
+stdin,stdout,stderr = ssh.exec_command("bucky-tr.py -t 8 -c {run_id}.csv {run_id}".format(run_id=run_id))
 #TODO add logging of stdout and stderr
 
 #montior for completion of the pipeline
