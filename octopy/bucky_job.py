@@ -17,8 +17,8 @@ with open("config.json",'r') as readjson:
     config = json.loads(reader)
 
 #connect to the db and get the status codes
+db_path = os.path.join(config["db_path"],'octo.db')
 def getStatusCodes():
-    db_path = os.path.join(config["db_path"],'octo.db')
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute('''SELECT ISOID,STATUSCODE FROM {run_id}'''.format(run_id=run_id))
@@ -37,7 +37,8 @@ i = 0
 while check_job == False:
     for key in statuscodes:
         if '1' in statuscodes[key]:
-            check_job == True
+            check_job = True
+            break
     time.sleep(30)
     statuscodes = getStatusCodes()
     #exit if nothing done after 5 checks
