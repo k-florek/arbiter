@@ -53,6 +53,8 @@ block content
                   button.btn.btn-light(type="button") Read 1
                 a(href= '/results/'+run_id+'/'+ isolate.FASTQC2)
                   button.btn.btn-light(type="button") Read 2
+              else if isolate.STATUSCODE[0] === '4'
+                h5 Error
               else
                 div.checkbox
                   input.checkbox-input(type="checkbox",id='fastqc',name='fastqc_check_'+ isolate.ISOID,)
@@ -64,6 +66,8 @@ block content
               else if isolate.STATUSCODE[1] === '3'
                 a(href=isolate.KRAKEN)
                   button.btn.btn-light(type="button") Results
+              else if isolate.STATUSCODE[1] === '4'
+                h5 Error
               else
                 div.checkbox
                   input.checkbox-input(type="checkbox",id='kraken',name='kraken_check_'+ isolate.ISOID,)
@@ -74,6 +78,8 @@ block content
                 h5 In Progress
               else if isolate.STATUSCODE[2] === '3'
                 p #{isolate.SALTYPE}
+              else if isolate.STATUSCODE[2] === '4'
+                h5 Assembly Error
               else
                 div.checkbox
                   input.checkbox-input(type="checkbox",id='sal',name='sal_check_'+ isolate.ISOID,)
@@ -84,6 +90,8 @@ block content
                 h5 In Progress
               else if isolate.STATUSCODE[3] === '3'
                 p #{isolate.ECOLITYPE}
+              else if isolate.STATUSCODE[3] === '4'
+                h5 Assembly Error
               else
                 div.checkbox
                   input.checkbox-input(type="checkbox",id='ecoli',name='ecoli_check_'+ isolate.ISOID,)
@@ -94,6 +102,8 @@ block content
                 h5 In Progress
               else if isolate.STATUSCODE[4] === '3'
                 p #{isolate.STREPTYPE}
+              else if isolate.STATUSCODE[4] === '4'
+                h5 Assembly Error
               else
                 div.checkbox
                   input.checkbox-input(type="checkbox",id='strep',name='strep_check_'+ isolate.ISOID,)
@@ -105,6 +115,8 @@ block content
               else if isolate.STATUSCODE[5] === '3'
                 a(href= '#') 
                   button.btn.btn-light(type="button") Results
+              else if isolate.STATUSCODE[5] === '4'
+                h5 Assembly Error
               else
                 div.checkbox
                   input.checkbox-input(type="checkbox",id='ar',name='ar_check_'+ isolate.ISOID,checked)

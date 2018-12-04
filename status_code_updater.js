@@ -11,8 +11,9 @@ binary status code for runs:
 [fastqc,kraken,sal,ecoli,strep,ar] = "000000"
 0 - not run
 1 - submitted
-2 - in progress *not used yet
-2 - finished
+2 - in progress
+3 - finished
+4 - error
 */
 /*process
 get statuscodes for each isolate id
