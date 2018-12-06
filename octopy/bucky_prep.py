@@ -19,11 +19,8 @@ def preprocess_reads(path):
                     if os.path.isdir(path+'/'+item.split('-')[0]) == False:
                         sub.Popen(["mkdir",path+'/'+item.split('-')[0]],stdout=sub.PIPE).wait()
                     if "_R1_" in item:
-                        print("Moving and renaming "+item)
                         sub.Popen(["mv",path+'/'+item,path+'/'+item.split('-')[0]+'/'+item.split('-')[0]+"_1.fastq.gz"])
                     elif "_R2_" in item:
-                        print("Moving and renaming "+item)
                         sub.Popen(["mv",path+'/'+item,path+'/'+item.split('-')[0]+'/'+item.split('-')[0]+"_2.fastq.gz"])
                     else:
-                        print("Moving and renaming "+item)
                         sub.Popen(["mv",path+'/'+item,path+'/'+item.split('-')[0]+'/'+item.split('-')[0]+".fastq.gz"])
