@@ -32,11 +32,11 @@ for root,dirs,files in os.walk(path):
                 #TODO add bit for unpaired read
 
 #check if output dir exists
-if os.path.exists('public/results/'+run_id):
-    outpath = 'public/results/'+run_id
+if os.path.exists('public/results/'+run_id+'/'+id):
+    outpath = 'public/results/'+run_id+'/'+id
 else:
-    os.mkdir('public/results/'+run_id)
-    outpath = 'public/results/'+run_id
+    os.mkdir('public/results/'+run_id+'/'+id)
+    outpath = 'public/results/'+run_id+'/'+id
 
 #build command for running fastqc
 cmd = f'fastqc {fwd_read} {rev_read} -o {outpath}'
