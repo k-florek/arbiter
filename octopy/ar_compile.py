@@ -31,17 +31,24 @@ def checkExists(arData,dataList):
     return False
 
 def summarize(path):
-    #parse antibiotic resistance
-    find . -name "*_resFind.csv" | xargs cat > resFind_all.csv;
-    find . -name "*_CARD.csv" | xargs cat > card_all.csv;
-    find . -name "*_NCBIres.csv" | xargs cat > NCBIres_all.csv;
-    find . -name "*_mlst.csv" | xargs cat > mlst_all.csv;
-    find . -name "*_vf.csv" | xargs cat > vf_all.csv
+    #summarize all results
+    cmd = 'find . -name "*_resfinder.csv" | xargs cat > resFind_all.csv'
+    sub.Popen(cmd,shell=True,cwd=path)
 
+    cmd = 'find . -name "*_card.csv" | xargs cat > card_all.csv'
+    sub.Popen(cmd,shell=True,cwd=path)
 
+    cmd = 'find . -name "*_ncbi.csv" | xargs cat > NCBIres_all.csv'
+    sub.Popen(cmd,shell=True,cwd=path)
 
+    cmd = 'find . -name "*_vfdb.csv" | xargs cat > vf_all.csv'
+    sub.Popen(cmd,shell=True,cwd=path)
 
-def ar_parse(config,files = []):
+def ar_parse(config,path):
+    #compile all individual result files
+    summarzie(path)
+    files = ['resFind_all.csv','card_all.csv','NCBIres_all.csv']
+    #start parsing result
     arList = []
     for file in files:
         with open(file,'r') as csvfile:
@@ -67,7 +74,7 @@ def ar_parse(config,files = []):
 
     #update database
     #setup database
-    conn = sqlite3.connect('../../db/octo.db')
+    conn = sqlite3.connect(config["db_path"])
     c = conn.cursor()
     c.execute('''CREATE TABLE if not exists AR (ID INTEGER PRIMARY KEY AUTOINCREMENT,RUNID TEXT,ISOID TEXT,GENE TEXT,CONTIG TEXT,GSTART TEXT,GEND TEXT,COVERAGE TEXT,IDENTITY TEXT,DATABASE TEXT,ACCESSION TEXT,DESCRIPTION TEXT)''')
     for id in isoid:
