@@ -68,7 +68,7 @@ app.use(express.static(path.join(__dirname,'public')));
 function checkAuth(req,res,next){
   if(!req.session.user_id){
     //temp skip login
-    req.session.user_id = 'cddbact';
+    //req.session.user_id = 'cddbact';
     res.redirect('/');
   } else {
     next();
