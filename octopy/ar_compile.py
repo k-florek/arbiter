@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import sys
-import csv
+import sys,os,csv
+import subprocess as sub
 import sqlite3
 
 run_id = sys.argv[1]
@@ -29,7 +29,19 @@ def checkExists(arData,dataList):
         if arData.hash == item.hash:
             return True
     return False
-def arCompile():
+
+def summarize(path):
+    #parse antibiotic resistance
+    find . -name "*_resFind.csv" | xargs cat > resFind_all.csv;
+    find . -name "*_CARD.csv" | xargs cat > card_all.csv;
+    find . -name "*_NCBIres.csv" | xargs cat > NCBIres_all.csv;
+    find . -name "*_mlst.csv" | xargs cat > mlst_all.csv;
+    find . -name "*_vf.csv" | xargs cat > vf_all.csv
+
+
+
+
+def ar_parse(config,files = []):
     arList = []
     for file in files:
         with open(file,'r') as csvfile:
