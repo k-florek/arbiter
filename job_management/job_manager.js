@@ -11,6 +11,8 @@ let fastqcQueue = new Queue('fastqc');
 let krakenQueue = new Queue('kraken');
 //bucky pipeline for typing/serotyping
 let buckyQueue = new Queue('bucky');
+//queue for running multiqc
+let multiqcQueue = new Queue('multiqc');
 
 const run_directory = config.run_dir;
 module.exports.jobSubmit = jobSubmit;
@@ -38,9 +40,11 @@ function jobSubmit (page,res,job_selection,run_id) {
   let ecoli_ids = [];
   let strep_ids = [];
   let ar_ids = [];
+
   //status for bucky
   let buckyJob = false;
-
+  //status for multiqc
+  let multiJob = false;
   //parse job selection and add ids to selected jobs
   for (let key in job_selection){
     if (key.includes('fastqc_check_')) {
@@ -48,6 +52,7 @@ function jobSubmit (page,res,job_selection,run_id) {
       fastqcQueue.add({id: key.split('_')[2],run: run_id,path: run_dir});
       //add isolate to queue
       fastqc_ids.push(key.split('_')[2]);
+      multiJob = true;
     }
     if (key.includes('kraken_check_')) {
       //add isolate details to krakenQueue
@@ -81,6 +86,10 @@ function jobSubmit (page,res,job_selection,run_id) {
     buckyQueue.add({run_id: run_id, path: run_dir})
   }
 
+  if (multiJob){
+    multiqcQueue.add({run_id:run_id})
+  }
+
   //reload the run page
   res.redirect(path.join('/status/',run_id));
 }
@@ -104,18 +113,36 @@ fastqcQueue.on('active',function(job,jobPromise){
 });
 fastqcQueue.on('error', function(error) {
   // An error occured.
+  scu.statusCodeUpdater(job.data['run'],job.data['id'],'fastqc','4');
+  job.remove();
   console.log(error);
 });
 fastqcQueue.on('failed', function(job, err){
   // A job failed with reason `err`!
+  scu.statusCodeUpdater(job.data['run'],job.data['id'],'fastqc','4');
+  job.remove();
   console.log(err)
 });
 
-//TODO find a better way to handle the finishing of jobs
-//fastqcQueue.on('drained', function(jobs,type){
-//  let alertMsg = 'Compleated FastQC on isolates from '+runidList.pop();
-//  io.emit('message', alertMsg);
-//});
+//###########################
+
+//start processing things in the multiqc queue
+multiqcQueue.process(1,require('./multiqc_processor'))
+
+//actions for fastqc queue events
+multiqcQueue.on('completed', function(job,result){
+  //do something on completion
+  job.remove();
+});
+multiqcQueue.on('error', function(error) {
+  // An error occured.
+  job.remove();
+  console.log(error);
+});
+multiqcQueue.on('failed', function(job, err){
+  job.remove();
+  console.log(err)
+});
 
 //###########################
 
@@ -135,10 +162,12 @@ krakenQueue.on('active',function(job,jobPromise){
 krakenQueue.on('error', function(error) {
   // An error occured.
   console.log(error);
+  job.remove();
 });
 krakenQueue.on('failed', function(job, err){
   // A job failed with reason `err`!
   console.log(err)
+  job.remove();
 });
 
 //###########################
@@ -159,8 +188,10 @@ buckyQueue.on('active',function(job,jobPromise){
 buckyQueue.on('error', function(error) {
   // An error occured.
   console.log(error);
+  job.remove();
 });
 buckyQueue.on('failed', function(job, err){
   // A job failed with reason `err`!
   console.log(err)
+  job.remove();
 });
