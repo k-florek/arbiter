@@ -17,6 +17,7 @@ with open("config.json",'r') as readjson:
     config = json.loads(reader)
 
 #connect to the db and get the status codes
+print('Getting statuscodes for {runid}'.format(runid=run_id))
 db_path = os.path.join(config["db_path"],'octo.db')
 def getStatusCodes():
     conn = sqlite3.connect(db_path)
@@ -56,6 +57,7 @@ with open(job_file,'w') as csvout:
         wr.writerow(row)
 
 #Start up aws instance
+print('Starting AWS instance for {runid}'.format(runid=run_id))
 ec2 = boto3.resource('ec2')
 
 BDM = [{"DeviceName": "/dev/sda1",
@@ -76,6 +78,7 @@ instance_id = ec2.create_instances(
 instance = ec2.Instance(instance_id)
 
 #transfer the raw files from storage and preprocess them
+print('Transfering reads from stoage for preprocessing {runid}'.format(runid=run_id))
 stage_path = os.path.join(config["job_staging_path"],run_id)
 try:
     os.mkdir(stage_path)
@@ -107,13 +110,13 @@ host = instance.public_dns_name
 key = paramiko.RSAKey.from_private_key_file(config["aws_key"])
 
 while True:
-    print("Connecting to {}".format(host))
+    print("Connecting to AWS instance: {}".format(host))
     i = 0
     try:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(hostname=host,username="ubuntu",pkey=key)
-        print("Connected")
+        print("Connected to {}".format(host))
         break
     except paramiko.AuthenticationException:
         print("Authentication Failed")
@@ -126,8 +129,10 @@ while True:
         print("Tried 5 times, quitting.")
         sys.exit()
 
+
 #setup for sftp
 #compress the raw reads folder
+print('Transfering preprocessed reads to AWS instance {aws}'.format(aws=instance_id))
 cmd = 'tar -czf {run_id_path}.tar.gz {run_id}'.format(run_id_path=stage_path,run_id=run_id)
 cmd = shlex.split(cmd)
 sub.Popen(cmd,cwd=config["job_staging_path"]).wait()
@@ -135,35 +140,65 @@ ftp_client = ssh.open_sftp()
 ftp_client.put(os.path.join(config["job_staging_path"],'{run_id}.tar.gz'.format(run_id=run_id)),'/home/ubuntu/{run_id}.tar.gz'.format(run_id=run_id))
 ftp_client.put(os.path.join(config["job_staging_path"],'{run_id}.csv'.format(run_id=run_id)),'/home/ubuntu/{run_id}.csv'.format(run_id=run_id))
 ftp_client.close()
+
 #decompress remote files
-ssh.exec_command("tar -xzf /home/ubuntu/{run_id}.tar.gz".format(run_id=run_id))
+print("Decompressing remote files {}".format(host))
+stdin,stdout,stderr = ssh.exec_command("tar -xzvf /home/ubuntu/{run_id}.tar.gz".format(run_id=run_id))
+exit_status = stdout.channel.recv_exit_status()          # Blocking call
+if exit_status == 0:
+    print ("Decompressed package")
+else:
+    print("Error", exit_status)
 
-#start the bucky pipeline
-stdin,stdout,stderr = ssh.exec_command("bucky-tr.py -t 8 -c {run_id}.csv {run_id}".format(run_id=run_id))
-#TODO add logging of stdout and stderr
+#update bucky-tr
+print("Checking for Bucky-TR updates on {}".format(host))
+stdin,stdout,stderr = ssh.exec_command("cd bucky-tr && git pull origin")
+exit_status = stdout.channel.recv_exit_status()          # Blocking call
+if exit_status == 0:
+    print ("Updated Bucky-TR")
+else:
+    print("Error", exit_status)
 
-#montior for completion of the pipeline
-while True:
-    stdin,stdout,stderr = ssh.exec_command("ls {run_id}".format(run_id=run_id))
-    stderr = stderr.read().decode('utf-8').split()
-    stdout = stdout.read().decode('utf-8').split()
-    if stderr:
-        with open('bucky_jobMon_error.log','a') as error:
-            error.write(stderr)
-        break
-    for line in stdout:
-        if '_results' in line:
-            time.sleep(300)
-            break
+#start bucky-tr pipeline
+print("Starting Bucky-TR on {}".format(host))
+stdin,stdout,stderr = ssh.exec_command("bucky-tr/bucky-tr.py -t 8 -c {run_id}.csv {run_id}".format(run_id=run_id))
 
-#transfer the result files back
-ssh.exec_command("cd {run_id} && tar -czf ../{run_id}_results.tar.gz {run_id}_results".format(run_id=run_id))
+#monitor for job completed
+completion = False
+while completion == False:
+    stdin,stdout,stderr = ssh.exec_command('ls {run_id}'.format(run_id=run_id))
+    file_list = stdout.readlines()
+    for f in file_list:
+        if '_results' in f:
+            completion = True
+    time.sleep(30)
+
+#compress and transfer the result files back
+print("Transfer results back from {}".format(host))
+stdin,stdout,stderr = ssh.exec_command("cd {run_id} && tar -czf ../{run_id}_results.tar.gz {run_id}_results".format(run_id=run_id))
+exit_status = stdout.channel.recv_exit_status()          # Blocking call
+if exit_status == 0:
+    print ("Compressed Result Package")
+else:
+    print("Error", exit_status)
+
 ftp_client = ssh.open_sftp()
 ftp_client.get("/home/ubuntu/{run_id}_results.tar.gz".format(run_id=run_id),os.path.join(config["job_staging_path"],"{run_id}_results.tar.gz".format(run_id=run_id)))
 
 #terminate the instance
+print("Disconnecting from {}".format(host))
 ssh.close()
 print('Shutting down',instance_id)
-ec2.instances.filter(InstanceIds=[instance_id]).terminate()
+#ec2.instances.filter(InstanceIds=[instance_id]).terminate()
 
-#parse results, update database, complete job
+#parse results, update database statuscodes, complete job
+parseResult(run_id,config)
+
+#update submission status in octo.db
+#binary status code for runs:
+#[fastqc,kraken,sal,ecoli,strep,ar] = "000000"
+#0 - not run
+#1 - submitted
+#2 - in progress
+#3 - finished
+#4 - error
