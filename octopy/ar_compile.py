@@ -88,3 +88,4 @@ def ar_parse(config,path):
     conn.commit()
     #close the database
     conn.close()
+    return isoid
