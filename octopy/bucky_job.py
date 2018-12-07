@@ -189,7 +189,7 @@ ftp_client.get("/home/ubuntu/{run_id}_results.tar.gz".format(run_id=run_id),os.p
 print("Disconnecting from {}".format(host))
 ssh.close()
 print('Shutting down',instance_id)
-#ec2.instances.filter(InstanceIds=[instance_id]).terminate()
+ec2.instances.filter(InstanceIds=[instance_id]).terminate()
 
 #parse results, update database statuscodes, complete job
 parseResult(run_id,config)
