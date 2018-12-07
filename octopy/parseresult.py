@@ -1,106 +1,119 @@
 #!/usr/bin/env python3
-import csv
-import sys
-import os
+import csv,sys,os,shutil,shlex
+import subprocess as sub
 import sqlite3
+from sistr_parser import sistr_parser
+from ecoli_parser import ecoh_parser
+from ar_compile import ar_parse
 
-def parseResult(run_id):
+def parseResult(run_id,config):
     #init data struct
-    assem_stats = {}
     sal_sero = {}
-    strep_sero = {}
     ecoli = {}
-    ids = []
-    #get ids
-    conn = sqlite3.connect('../../db/octo.db')
+    statuscodes = {}
+
+    #get ids and status codes
+    db_path = os.path.join(config["db_path"],'octo.db')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
-    c.execute('''SELECT ISOID FROM {run_id}'''.format(run_id=run_id))
-    ISOIDS = c.fetchall()
+    c.execute('''SELECT ISOID,STATUSCODE FROM {run_id}'''.format(run_id=run_id))
+    rows = c.fetchall()
     conn.close()
-    #check to see if all assemblies were completed
-    for ISOID in ISOIDS:
-        id = ISOID[0]
-        if os.path.isfile('{0}/{0}_assembly.stats'.format(id)):
-            ids.append(id)
-    #parse assembly stats
-    for id in ids:
-        with open('{0}/{0}_assembly.stats'.format(id)) as statin:
-            result = ''
-            for line in statin:
-                if "sum" in line:
-                    result += line + ', '
-                elif "N50" in line:
-                    result += line.split(',')[0] + ', '
-                elif "N_count" in line:
-                    result += line + ', '
-                elif "Gaps" in line:
-                    result += line
-            assem_stats[id] = result
-    #TODO add section to parse serotype from sqlite database rather than scanning dir
+    for row in rows:
+        statuscodes[row[0]] = list(row[1])
+
+    #copy results from staging path to public path
+    #copy dir structure
+    inputpath = os.path.join(config["job_staging_path"],run_id+'_results/')
+    outputpath = 'public/results/'+run_id+'/'
+    for (root,dirs,files) in os.walk(inputpath):
+        structure = os.path.join(outputpath, root[len(inputpath):])
+        if not os.path.isdir(structure):
+            os.mkdir(structure)
+        else:
+            print("Folder already exists!")
+    #copyfiles
+    inputpath = os.path.join(config["job_staging_path"],run_id+'_results/')
+    outputpath = 'public/results/'+run_id+'/'
+    for (root,dirs,files) in os.walk(inputpath):
+        for file in files:
+            shutil.copy2(os.path.join(root,file),os.path.join(outputpath, root[len(inputpath):]))
+
+    #clear and run multiqc
+    try:
+        os.remove('public/results/'+run_id+'/multiqc_report.html')
+    except OSError:
+        pass
+    try:
+        os.rmdir('public/results/'+run_id+'/multiqc_data')
+    except OSError:
+        pass
+
+    multiqc_cmd = shlex.split('multiqc -d .')
+    sub.Popen(multiqc_cmd,cwd='public/results/'+run_id)
+
     #parse sal serotype
-    with open('sistr_summary.tsv','r') as salin:
+    sistr_parser('public/results/'+run_id)
+    with open('public/results/'+run_id+'/sistr_summary.tsv','r') as salin:
         reader = csv.reader(salin,delimiter='\t')
         for row in reader:
             if '/' not in row[0]:
                 sal_sero[row[0]] = '; '.join([row[1],row[2],row[5]])
-                if row[0] not in ids:
-                    ids.append(row[0])
+                if row[0] in statuscodes:
+                    statuscodes[row[0]][2] = '3'
 
-    #check if dictonary contains all ids, if not set empty
-    for id in ids:
-        if id not in assem_stats:
-            assem_stats[id] = None
-        if id not in sal_sero:
-            sal_sero[id] = None
-        if id not in strep_sero:
-            strep_sero[id] = None
-        if id not in ecoli:
-            ecoli[id] = None
+    #parse ecoli serotype
+    ecoh_parser('public/results/'+run_id)
+    with open('public/results/'+run_id+'/ecoh_summary.tsv','r') as salin:
+        reader = csv.reader(salin,delimiter='\t')
+        for row in reader:
+            if '/' not in row[0]:
+                ecoli[row[0]] = row[1]
+                if row[0] in statuscodes:
+                    statuscodes[row[0]][3] = '3'
+
+    #parse ar data
+    ar_completed_ids = ar_parse(config,'public/results/'+run_id)
 
     #setup database
-    conn = sqlite3.connect('../../db/octo.db')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
 
-    #update database
-    for id in ids:
-        c.execute('''UPDATE {run_id} SET SALTYPE = ?,
-            STREPTYPE = ?,
-            ECOLITYPE = ?,
-            STATS = ?
-            WHERE ISOID = ?'''.format(run_id=run_id),(sal_sero[id],strep_sero[id],ecoli[id],assem_stats[id],id))
+    #update database with serotypes
+    for id in statuscodes:
+        #update sal serotype
+        try:
+            sal_type = sal_sero[id]
+            c.execute('''UPDATE {run_id} SET SALTYPE = ? WHERE ISOID = ?'''.format(run_id=run_id),(sal_type,id))
+        except KeyError:
+            pass
 
-    #update assembly stats in seq_runs database
-    machine = run_id.split('_')[0]
-    date = run_id.split('_')[1]
-    c.execute('''UPDATE seq_runs SET STATS = 'True' WHERE MACHINE = ? AND DATE = ?''',(machine,date))
-    #update submission status in octo.db
-    #binary status code for runs:
-    #[fastqc,kraken,sal,ecoli,strep,ar] = "000000"
-    #0 - not run
-    #1 - submitted
-    #2 - finished
-    for id in ids:
-        c.execute('''SELECT * FROM {run_id} WHERE ISOID=?'''.format(run_id=run_id),(id,))
-        row = c.fetchone()
-        statuscode = row[2]
+        #update ecoli serotype
+        try:
+            ecoli_type = ecoli[id]
+            c.execute('''UPDATE {run_id} SET ECOLITYPE = ? WHERE ISOID = ?'''.format(run_id=run_id),(ecoli_type,id))
+        except KeyError:
+            pass
 
-        #update status code to change submitted to finished
-        newcode = ''
-        count = 0
-        for code in statuscode:
-            if count < 2:
-                newcode += code
-                count += 1
-            elif code == '1':
-                newcode += '2'
-                count += 1
-            else:
-                newcode += code
-                count += 1
+        #update ar statuscode
+        if id in ar_completed_ids:
+            statuscode[id][5] = 3
 
-        c.execute('''UPDATE {run_id} SET STATUSCODE = ? WHERE ISOID = ?'''.format(run_id=run_id),(newcode,id))
+    #update statuscodes
+    for id in statuscodes:
+        code = ''.join(statuscodes[id])
+        c.execute('''UPDATE {run_id} SET STATUSCODE = ? WHERE ISOID = ?'''.format(run_id=run_id),(code,id))
+
 
     #save changes to database
     conn.commit()
     #close the database
     conn.close()
+
+    #binary status code for runs:
+    #[fastqc,kraken,sal,ecoli,strep,ar] = "000000"
+    #0 - not run
+    #1 - submitted
+    #2 - in progress
+    #3 - finished
+    #4 - error
