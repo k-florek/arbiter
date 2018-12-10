@@ -98,7 +98,7 @@ def parseResult(run_id,config):
     #update multiqc results
     machine = run_id.split('_')[0]
     date = run_id.split('_')[1]
-    c.execute('''UPDATE seq_runs SET FASTQC='x' WHERE MACHINE={mach} AND DATE={date}'''.format(mach=machine,date=date))
+    c.execute("UPDATE seq_runs SET FASTQC='x' WHERE MACHINE=? AND DATE=?",(machine,date))
 
 
     #save changes to database
