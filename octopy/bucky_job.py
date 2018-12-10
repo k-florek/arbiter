@@ -100,10 +100,13 @@ for row in rows:
 preprocess_reads(stage_path)
 
 #check to see if instance is running
-state = instance.state['Code']
-if state<16:
+while True:
     state = instance.state['Code']
-    time.sleep(10)
+    if state<16:
+        state = instance.state['Code']
+        time.sleep(10)
+    else:
+        break
 
 #transfer the files to the amazon instance
 host = instance.public_dns_name
