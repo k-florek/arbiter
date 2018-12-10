@@ -39,17 +39,8 @@ def parseResult(run_id,config):
         for file in files:
             shutil.copy2(os.path.join(root,file),os.path.join(outputpath, root[len(inputpath):]))
 
-    #clear and run multiqc
-    try:
-        os.remove('public/results/'+run_id+'/multiqc_report.html')
-    except OSError:
-        pass
-    try:
-        os.rmdir('public/results/'+run_id+'/multiqc_data')
-    except OSError:
-        pass
-
-    multiqc_cmd = shlex.split('multiqc -d .')
+    #run multiqc
+    multiqc_cmd = shlex.split('multiqc -d -f .')
     sub.Popen(multiqc_cmd,cwd='public/results/'+run_id)
 
     #parse sal serotype

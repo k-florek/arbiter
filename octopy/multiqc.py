@@ -31,17 +31,9 @@ while True:
         break
     time.sleep(30)
 
-#clear and run multiqc
-try:
-    os.remove('public/results/'+run_id+'/multiqc_report.html')
-except OSError:
-    pass
-try:
-    os.rmdir('public/results/'+run_id+'/multiqc_data')
-except OSError:
-    pass
+#run multiqc
 
-multiqc_cmd = shlex.split('multiqc -d .')
+multiqc_cmd = shlex.split('multiqc -d -f .')
 sub.Popen(multiqc_cmd,cwd='public/results/'+run_id)
 
 #update multiqc status in db
