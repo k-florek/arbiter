@@ -49,9 +49,9 @@ block content
               else if isolate.STATUSCODE[0] === '2'
                 h5 In Progress
               else if isolate.STATUSCODE[0] === '3'
-                a(href= '/results/'+run_id+'/'+ isolate.FASTQC1)
+                a(href= '/results/'+run_id+'/'+isolate.ISOID+'/'+ isolate.FASTQC1)
                   button.btn.btn-light(type="button") Read 1
-                a(href= '/results/'+run_id+'/'+ isolate.FASTQC2)
+                a(href= '/results/'+run_id+'/'+isolate.ISOID+'/'+ isolate.FASTQC2)
                   button.btn.btn-light(type="button") Read 2
               else if isolate.STATUSCODE[0] === '4'
                 h5 Error
