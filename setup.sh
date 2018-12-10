@@ -3,4 +3,5 @@
 bower install
 npm install
 mkdir db
-pip3 install awscli boto3 paramiko multiqc
+pip3 install --user awscli boto3 paramiko multiqc
+mkdir public/results
