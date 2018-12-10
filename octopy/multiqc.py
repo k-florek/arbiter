@@ -31,7 +31,15 @@ while True:
         break
     time.sleep(30)
 
-#TODO check if multiqc exists already, if so remove it and make new
+#clear and run multiqc
+try:
+    os.remove('public/results/'+run_id+'/multiqc_report.html')
+except OSError:
+    pass
+try:
+    os.rmdir('public/results/'+run_id+'/multiqc_data')
+except OSError:
+    pass
 
 multiqc_cmd = shlex.split('multiqc -d .')
 sub.Popen(multiqc_cmd,cwd='public/results/'+run_id)
@@ -43,5 +51,5 @@ date = run_id.split('_')[1]
 db_path = os.path.join(config["db_path"],'octo.db')
 conn = sqlite3.connect(db_path)
 c = conn.cursor()
-c.execute('''UPDATE seq_runs SET FASTQC='x' WHERE MACHINE={mach} AND DATE={date}'''.format(mach=machine,date=date))
+c.execute("UPDATE seq_runs SET FASTQC='x' WHERE MACHINE='{mach}' AND DATE='{date}'".format(mach=machine,date=date))
 conn.close()
