@@ -43,5 +43,5 @@ date = run_id.split('_')[1]
 db_path = os.path.join(config["db_path"],'octo.db')
 conn = sqlite3.connect(db_path)
 c = conn.cursor()
-c.execute("UPDATE seq_runs SET FASTQC='x' WHERE MACHINE='{mach}' AND DATE='{date}'".format(mach=machine,date=date))
+c.execute("UPDATE seq_runs SET FASTQC='x' WHERE MACHINE=? AND DATE=?",(machine,date))
 conn.close()
