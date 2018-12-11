@@ -79,12 +79,12 @@ instance = ec2.Instance(instance_id)
 
 #transfer the raw files from storage and preprocess them
 print('Transfering reads from stoage for preprocessing {runid}'.format(runid=run_id))
-stage_path = os.path.join(config["job_staging_path"],run_id)
+stage_path_runid = os.path.join(config["job_staging_path"],run_id)
 try:
-    os.mkdir(stage_path)
+    os.mkdir(stage_path_runid)
 except FileExistsError:
-    shutil.rmtree(stage_path)
-    os.mkdir(stage_path)
+    shutil.rmtree(stage_path_runid)
+    os.mkdir(stage_path_runid)
 
 conn = sqlite3.connect(db_path)
 c = conn.cursor()
@@ -92,12 +92,12 @@ c.execute('''SELECT READ1,READ2 FROM {run_id}'''.format(run_id=run_id))
 rows = c.fetchall()
 conn.close()
 for row in rows:
-    r1 = sub.Popen(['cp',row[0],stage_path])
-    r2 = sub.Popen(['cp',row[1],stage_path])
+    r1 = sub.Popen(['cp',row[0],stage_path_runid])
+    r2 = sub.Popen(['cp',row[1],stage_path_runid])
     r1.wait()
     r2.wait()
 
-preprocess_reads(stage_path)
+preprocess_reads(stage_path_runid)
 
 #check to see if instance is running
 while True:
@@ -136,7 +136,7 @@ while True:
 #setup for sftp
 #compress the raw reads folder
 print('Transfering preprocessed reads to AWS instance {aws}'.format(aws=instance_id))
-cmd = 'tar -czf {run_id_path}.tar.gz {run_id}'.format(run_id_path=stage_path,run_id=run_id)
+cmd = 'tar -czf {run_id}.tar.gz {run_id}'.format(run_id=run_id)
 cmd = shlex.split(cmd)
 sub.Popen(cmd,cwd=config["job_staging_path"]).wait()
 ftp_client = ssh.open_sftp()
@@ -174,7 +174,8 @@ while completion == False:
     for f in file_list:
         if '_results' in f:
             completion = True
-    time.sleep(30)
+            time.sleep(120)
+    time.sleep(60)
 
 #compress and transfer the result files back
 print("Transfer results back from {}".format(host))
@@ -195,6 +196,10 @@ print('Shutting down',instance_id)
 ec2.instances.filter(InstanceIds=[instance_id]).terminate()
 
 #parse results, update database statuscodes, complete job
+#decompress result package
+cmd = 'tar -xzf {run_id}_results.tar.gz'.format(run_id=run_id)
+cmd = shlex.split(cmd)
+sub.Popen(cmd,cwd=config["job_staging_path"]).wait()
 parseResult(run_id,config)
 
 #update submission status in octo.db
