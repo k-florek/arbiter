@@ -202,11 +202,9 @@ cmd = shlex.split(cmd)
 sub.Popen(cmd,cwd=config["job_staging_path"]).wait()
 parseResult(run_id,config)
 
-#update submission status in octo.db
-#binary status code for runs:
-#[fastqc,kraken,sal,ecoli,strep,ar] = "000000"
-#0 - not run
-#1 - submitted
-#2 - in progress
-#3 - finished
-#4 - error
+#cleanup
+shutil.rmtree(stage_path_runid)
+shutil.rmtree(stage_path_runid+'/{run_id}_results'.format(run_id=run_id))
+#os.remove(os.path.join(config["job_staging_path"],run_id + '.csv'))
+#os.remove(os.path.join(config["job_staging_path"],run_id + '_results.tar.gz'))
+#os.remove(os.path.join(config["job_staging_path"],run_id + '.tar.gz'))
