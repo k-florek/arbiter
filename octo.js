@@ -69,7 +69,8 @@ function checkAuth(req,res,next){
   if(!req.session.user_id){
     //temp skip login
     //req.session.user_id = 'cddbact';
-    res.redirect('/');
+    //res.redirect('/login');
+    res.redirect('/login');
   } else {
     next();
   }
