@@ -30,23 +30,23 @@ def getStatusCodes():
         codes[row[0]] = row[1]
     return codes
 
-#write the status codes to a csv file that can be used by bucky-tr to run the pipeline
-#check to see if we have a job
+
+#check to see if we have a job if so add it to a list of job ids
 statuscodes = getStatusCodes()
-check_job = False
+job_ids = []
 i = 0
-while check_job == False:
+while not job_ids:
     for key in statuscodes:
-        if '1' in statuscodes[key]:
-            check_job = True
-            break
+        if '1' in list(statuscodes[key])[2:]:
+            job_ids.append(key)
     time.sleep(30)
     statuscodes = getStatusCodes()
-    #exit if nothing done after 5 checks
+    #exit if no jobs after 5 checks
     i += 1
     if i > 5:
         sys.exit(1)
 
+#write the status codes to a csv file that can be used by bucky-tr to run the pipeline
 job_file = os.path.join(config["job_staging_path"],run_id+".csv")
 with open(job_file,'w') as csvout:
     wr = csv.writer(csvout,delimiter=',')
@@ -88,14 +88,16 @@ except FileExistsError:
 
 conn = sqlite3.connect(db_path)
 c = conn.cursor()
-c.execute('''SELECT READ1,READ2 FROM {run_id}'''.format(run_id=run_id))
+c.execute('''SELECT READ1,READ2,ISOID FROM {run_id}'''.format(run_id=run_id))
 rows = c.fetchall()
 conn.close()
 for row in rows:
-    r1 = sub.Popen(['cp',row[0],stage_path_runid])
-    r2 = sub.Popen(['cp',row[1],stage_path_runid])
-    r1.wait()
-    r2.wait()
+    #only transfer reads we have a job for
+    if row[2] in job_ids:
+        r1 = sub.Popen(['cp',row[0],stage_path_runid])
+        r2 = sub.Popen(['cp',row[1],stage_path_runid])
+        r1.wait()
+        r2.wait()
 
 preprocess_reads(stage_path_runid)
 
@@ -166,7 +168,7 @@ else:
 print("Starting Bucky-TR on {}".format(host))
 stdin,stdout,stderr = ssh.exec_command("bucky-tr/bucky-tr.py -t 8 -c {run_id}.csv {run_id}".format(run_id=run_id))
 
-#monitor for job completed
+#monitor for job completion
 completion = False
 while completion == False:
     stdin,stdout,stderr = ssh.exec_command('ls {run_id}'.format(run_id=run_id))
@@ -174,11 +176,11 @@ while completion == False:
     for f in file_list:
         if '_results' in f:
             completion = True
-            time.sleep(120)
     time.sleep(60)
+time.sleep(120)
 
 #compress and transfer the result files back
-print("Transfer results back from {}".format(host))
+print("Compressing results on {}".format(host))
 stdin,stdout,stderr = ssh.exec_command("cd {run_id} && tar -czf ../{run_id}_results.tar.gz {run_id}_results".format(run_id=run_id))
 exit_status = stdout.channel.recv_exit_status()          # Blocking call
 if exit_status == 0:
@@ -186,8 +188,10 @@ if exit_status == 0:
 else:
     print("Error", exit_status)
 
+print("Transfering result package from {}".format(host))
 ftp_client = ssh.open_sftp()
 ftp_client.get("/home/ubuntu/{run_id}_results.tar.gz".format(run_id=run_id),os.path.join(config["job_staging_path"],"{run_id}_results.tar.gz".format(run_id=run_id)))
+ftp_client.close()
 
 #terminate the instance
 print("Disconnecting from {}".format(host))
@@ -197,14 +201,18 @@ ec2.instances.filter(InstanceIds=[instance_id]).terminate()
 
 #parse results, update database statuscodes, complete job
 #decompress result package
+print("Decompressing results package")
 cmd = 'tar -xzf {run_id}_results.tar.gz'.format(run_id=run_id)
 cmd = shlex.split(cmd)
 sub.Popen(cmd,cwd=config["job_staging_path"]).wait()
+print("Parsing results ...")
 parseResult(run_id,config)
 
 #cleanup
+print("Finished parsing, cleaning up")
 shutil.rmtree(stage_path_runid)
 shutil.rmtree(stage_path_runid+'/{run_id}_results'.format(run_id=run_id))
 #os.remove(os.path.join(config["job_staging_path"],run_id + '.csv'))
 #os.remove(os.path.join(config["job_staging_path"],run_id + '_results.tar.gz'))
 #os.remove(os.path.join(config["job_staging_path"],run_id + '.tar.gz'))
+print("Done")
