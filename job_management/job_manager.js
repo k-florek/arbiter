@@ -179,6 +179,12 @@ buckyQueue.process(1,require('./bucky_processor'));
 buckyQueue.on('completed', function(job,result){
   //do something on completion
   console.log('Completed bucky job:',job.data['run_id']);
+  if(job.data['stdout']) {
+    console.log(job.data['stdout']);
+  }
+  if(job.data['stderr']) {
+    console.log(job.data['stderr']);
+  }
   job.remove();
 });
 buckyQueue.on('active',function(job,jobPromise){

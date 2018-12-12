@@ -14,10 +14,10 @@ module.exports = function(job,done){
 
   let ch = child.execFile('octopy/bucky_job.py',[run_id,path]);
   ch.stdout.on('data',(data)=>{
-    job.progress(data);
+    job.update('stdout',data);
   });
   ch.stderr.on('data',(data)=>{
-    job.progress(data);
+    job.update('stderr',data);
   });
   ch.on('error',(err)=>{
     done(err);
