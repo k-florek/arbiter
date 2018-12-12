@@ -14,12 +14,13 @@ module.exports = function(job,done){
 
   let ch = child.execFile('octopy/bucky_job.py',[run_id,path]);
   ch.stdout.on('data',(data)=>{
-    job.update('stdout',data);
+    console.log(run_id+' Bucky-TR update: '+data);
   });
   ch.stderr.on('data',(data)=>{
-    job.update('stderr',data);
+    console.log(run_id+' Bucky-TR error: '+data);
   });
   ch.on('error',(err)=>{
+    console.log(run_id+' Bucky-TR error: '+err);
     done(err);
   });
   ch.on('close',(code)=>{
