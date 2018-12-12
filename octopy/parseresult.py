@@ -64,7 +64,7 @@ def parseResult(run_id,config):
                     statuscodes[row[0]][3] = '3'
 
     #parse ar data
-    ar_completed_ids = ar_parse(config,'public/results/'+run_id)
+    ar_completed_ids = ar_parse(config,run_id)
 
     #setup database
     conn = sqlite3.connect(db_path)
@@ -89,6 +89,14 @@ def parseResult(run_id,config):
         #update ar statuscode
         if id in ar_completed_ids:
             statuscode[id][5] = 3
+
+    #set codes that are still 1 for assembly based functions to failed
+    for id in statuscodes:
+        idx = 2
+        while idx < len(statuscodes[id]):
+            if '1' == statuscodes[id][idx]:
+                statuscodes[id][idx] = '4'
+            idx += 1
 
     #update statuscodes
     for id in statuscodes:
