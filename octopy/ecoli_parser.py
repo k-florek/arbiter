@@ -8,7 +8,7 @@ import os
 import csv
 
 def ecoh_parser(d):
-    results = dict()
+    results = {}
     p_list = []
     for root,dirs,files in os.walk(d):
         for f in files:
@@ -17,8 +17,7 @@ def ecoh_parser(d):
 
     for item in p_list:
         with open(item,'r') as r_file:
-            read = csv.reader(r_file,delimiter=',')
-            results = {}
+            read = csv.reader(r_file,delimiter='\t')
             for row in read:
                 if "#FILE" not in row:
                     #check coverage (8) and identity (9)
