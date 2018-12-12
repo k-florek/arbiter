@@ -4,9 +4,6 @@ import sys,os,csv
 import subprocess as sub
 import sqlite3
 
-run_id = sys.argv[1]
-files = sys.argv[2:]
-
 covThresh = 90
 identThresh = 90
 
@@ -44,14 +41,15 @@ def summarize(path):
     cmd = 'find . -name "*_vfdb.csv" | xargs cat > vf_all.csv'
     sub.Popen(cmd,shell=True,cwd=path)
 
-def ar_parse(config,path):
+def ar_parse(config,run_id):
+    path = 'public/results/'+run_id
     #compile all individual result files
-    summarzie(path)
+    summarize(path)
     files = ['resFind_all.csv','card_all.csv','NCBIres_all.csv']
     #start parsing result
     arList = []
     for file in files:
-        with open(file,'r') as csvfile:
+        with open(os.path.join(path,file),'r') as csvfile:
             reader = csv.reader(csvfile,delimiter='\t')
             for line in reader:
                 if '#' not in line[0]:
@@ -74,7 +72,7 @@ def ar_parse(config,path):
 
     #update database
     #setup database
-    conn = sqlite3.connect(config["db_path"])
+    conn = sqlite3.connect(os.path.join(config["db_path"],'octo.db'))
     c = conn.cursor()
     c.execute('''CREATE TABLE if not exists AR (ID INTEGER PRIMARY KEY AUTOINCREMENT,RUNID TEXT,ISOID TEXT,GENE TEXT,CONTIG TEXT,GSTART TEXT,GEND TEXT,COVERAGE TEXT,IDENTITY TEXT,DATABASE TEXT,ACCESSION TEXT,DESCRIPTION TEXT)''')
     for id in isoid:
