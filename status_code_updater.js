@@ -82,7 +82,6 @@ function statusCodeUpdater(run,isolate,job,code){
     //for the rows obtained (should be just 1) update the statuscode
     rows.forEach(function(row){
       let statuscode = row['STATUSCODE'];
-      console.log(isolate,statuscode)
       switch(String(job)){
         case 'fastqc':
           statuscode = replaceAt(0,code,statuscode);
