@@ -102,15 +102,20 @@ for row in rows:
 preprocess_reads(stage_path_runid)
 
 #check to see if instance is running
+i = 0
 while True:
+    instance.load()
     state = instance.state['Code']
-    if state<16:
-        state = instance.state['Code']
-        time.sleep(10)
-    else:
+    if state > 0:
         break
+    if i > 5:
+        print("AWS instance did not become available, code: ",state)
+        ec2.instances.filter(InstanceIds=[instance_id]).terminate()
+        sys.exit()
+    i += 1
+    time.sleep(15)
 
-#transfer the files to the amazon instance
+#establish ssh connection to the instance
 host = instance.public_dns_name
 key = paramiko.RSAKey.from_private_key_file(config["aws_key"])
 
@@ -210,8 +215,8 @@ parseResult(run_id,config)
 
 #cleanup
 print("Finished parsing, cleaning up")
-shutil.rmtree(stage_path_runid)
-shutil.rmtree(stage_path_runid+'/{run_id}_results'.format(run_id=run_id))
+#shutil.rmtree(config["job_staging_path"]+'/{run_id}'.format(run_id=run_id))
+#shutil.rmtree(config["job_staging_path"]+'/{run_id}_results'.format(run_id=run_id))
 #os.remove(os.path.join(config["job_staging_path"],run_id + '.csv'))
 #os.remove(os.path.join(config["job_staging_path"],run_id + '_results.tar.gz'))
 #os.remove(os.path.join(config["job_staging_path"],run_id + '.tar.gz'))
