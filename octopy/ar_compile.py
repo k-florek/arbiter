@@ -54,7 +54,7 @@ def ar_parse(config,run_id):
             for line in reader:
                 if '#' not in line[0]:
                     if float(line[8]) > covThresh and float(line[9]) > identThresh:
-                        data = AR(line[0].split('_')[0],line[1],line[2],line[3],line[4],line[8],line[9],line[10],line[11],line[12])
+                        data = AR(line[0].split('.')[0],line[1],line[2],line[3],line[4],line[8],line[9],line[10],line[11],line[12])
                         if checkExists(data,arList):
                             for entry in arList:
                                 if data.hash == entry.hash:
