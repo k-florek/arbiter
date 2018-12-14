@@ -30,16 +30,16 @@ def checkExists(arData,dataList):
 def summarize(path):
     #summarize all results
     cmd = 'find . -name "*_resfinder.csv" | xargs cat > resFind_all.csv'
-    sub.Popen(cmd,shell=True,cwd=path)
+    sub.Popen(cmd,shell=True,cwd=path).wait()
 
     cmd = 'find . -name "*_card.csv" | xargs cat > card_all.csv'
-    sub.Popen(cmd,shell=True,cwd=path)
+    sub.Popen(cmd,shell=True,cwd=path).wait()
 
     cmd = 'find . -name "*_ncbi.csv" | xargs cat > NCBIres_all.csv'
-    sub.Popen(cmd,shell=True,cwd=path)
+    sub.Popen(cmd,shell=True,cwd=path).wait()
 
     cmd = 'find . -name "*_vfdb.csv" | xargs cat > vf_all.csv'
-    sub.Popen(cmd,shell=True,cwd=path)
+    sub.Popen(cmd,shell=True,cwd=path).wait()
 
 def ar_parse(config,run_id):
     path = 'public/results/'+run_id
