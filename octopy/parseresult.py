@@ -88,7 +88,7 @@ def parseResult(run_id,config):
 
         #update ar statuscode
         if id in ar_completed_ids:
-            statuscode[id][5] = '3'
+            statuscodes[id][5] = '3'
 
     #set codes that are still 1 for assembly based functions to failed
     for id in statuscodes:
