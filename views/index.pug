@@ -4,6 +4,8 @@ block content
   script().
     $(document).ready(function () {
       var runTable = $('#seqruns').DataTable({
+        "pageLength": 20,
+        "lengthMenu": [10,20,50,100],
         "dom": "<'row'<'col'rt>> <'row'<'col'i><'col'p><'col'l>>",
         "order": [[0,"desc"]],
         "columns": [
@@ -19,7 +21,7 @@ block content
         runTable.search($(this).val()).draw();
       });
     });
-  .container
+  .octo-data-container
     table#seqruns.table.table-hover
       thead
         tr
