@@ -47,33 +47,33 @@ function jobSubmit (page,res,job_selection,run_id) {
   let multiJob = false;
   //parse job selection and add ids to selected jobs
   for (let key in job_selection){
-    if (key.includes('fastqc_check_')) {
+    if (key.includes('fastqc_check_') && !key.includes('fastqc_check_all')) {
       //add isolate details to fastqcQueue
       fastqcQueue.add({id: key.split('_')[2],run: run_id,path: run_dir});
       //add isolate to queue
       fastqc_ids.push(key.split('_')[2]);
       multiJob = true;
     }
-    if (key.includes('kraken_check_')) {
+    if (key.includes('kraken_check_') && !key.includes('kraken_check_all')) {
       //add isolate details to krakenQueue
       krakenQueue.add({id: key.split('_')[2],run: run_id,path: run_dir});
       //add isolate to queue
       kraken_ids.push(key.split('_')[2]);
     }
     //generate id list for bucky jobs
-    if (key.includes('sal_check_')) {
+    if (key.includes('sal_check_') && !key.includes('sal_check_all')) {
       sal_ids.push(key.split('_')[2]);
       buckyJob = true;
     }
-    if (key.includes('ecoli_check_')) {
+    if (key.includes('ecoli_check_') && !key.includes('ecoli_check_all')) {
       ecoli_ids.push(key.split('_')[2]);
       buckyJob = true;
     }
-    if (key.includes('strep_check_')) {
+    if (key.includes('strep_check_') && !key.includes('strep_check_all')) {
       strep_ids.push(key.split('_')[2]);
       buckyJob = true;
     }
-    if (key.includes('ar_check_')) {
+    if (key.includes('ar_check_') && !key.includes('ar_check_all')) {
       ar_ids.push(key.split('_')[2])
       buckyJob = true;
     }

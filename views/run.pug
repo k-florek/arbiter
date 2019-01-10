@@ -5,7 +5,6 @@ block content
       let all_checkboxes = document.getElementsByClassName('checkbox-input');
       let checkboxes = [];
       for (let i=0;i<all_checkboxes.length;i++){
-        console.log(all_checkboxes[i].id);
         if (all_checkboxes[i].id == _id) {
             checkboxes.push(all_checkboxes[i]);
           }
@@ -31,47 +30,47 @@ block content
           { "orderable": false }
         ]
       });
-      
+
       //allow search bar to filter
       $('#searchText').keyup(function(){
         runTable.search($(this).val()).draw();
       });
     });
   .octo-data-container
-    table#seqruns.table.table-hover
-      thead
-        tr
-          th.text-center(rowspan='2',style="vertical-align:middle")
-            H4 Isolate
-          th.text-center
-            H4 FastQC
-          th.text-center
-            H4 Kraken 
-          th.text-center
-            H4 Sal Serotyping
-          th.text-center
-            H4 E coli Serotyping
-          th.text-center
-            H4 Strep Serotyping
-          th.text-center
-            H4 AR Detection
-          th
-        tr
-          th.text-center
-            input.checkbox-input(type="checkbox",name='fastqc_check_all',onClick="toggle(this,'fastqc')") 
-          th.text-center
-            input.checkbox-input(type="checkbox",name='kraken_check_all',onClick="toggle(this,'kraken')")
-          th.text-center
-            input.checkbox-input(type="checkbox",name='typing_check_all',onClick="toggle(this,'sal')")
-          th.text-center
-            input.checkbox-input(type="checkbox",name='typing_check_all',onClick="toggle(this,'ecoli')")
-          th.text-center
-            input.checkbox-input(type="checkbox",name='typing_check_all',onClick="toggle(this,'strep')")
-          th.text-center
-            input.checkbox-input(type="checkbox",name='typing_check_all',onClick="toggle(this,'ar')",checked)
-          th
-      tbody 
-        form(action='/status/'+ run_id ,method='post',id='job')
+    form(action='/status/'+ run_id ,method='post',id='job')
+      table#seqruns.table.table-hover
+        thead
+          tr
+            th.text-center(rowspan='2',style="vertical-align:middle")
+              H4 Isolate
+            th.text-center
+              H4 FastQC
+            th.text-center
+              H4 Kraken 
+            th.text-center
+              H4 Sal Serotyping
+            th.text-center
+              H4 E coli Serotyping
+            th.text-center
+              H4 Strep Serotyping
+            th.text-center
+              H4 AR Detection
+            th
+          tr
+            th.text-center
+              input.checkbox-input(type="checkbox",name='fastqc_check_all',onClick="toggle(this,'fastqc')") 
+            th.text-center
+              input.checkbox-input(type="checkbox",name='kraken_check_all',onClick="toggle(this,'kraken')")
+            th.text-center
+              input.checkbox-input(type="checkbox",name='typing_check_all',onClick="toggle(this,'sal')")
+            th.text-center
+              input.checkbox-input(type="checkbox",name='typing_check_all',onClick="toggle(this,'ecoli')")
+            th.text-center
+              input.checkbox-input(type="checkbox",name='typing_check_all',onClick="toggle(this,'strep')")
+            th.text-center
+              input.checkbox-input(type="checkbox",name='typing_check_all',onClick="toggle(this,'ar')",checked)
+            th
+        tbody 
           each isolate, i in isolates
             tr
               td.text-center
