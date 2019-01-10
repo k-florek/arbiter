@@ -101,18 +101,6 @@ app.get('/',checkAuth, function(req, res){
   getruns.getRuns('index',res);
 });
 
-//By MACHINE
-app.get('/machine/:machinename',checkAuth, function(req, res){
-  let machinename = req.params.machinename;
-  getruns.getRuns('index',res,machinename);
-});
-
-//By Date
-app.get('/date/:date',checkAuth, function(req, res){
-  let date = req.params.date;
-  getruns.getRuns('index',res,'',date);
-});
-
 //update database
 app.get('/updatedb',checkAuth, function(req, res){
   updatedb.update('index',res);

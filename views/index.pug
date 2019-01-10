@@ -1,39 +1,59 @@
 extends navbar_main
 
 block content
+  script().
+    $(document).ready(function () {
+      var runTable = $('#seqruns').DataTable({
+        "dom": "<'row'<'col'rt>> <'row'<'col'i><'col'p><'col'l>>",
+        "order": [[0,"desc"]],
+        "columns": [
+          null,
+          null,
+          { "orderable": false },
+          { "orderable": false },
+          { "orderable": false },
+          { "orderable": false }
+        ]
+      });
+      $('#searchText').keyup(function(){
+        runTable.search($(this).val()).draw();
+      });
+    });
   .container
-    table.table.table-striped
+    table#seqruns.table.table-hover
       thead
         tr
-          th 
-            H4 Date
-          th 
-            H4 Machine
-      tbody 
-      each run, i in runs
-        tr
-          td
-            a(href="/date/" + run.DATE)
-              button.btn.btn-dark(type="button")= run.DATE
-          td
-            a(href= "/machine/" + run.MACHINE) 
-              button.btn.btn-dark(type="button")= run.MACHINE
-          td 
-            if run.FASTQC
-              a(href="/results/"+run.MACHINE+"_"+run.DATE+"/multiqc_report.html") 
-                button.btn.btn-success(type="button") MultiQC
-            else 
+          th.dt-center(style="text-align: center")
+            h5 Date
+          th.dt-center(style="text-align: center")
+            h5 Machine
+          th
+          th
+          th
+          th
+      tbody
+        each run, i in runs
+          tr
+            td.dt-center(style="text-align: center")
+              h5= run.DATE
+            td.dt-center(style="text-align: center")
+              h5= run.MACHINE
+            td.dt-center(style="text-align: center")
+              if run.FASTQC
+                a(href="/results/"+run.MACHINE+"_"+run.DATE+"/multiqc_report.html") 
+                  button.btn.btn-success(type="button") MultiQC
+              else 
+                a(href="#") 
+                  button.btn.btn-light(type="button") MultiQC
+            td.dt-center(style="text-align: center")
               a(href="#") 
-                button.btn.btn-light(type="button") MultiQC
-          td 
-            a(href="#") 
-              button.btn.btn-light(type="button") Kraken
-          td 
-            a(href="/status/"+run.MACHINE+"_"+run.DATE) 
-              button.btn.btn-info(type="button") Show
-          //td 
-            a(href="#") 
-              button.btn.btn-info(type="button") Edit
-          td
-            a(href="/delete/"+run.MACHINE+"/"+run.DATE)
-              button.btn.btn-danger(type="button") Delete
+                button.btn.btn-light(type="button") Kraken
+            td.dt-center(style="text-align: center")
+              a(href="/status/"+run.MACHINE+"_"+run.DATE) 
+                button.btn.btn-info(type="button") Show
+            //td.dt-center(style="text-align: center")
+              a(href="#") 
+                button.btn.btn-info(type="button") Edit
+            td.dt-center(style="text-align: center")
+              a(href="/delete/"+run.MACHINE+"/"+run.DATE)
+                button.btn.btn-danger(type="button") Delete
