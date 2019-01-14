@@ -14,6 +14,7 @@ block content
           { "orderable": false },
           { "orderable": false },
           { "orderable": false },
+          { "orderable": false },
           { "orderable": false }
         ]
       });
@@ -29,6 +30,7 @@ block content
             h5 Date
           th.dt-center(style="text-align: center")
             h5 Machine
+          th
           th
           th
           th
@@ -50,6 +52,13 @@ block content
             td.dt-center(style="text-align: center")
               a(href="#") 
                 button.btn.btn-light(type="button") Kraken
+            td.dt-center(style="text-align: center")
+              if run.AR
+                a(href="/ar_results/"+run.MACHINE+"_"+run.DATE) 
+                  button.btn.btn-success(type="button") AR
+              else
+                a(href="#")
+                  button.btn.btn-light(type="button") AR
             td.dt-center(style="text-align: center")
               a(href="/status/"+run.MACHINE+"_"+run.DATE) 
                 button.btn.btn-info(type="button") Show

@@ -6,6 +6,7 @@ const getiso = require('./get_iso');
 const scaniso = require('./scan_iso');
 const js = require('./job_management/job_manager');
 const jobQueue = require('./get_jobQueue');
+const getAR = require('./get_ar');
 
 //standard modules
 const session = require('express-session');
@@ -33,7 +34,7 @@ db = new sqlite.Database(path.join(config.db_path,'octo.db'), (err) => {
   if (err) {
     return console.error(err.message);
   }
-  db.run(`CREATE TABLE if not exists seq_runs (ID INTEGER PRIMARY KEY AUTOINCREMENT, MACHINE TEXT NOT NULL, DATE DATE NOT NULL, PATH TEXT UNIQUE NOT NULL,FASTQC TEXT,KRAKEN TEXT,STATS TEXT)`, (err) => {
+  db.run(`CREATE TABLE if not exists seq_runs (ID INTEGER PRIMARY KEY AUTOINCREMENT, MACHINE TEXT NOT NULL, DATE DATE NOT NULL, PATH TEXT UNIQUE NOT NULL,FASTQC TEXT,KRAKEN TEXT,AR TEXT)`, (err) => {
     if (err) {
       return console.error(err.message);
     }
@@ -112,6 +113,18 @@ app.get('/status/:runid',checkAuth, function(req,res){
   getiso.getIso('run',res,runid);
 });
 
+//get ar results
+app.get('/ar_results/:runid',checkAuth, function(req,res){
+  let runid = req.params.runid;
+  getAR.getAR('ar',res,runid)
+});
+app.get('/ar_results/:runid/:isoid',checkAuth, function(req,res){
+  let runid = req.params.runid;
+  let isoid = req.params.isoid;
+  getAR.getAR('ar',res,runid,isoid)
+});
+
+//show job queue
 app.get('/job_queue',checkAuth,function(req,res){
   jobQueue.getJobStatus('job_queue',res);
 });

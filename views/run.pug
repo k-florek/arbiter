@@ -145,7 +145,7 @@ block content
                 else if isolate.STATUSCODE[5] === '2'
                   h5 In Progress
                 else if isolate.STATUSCODE[5] === '3'
-                  a(href= '#') 
+                  a(href="/ar_results/"+run_id+"/"+isolate.ISOID) 
                     button.btn.btn-light(type="button") Results
                 else if isolate.STATUSCODE[5] === '4'
                   p Assembly Error

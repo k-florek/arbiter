@@ -82,6 +82,10 @@ def ar_parse(config,run_id):
                     GSTART,GEND,COVERAGE,IDENTITY,DATABASE,ACCESSION,DESCRIPTION) VALUES
                     (?,?,?,?,?,?,?,?,?,?,?)''',(run_id,entry.isoid,entry.gene,entry.seq,entry.start,entry.end,entry.cov,entry.iden,entry.db,entry.asc,entry.descript))
 
+    #indicate that changes have been made to ar database for this run
+    machine = run_id.split('_')[0]
+    date = run_id.split('_')[1]
+    c.execute('''UPDATE seq_runs SET AR = "x" WHERE (MACHINE=? AND DATE=?)''',(machine,date))
     #save changes to database
     conn.commit()
     #close the database
