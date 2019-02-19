@@ -68,7 +68,7 @@ BDM = [{"DeviceName": "/dev/sda1",
 
 instance_id = ec2.create_instances(
     BlockDeviceMappings=BDM,
-    ImageId="ami-02a5aab546fb4d3c4",
+    ImageId="ami-023b10073787a2c99",
     MinCount=1,
     MaxCount=1,
     InstanceType="c4.2xlarge",
