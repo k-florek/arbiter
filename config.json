@@ -1,9 +1,9 @@
 {
-  "run_dir": "",
-  "lib_path": "",
-  "db_path":"",
-  "job_staging_path": "",
+  "run_dir": "/run/user/3113/gvfs/smb-share:domain=slhdomain,server=slhdatamiseq,share=data,user=floreknx/CDD/Miseq/",
+  "lib_path": "/home/floreknx/Desktop/octopodes/lib",
+  "db_path":"/home/floreknx/Desktop/octopodes/db",
+  "job_staging_path": "/home/floreknx/Desktop/octopodes/job_submission",
   "kraken_aws_json": "",
-  "bucky-tr_aws_json": "",
-  "aws_key": ""
+  "bucky-tr_aws_json": "/home/floreknx/Desktop/octopodes/bucky_aws.json",
+  "aws_key": "/home/floreknx/.aws_keys/octopodes.pem"
 }

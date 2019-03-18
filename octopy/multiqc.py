@@ -33,7 +33,7 @@ while True:
 
 #run multiqc
 
-multiqc_cmd = shlex.split('multiqc -d -f .')
+multiqc_cmd = shlex.split('multiqc -d -f -c ../../../multiqc_config.yaml .')
 sub.Popen(multiqc_cmd,cwd='public/results/'+run_id)
 
 #update multiqc status in db
