@@ -1,1 +1,1 @@
-* Octopodes
+* SkySeq-QC
