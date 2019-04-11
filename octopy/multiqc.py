@@ -19,7 +19,7 @@ while True:
     db_path = os.path.join(config["db_path"],'octo.db')
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
-    c.execute('''SELECT ISOID,STATUSCODE FROM {run_id}'''.format(run_id=run_id))
+    c.execute('''SELECT ISOID,STATUSCODE FROM seq_QC where RUNID = {run_id}'''.format(run_id=run_id))
     rows = c.fetchall()
     conn.close()
 
@@ -33,7 +33,7 @@ while True:
 
 #run multiqc
 
-multiqc_cmd = shlex.split('multiqc -d -f -c ../../../multiqc_config.yaml .')
+multiqc_cmd = shlex.split('multiqc -d -f .')
 sub.Popen(multiqc_cmd,cwd='public/results/'+run_id)
 
 #update multiqc status in db

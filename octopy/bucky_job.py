@@ -22,7 +22,7 @@ db_path = os.path.join(config["db_path"],'octo.db')
 def getStatusCodes():
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
-    c.execute('''SELECT ISOID,STATUSCODE FROM {run_id}'''.format(run_id=run_id))
+    c.execute('''SELECT ISOID,STATUSCODE FROM seq_QC where RUNID = {run_id}'''.format(run_id=run_id))
     rows = c.fetchall()
     conn.close()
     codes = {}
@@ -68,7 +68,7 @@ BDM = [{"DeviceName": "/dev/sda1",
 
 instance_id = ec2.create_instances(
     BlockDeviceMappings=BDM,
-    ImageId="ami-010f7140e893fca69",
+    ImageId="ami-02a5aab546fb4d3c4",
     MinCount=1,
     MaxCount=1,
     InstanceType="c4.2xlarge",
@@ -88,7 +88,7 @@ except FileExistsError:
 
 conn = sqlite3.connect(db_path)
 c = conn.cursor()
-c.execute('''SELECT READ1,READ2,ISOID FROM {run_id}'''.format(run_id=run_id))
+c.execute('''SELECT READ1,READ2,ISOID FROM seq_QC where RUNID = {run_id}'''.format(run_id=run_id))
 rows = c.fetchall()
 conn.close()
 for row in rows:
@@ -160,12 +160,12 @@ if exit_status == 0:
 else:
     print("Error", exit_status)
 
-#grab pipeline
-print("Get Bucky-TR on {}".format(host))
-stdin,stdout,stderr = ssh.exec_command("git clone https://github.com/nwflorek/bucky-tr.git")
+#update bucky-tr
+print("Checking for Bucky-TR updates on {}".format(host))
+stdin,stdout,stderr = ssh.exec_command("cd bucky-tr && git pull origin")
 exit_status = stdout.channel.recv_exit_status()          # Blocking call
 if exit_status == 0:
-    print ("Got Bucky-TR pipeline")
+    print ("Updated Bucky-TR")
 else:
     print("Error", exit_status)
 

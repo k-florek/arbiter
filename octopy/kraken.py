@@ -20,7 +20,7 @@ with open("config.json",'r') as readjson:
 #get reads
 conn = sqlite3.connect(db_path)
 c = conn.cursor()
-c.execute('''SELECT READ1,READ2 FROM {run_id} WHERE ISOID=?'''.format(run_id=run_id),(id,))
+c.execute('''SELECT READ1,READ2 FROM seq_QC where RUNID = {run_id} WHERE ISOID=?'''.format(run_id=run_id),(id,))
 rows = c.fetchall()
 conn.close()
 read1_path = rows[0][0]
@@ -144,13 +144,13 @@ c = conn.cursor()
 #2 - in progress
 #3 - finished
 #4 - error
-c.execute('''SELECT * FROM {run_id} WHERE ISOID=?'''.format(run_id=run_id),(id,))
+c.execute('''SELECT * FROM seq_QC where RUNID = {run_id} WHERE ISOID=?'''.format(run_id=run_id),(id,))
 row = c.fetchone()
 statuscode = row[2]
 kraken_path = '/results/{run_id}/{id}/{id}_krona.html'.format(run_id=run_id,id=id)
 if statuscode[1] == '1':
     newcode = statuscode[0] + '3' + statuscode[2:]
-    c.execute('''UPDATE {run_id} SET STATUSCODE = ?,KRAKEN = ? WHERE ISOID = ?'''.format(run_id=run_id),(newcode,kraken_path,id))
+    c.execute('''UPDATE seq_QC SET STATUSCODE = ?,KRAKEN = ? WHERE ISOID = ? AND RUNID = ?''',(newcode,kraken_path,id,run_id))
 
 #save changes to database
 conn.commit()
