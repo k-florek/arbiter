@@ -32,7 +32,7 @@ function krakenSubmit (ids,run_id) {
   function readDB(err){
     errors(err);
     console.log(`Setting up ${run_id} for Kraken.`);
-    let sql = `SELECT ISOID,READ1,READ2 FROM ${run_id} ORDER BY ISOID ASC`;
+    let sql = `SELECT ISOID,READ1,READ2 FROM seq_QC where RUNID = ? ORDER BY ISOID ASC`,run_id;
     db.all(sql,setJob);
   }
   //craft execution command

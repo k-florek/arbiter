@@ -19,7 +19,7 @@ function scanIso (page,res,run_id) {
   2 - finished
   */
   console.log('Scanning run directory for isolates.');
-  let sql = `CREATE TABLE if not exists ${run_id} (ID INTEGER PRIMARY KEY AUTOINCREMENT, ISOID TEXT UNIQUE NOT NULL, STATUSCODE TEXT NOT NULL, READ1 TEXT UNIQUE NOT NULL, READ2 TEXT UNIQUE NOT NULL,FASTQC1 TEXT,FASTQC2 TEXT,KRAKEN TEXT)`;
+  let sql = `CREATE TABLE if not exists seq_QC (ID INTEGER PRIMARY KEY AUTOINCREMENT,RUNID TEXT NOT NULL, ISOID TEXT UNIQUE NOT NULL, STATUSCODE TEXT NOT NULL, READ1 TEXT UNIQUE NOT NULL, READ2 TEXT UNIQUE NOT NULL,FASTQC1 TEXT,FASTQC2 TEXT,KRAKEN TEXT)`;
   db.run(sql,scanfs);
 
   //handle errors
@@ -74,7 +74,7 @@ function scanIso (page,res,run_id) {
           return insertDB(rows.shift());
         });
       }else{
-        let sql = `SELECT ISOID,STATUSCODE,READ1,READ2,FASTQC1,FASTQC2,KRAKEN FROM ${run_id} ORDER BY ISOID ASC`;
+        let sql = `SELECT ISOID,STATUSCODE,READ1,READ2,FASTQC1,FASTQC2,KRAKEN FROM seq_QC where RUNID = ${run_id} ORDER BY ISOID ASC`;
         db.all(sql,renderPage);
       }
     }
