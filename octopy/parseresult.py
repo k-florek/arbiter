@@ -16,7 +16,7 @@ def parseResult(run_id,config):
     db_path = os.path.join(config["db_path"],'octo.db')
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
-    c.execute('''SELECT ISOID,STATUSCODE FROM {run_id}'''.format(run_id=run_id))
+    c.execute('''SELECT ISOID,STATUSCODE FROM seq_QC where RUNID = {run_id}'''.format(run_id=run_id))
     rows = c.fetchall()
     conn.close()
     for row in rows:
@@ -75,14 +75,14 @@ def parseResult(run_id,config):
         #update sal serotype
         try:
             sal_type = sal_sero[id]
-            c.execute('''UPDATE {run_id} SET SALTYPE = ? WHERE ISOID = ?'''.format(run_id=run_id),(sal_type,id))
+            c.execute('''UPDATE seq_QC SET SALTYPE = ? WHERE ISOID = ? AND RUNID = ?''',(sal_type,id,run_id))
         except KeyError:
             pass
 
         #update ecoli serotype
         try:
             ecoli_type = ecoli[id]
-            c.execute('''UPDATE {run_id} SET ECOLITYPE = ? WHERE ISOID = ?'''.format(run_id=run_id),(ecoli_type,id))
+            c.execute('''UPDATE seq_QC SET ECOLITYPE = ? WHERE ISOID = ? RUNID = ?''',(ecoli_type,id,run_id))
         except KeyError:
             pass
 
@@ -101,7 +101,7 @@ def parseResult(run_id,config):
     #update statuscodes
     for id in statuscodes:
         code = ''.join(statuscodes[id])
-        c.execute('''UPDATE {run_id} SET STATUSCODE = ? WHERE ISOID = ?'''.format(run_id=run_id),(code,id))
+        c.execute('''UPDATE seq_QC SET STATUSCODE = ? WHERE ISOID = ? AND RUNID = ?'''.format(run_id=run_id),(code,id,run_id))
 
     #update multiqc results
     machine = run_id.split('_')[0]

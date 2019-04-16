@@ -167,7 +167,7 @@ app.get('/delete/:machine/:date', function(req,res){
 
 //delete a record from isolates
 app.get('/status/:runid/delete/:isoid', function(req,res){
-  db.run(`DELETE FROM ${req.params.runid} WHERE ISOID=?`,[req.params.isoid], (err) => {
+  db.run(`DELETE FROM seq_QC WHERE RUNID = ? AND ISOID=?`,[req.params.runid, req.params.isoid], (err) => {
     if (err) {
       return console.error(err.message);
     }
