@@ -40,7 +40,7 @@ def parseResult(run_id,config):
             shutil.copy2(os.path.join(root,file),os.path.join(outputpath, root[len(inputpath):]))
 
     #run multiqc
-    multiqc_cmd = shlex.split('multiqc -d -f .')
+    multiqc_cmd = shlex.split('multiqc -c ../../../multiqc_config.yaml .')
     sub.Popen(multiqc_cmd,cwd='public/results/'+run_id)
 
     #parse sal serotype
