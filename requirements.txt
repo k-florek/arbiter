@@ -1,0 +1,4 @@
+boto3>=1.9.53
+paramiko>=2.4.2
+awscli>=1.16.63
+multiqc>=1.6
