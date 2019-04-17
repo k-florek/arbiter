@@ -30,7 +30,7 @@ let server = require('http').Server(app);
 io = require('socket.io').listen(server);
 
 //open the database
-db = new sqlite.Database(path.join(config.db_path,'octo.db'), (err) => {
+db = new sqlite.Database(path.join(config.db_path,'skyseq.db'), (err) => {
   if (err) {
     return console.error(err.message);
   }
@@ -182,7 +182,7 @@ app.get('/status/:runid/delete/:isoid', function(req,res){
 });
 
 server.listen(port,function(){
-  console.log('Octopods started on port: '+port);
+  console.log('SkySeq started on port: '+port);
 });
 
 app.use(function (req, res, next) {

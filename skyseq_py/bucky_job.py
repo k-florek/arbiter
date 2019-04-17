@@ -18,7 +18,7 @@ with open("config.json",'r') as readjson:
 
 #connect to the db and get the status codes
 print('Getting statuscodes for {runid}'.format(runid=run_id))
-db_path = os.path.join(config["db_path"],'octo.db')
+db_path = os.path.join(config["db_path"],'skyseq.db')
 def getStatusCodes():
     conn = sqlite3.connect(db_path)
     c = conn.cursor()

@@ -12,7 +12,7 @@ module.exports = function(job,done){
   let strep = job.data['strep'];
   let ar = job.data['ar'];
 
-  let ch = child.execFile('octopy/bucky_job.py',[run_id,path]);
+  let ch = child.execFile('skyseq_py/bucky_job.py',[run_id,path]);
   ch.stdout.on('data',(data)=>{
     console.log(run_id+' Bucky-TR update: '+data);
   });

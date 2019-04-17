@@ -15,7 +15,7 @@ path = sys.argv[3]
 with open('config.json') as j:
     config = json.load(j)
 
-database_path=os.path.join(config["db_path"],'octo.db')
+database_path=os.path.join(config["db_path"],'skyseq.db')
 
 #path to fwd and reverse read for unpaired only fwd read will be used
 fwd_read = ''
