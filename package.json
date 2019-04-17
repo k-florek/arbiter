@@ -1,12 +1,12 @@
 {
-  "name": "octopodes",
+  "name": "skyseq",
   "version": "0.0.1",
-  "description": "SIMS - Sequencing information management system",
-  "main": "octo.js",
+  "description": "Sequencing QC management system",
+  "main": "skyseq.js",
   "scripts": {
-    "start": "node octo"
+    "start": "node skyseq"
   },
-  "author": "Nicholas Florek",
+  "author": "Kelsey Florek",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -19,7 +19,7 @@
     "jquery": "^3.3.1",
     "js-alert": "^1.0.4",
     "node-cleanup": "^2.1.2",
-    "npm": "^6.5.0",
+    "npm": "^6.9.0",
     "popper.js": "^1.14.3",
     "pug": "^2.0.3",
     "redis": "^2.8.0",

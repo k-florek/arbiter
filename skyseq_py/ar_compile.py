@@ -72,7 +72,7 @@ def ar_parse(config,run_id):
 
     #update database
     #setup database
-    conn = sqlite3.connect(os.path.join(config["db_path"],'octo.db'))
+    conn = sqlite3.connect(os.path.join(config["db_path"],'skyseq.db'))
     c = conn.cursor()
     c.execute('''CREATE TABLE if not exists AR (ID INTEGER PRIMARY KEY AUTOINCREMENT,RUNID TEXT,ISOID TEXT,GENE TEXT,CONTIG TEXT,GSTART TEXT,GEND TEXT,COVERAGE TEXT,IDENTITY TEXT,DATABASE TEXT,ACCESSION TEXT,DESCRIPTION TEXT)''')
     for id in isoid:

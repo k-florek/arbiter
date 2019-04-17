@@ -9,7 +9,7 @@ module.exports = function(job,done){
   let run_id = job.data['run'];
   let path = job.data['path'];
 
-  let ch = child.execFile('octopy/kraken.py',[id,run_id,path]);
+  let ch = child.execFile('skyseq_py/kraken.py',[id,run_id,path]);
   ch.stdout.on('data',(data)=>{
     job.progress(data);
   });

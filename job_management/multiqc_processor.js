@@ -7,7 +7,7 @@ const run_directory = config.run_dir;
 module.exports = function(job,done){
   let run_id = job.data['run_id'];
 
-  let ch = child.execFile('octopy/multiqc.py',[run_id]);
+  let ch = child.execFile('skyseq_py/multiqc.py',[run_id]);
   ch.stdout.on('data',(data)=>{
     job.progress(data);
   });

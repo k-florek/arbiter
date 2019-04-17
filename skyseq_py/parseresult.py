@@ -13,7 +13,7 @@ def parseResult(run_id,config):
     statuscodes = {}
 
     #get ids and status codes
-    db_path = os.path.join(config["db_path"],'octo.db')
+    db_path = os.path.join(config["db_path"],'skyseq.db')
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute('''SELECT ISOID,STATUSCODE FROM {run_id}'''.format(run_id=run_id))

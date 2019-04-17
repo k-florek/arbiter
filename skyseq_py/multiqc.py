@@ -12,11 +12,11 @@ run_id = sys.argv[1]
 with open('config.json') as j:
     config = json.load(j)
 
-database_path=os.path.join(config["db_path"],'octo.db')
+database_path=os.path.join(config["db_path"],'skyseq.db')
 
 while True:
     #get ids and status codes
-    db_path = os.path.join(config["db_path"],'octo.db')
+    db_path = os.path.join(config["db_path"],'skyseq.db')
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute('''SELECT ISOID,STATUSCODE FROM {run_id}'''.format(run_id=run_id))
@@ -39,7 +39,7 @@ sub.Popen(multiqc_cmd,cwd='public/results/'+run_id)
 #get machine and date from run_id
 machine = run_id.split('_')[0]
 date = run_id.split('_')[1]
-db_path = os.path.join(config["db_path"],'octo.db')
+db_path = os.path.join(config["db_path"],'skyseq.db')
 conn = sqlite3.connect(db_path)
 c = conn.cursor()
 c.execute("UPDATE seq_runs SET FASTQC='x' WHERE MACHINE=? AND DATE=?",(machine,date))

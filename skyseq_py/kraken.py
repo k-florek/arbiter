@@ -132,11 +132,11 @@ cmd = shlex.split(cmd_str)
 sub.Popen(cmd,cwd='public/results/'+run_id+'/'+id).wait()
 
 #update database
-db_path = os.path.join(config["db_path"],'octo.db')
+db_path = os.path.join(config["db_path"],'skyseq.db')
 conn = sqlite3.connect(db_path)
 c = conn.cursor()
 
-#update submission status in octo.db
+#update submission status in skyseq.db
 #binary status code for runs:
 #[fastqc,kraken,sal,ecoli,strep,ar] = "000000"
 #0 - not run

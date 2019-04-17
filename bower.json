@@ -1,12 +1,12 @@
 {
-  "name": "octopodes",
-  "description": "SIMS - Sequencing information management system",
-  "main": "octo.js",
+  "name": "skyseq",
+  "description": "Sequencing QC management system",
+  "main": "skyseq.js",
   "authors": [
-    "Nicholas Florek"
+    "Kelsey Florek"
   ],
   "license": "ISC",
-  "homepage": "https://github.com/nwflorek/octopodes",
+  "homepage": "https://github.com/k-florek/skyseq-qc",
   "ignore": [
     "**/.*",
     "node_modules",
