@@ -27,7 +27,7 @@ function multiCodeUpdate(run,fastqc_ids, kraken_ids, sal_ids, ecoli_ids, strep_i
   //create object to hold codes while we are updating them
   let codes = {};
   //get the rows matching this isolate
-  let sql = `SELECT ISOID, STATUSCODE FROM seq_QC where RUNID = ${run}`;
+  let sql = `SELECT ISOID, STATUSCODE FROM seq_samples where RUNID = ${run}`;
   db.all(sql,(err,rows)=>{
     if(err){
       console.log(err);
@@ -62,7 +62,7 @@ function multiCodeUpdate(run,fastqc_ids, kraken_ids, sal_ids, ecoli_ids, strep_i
     });
 
     rows.forEach(function(row){
-      let sql = `UPDATE seq_qc SET STATUSCODE=? WHERE ISOID=? AND RUNID =?`;
+      let sql = `UPDATE seq_samples SET STATUSCODE=? WHERE ISOID=? AND RUNID =?`;
       let id = row['ISOID'];
       let statuscode = codes[id];
       db.run(sql,[statuscode,id, run],(err)=>{
@@ -74,7 +74,7 @@ function multiCodeUpdate(run,fastqc_ids, kraken_ids, sal_ids, ecoli_ids, strep_i
 
 function statusCodeUpdater(run,isolate,job,code){
   //get the rows matching this isolate
-  let sql = `SELECT STATUSCODE FROM seq_QC where RUNID =? AND ISOID=?`;
+  let sql = `SELECT STATUSCODE FROM seq_samples where RUNID =? AND ISOID=?`;
   db.all(sql,[run, isolate],(err,rows)=>{
     if(err){
       console.log(err);
@@ -104,7 +104,7 @@ function statusCodeUpdater(run,isolate,job,code){
       }
 
       //write the statuscode update to the database
-      let sql = `UPDATE seq_QC SET STATUSCODE=? WHERE ISOID=? AND RUNID =?`;
+      let sql = `UPDATE seq_samples SET STATUSCODE=? WHERE ISOID=? AND RUNID =?`;
       db.run(sql,[statuscode,isolate, run],(err)=>{
         if(err){
           console.log(err);

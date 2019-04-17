@@ -19,9 +19,6 @@ function scanIso (page,res,run_id) {
   2 - finished
   */
   console.log('Scanning run directory for isolates.');
-  let sql = `CREATE TABLE if not exists seq_QC (ID INTEGER PRIMARY KEY AUTOINCREMENT,RUNID TEXT NOT NULL, ISOID TEXT UNIQUE NOT NULL, STATUSCODE TEXT NOT NULL, READ1 TEXT UNIQUE NOT NULL, READ2 TEXT UNIQUE NOT NULL,FASTQC1 TEXT,FASTQC2 TEXT,KRAKEN TEXT)`;
-  db.run(sql,scanfs);
-
   //handle errors
   function errors(err){
     if (err) {
@@ -29,15 +26,12 @@ function scanIso (page,res,run_id) {
     }
   }
 
-  //scan file system
-  function scanfs (err){
-    errors(err);
-    fs.readdir(run_dir,procfs);
-  }
+  fs.readdir(run_dir,procfs);
 
   //process file system and INSERT
   function procfs (err,files){
     let rows = [];
+    //initalize starting statuscode
     let statuscode = '000000';
     errors(err);
     //loop through each file
@@ -48,7 +42,7 @@ function scanIso (page,res,run_id) {
       //check if dir
       if (stat && stat.isFile()) {
         if (files[i].includes('R1_001.fastq.gz')) {
-          //don't include undertimined reads
+          //don't include undetermined reads
           if (files[i].includes('Undetermined')){
             continue;
           }
@@ -56,7 +50,7 @@ function scanIso (page,res,run_id) {
           let read1 = p;
           let read2 = path.join(run_dir,files[i].split('_')[0]+'_'+files[i].split('_')[1]+'_'+files[i].split('_')[2]+'_'+'R2'+'_'+files[i].split('_')[4]);
           if (!rows.includes(isoid)){
-            rows.push([isoid,statuscode,read1,read2]);
+            rows.push([run_id,isoid,statuscode,read1,read2]);
           }
         }
       }
@@ -66,7 +60,7 @@ function scanIso (page,res,run_id) {
     //insert into database
     function insertDB (row){
       //insert row into database
-      let sql = `INSERT or IGNORE INTO ${run_id} (ISOID,STATUSCODE,READ1,READ2) VALUES (?,?,?,?)`;
+      let sql = `INSERT or IGNORE INTO seq_samples (RUNID,ISOID,STATUSCODE,READ1,READ2) VALUES (?,?,?,?,?)`;
       if (row){
         db.run(sql,row,(err)=>{
           errors(err);
@@ -74,7 +68,7 @@ function scanIso (page,res,run_id) {
           return insertDB(rows.shift());
         });
       }else{
-        let sql = `SELECT ISOID,STATUSCODE,READ1,READ2,FASTQC1,FASTQC2,KRAKEN FROM seq_QC where RUNID = ${run_id} ORDER BY ISOID ASC`;
+        let sql = `SELECT ISOID,STATUSCODE,READ1,READ2,FASTQC1,FASTQC2,KRAKEN FROM seq_samples where RUNID = '${run_id}' ORDER BY ISOID ASC`;
         db.all(sql,renderPage);
       }
     }

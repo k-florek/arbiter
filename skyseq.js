@@ -30,16 +30,43 @@ let server = require('http').Server(app);
 io = require('socket.io').listen(server);
 
 //open the database
+//if new database initialize the tables
 db = new sqlite.Database(path.join(config.db_path,'skyseq.db'), (err) => {
   if (err) {
     return console.error(err.message);
   }
-  db.run(`CREATE TABLE if not exists seq_runs (ID INTEGER PRIMARY KEY AUTOINCREMENT, MACHINE TEXT NOT NULL, DATE DATE NOT NULL, PATH TEXT UNIQUE NOT NULL,FASTQC TEXT,KRAKEN TEXT,AR TEXT)`, (err) => {
+  let sql = `CREATE TABLE if not exists seq_runs (ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    MACHINE TEXT NOT NULL,
+    DATE DATE NOT NULL,
+    PATH TEXT UNIQUE NOT NULL,
+    FASTQC TEXT,
+    KRAKEN TEXT,
+    AR TEXT)`;
+  db.run(sql, (err) => {
     if (err) {
       return console.error(err.message);
     }
-    console.log('Connected to the SQlite database.');
+    console.log('Created seq_runs table.');
   });
+  sql = `CREATE TABLE if not exists seq_samples (ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    RUNID TEXT NOT NULL,
+    ISOID TEXT UNIQUE NOT NULL,
+    STATUSCODE TEXT NOT NULL,
+    READ1 TEXT UNIQUE NOT NULL,
+    READ2 TEXT UNIQUE NOT NULL,
+    FASTQC1 TEXT,
+    FASTQC2 TEXT,
+    KRAKEN TEXT,
+    SALTYPE TEXT,
+    STREPTYPE TEXT,
+    ECOLITYPE TEXT)`;
+  db.run(sql,(err) => {
+    if(err) {
+
+    }
+    console.log('Created seq_samples table.');
+  });
+  console.log('Connected to the SQlite database.');
 });
 //on terminate cleanup
 nodeCleanup(function (exitCode,signal){
@@ -167,7 +194,7 @@ app.get('/delete/:machine/:date', function(req,res){
 
 //delete a record from isolates
 app.get('/status/:runid/delete/:isoid', function(req,res){
-  db.run(`DELETE FROM seq_QC WHERE RUNID = ? AND ISOID=?`,[req.params.runid, req.params.isoid], (err) => {
+  db.run(`DELETE FROM seq_samples WHERE RUNID = ? AND ISOID=?`,[req.params.runid, req.params.isoid], (err) => {
     if (err) {
       return console.error(err.message);
     }
