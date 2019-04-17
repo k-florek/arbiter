@@ -19,7 +19,7 @@ while True:
     db_path = os.path.join(config["db_path"],'skyseq.db')
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
-    c.execute('''SELECT ISOID,STATUSCODE FROM seq_QC where RUNID = {run_id}'''.format(run_id=run_id))
+    c.execute('''SELECT ISOID,STATUSCODE FROM seq_samples where RUNID = {run_id}'''.format(run_id=run_id))
     rows = c.fetchall()
     conn.close()
 

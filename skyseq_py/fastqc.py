@@ -57,7 +57,7 @@ rev_read = os.path.basename(rev_read)
 #put fastqc information into database
 fastqc1 = fwd_read.split('.')[0]+'_fastqc.html'
 fastqc2 = rev_read.split('.')[0]+'_fastqc.html'
-c.execute(f'UPDATE seq_QC SET FASTQC1 = ?,FASTQC2 = ? WHERE ISOID = ? AND RUNID = ?',(fastqc1,fastqc2,id,run_id))
+c.execute(f'UPDATE seq_samples SET FASTQC1 = ?,FASTQC2 = ? WHERE ISOID = ? AND RUNID = ?',(fastqc1,fastqc2,id,run_id))
 
 #save changes to database
 conn.commit()

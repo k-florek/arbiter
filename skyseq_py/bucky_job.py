@@ -22,7 +22,7 @@ db_path = os.path.join(config["db_path"],'skyseq.db')
 def getStatusCodes():
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
-    c.execute('''SELECT ISOID,STATUSCODE FROM seq_QC where RUNID = {run_id}'''.format(run_id=run_id))
+    c.execute('''SELECT ISOID,STATUSCODE FROM seq_samples where RUNID = {run_id}'''.format(run_id=run_id))
     rows = c.fetchall()
     conn.close()
     codes = {}
@@ -88,7 +88,7 @@ except FileExistsError:
 
 conn = sqlite3.connect(db_path)
 c = conn.cursor()
-c.execute('''SELECT READ1,READ2,ISOID FROM seq_QC where RUNID = {run_id}'''.format(run_id=run_id))
+c.execute('''SELECT READ1,READ2,ISOID FROM seq_samples where RUNID = {run_id}'''.format(run_id=run_id))
 rows = c.fetchall()
 conn.close()
 for row in rows:
