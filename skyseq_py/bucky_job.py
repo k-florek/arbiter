@@ -170,7 +170,7 @@ else:
 
 #grab pipeline
 print("Get Bucky-TR on {}".format(host))
-stdin,stdout,stderr = ssh.exec_command("git clone https://github.com/nwflorek/bucky-tr.git")
+stdin,stdout,stderr = ssh.exec_command("git clone https://github.com/k-florek/bucky-tr")
 exit_status = stdout.channel.recv_exit_status()          # Blocking call
 if exit_status == 0:
     print ("Got Bucky-TR pipeline")
