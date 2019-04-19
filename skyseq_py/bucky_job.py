@@ -22,7 +22,7 @@ db_path = os.path.join(config["db_path"],'skyseq.db')
 def getStatusCodes():
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
-    c.execute('''SELECT ISOID,STATUSCODE FROM seq_samples where RUNID = {run_id}'''.format(run_id=run_id))
+    c.execute('''SELECT ISOID,STATUSCODE FROM seq_samples where RUNID = \'{run_id}\''''.format(run_id=run_id))
     rows = c.fetchall()
     conn.close()
     codes = {}
@@ -68,11 +68,19 @@ BDM = [{"DeviceName": "/dev/sda1",
 
 instance_id = ec2.create_instances(
     BlockDeviceMappings=BDM,
-    ImageId="ami-02a5aab546fb4d3c4",
+    ImageId=config["aws_ami"],
     MinCount=1,
     MaxCount=1,
     InstanceType="c4.2xlarge",
-    KeyName='octopodes',
+    KeyName=config["aws_key_name"],
+    InstanceMarketOptions={
+        'MarketType': 'spot',
+        'SpotOptions': {
+            'MaxPrice': '0.398',
+            'SpotInstanceType': 'one-time',
+            'InstanceInterruptionBehavior': 'terminate'
+        }
+    },
     SecurityGroups=['program_access',]
 )[0].id
 instance = ec2.Instance(instance_id)
@@ -88,7 +96,7 @@ except FileExistsError:
 
 conn = sqlite3.connect(db_path)
 c = conn.cursor()
-c.execute('''SELECT READ1,READ2,ISOID FROM seq_samples where RUNID = {run_id}'''.format(run_id=run_id))
+c.execute('''SELECT READ1,READ2,ISOID FROM seq_samples where RUNID = \'{run_id}\''''.format(run_id=run_id))
 rows = c.fetchall()
 conn.close()
 for row in rows:
