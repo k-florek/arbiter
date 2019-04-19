@@ -178,7 +178,7 @@ app.get('/delete/:machine/:date', function(req,res){
     res.redirect('/');
   });
   let run_id = req.params.machine+'_'+req.params.date
-  db.run(`DELETE FROM ${run_id}`,(err) => {
+  db.run(`DELETE FROM seq_samples WHERE RUNID = '${run_id}'`,(err) => {
     if (err) {
       return console.error(err.message);
     }

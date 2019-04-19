@@ -27,7 +27,7 @@ function multiCodeUpdate(run,fastqc_ids, kraken_ids, sal_ids, ecoli_ids, strep_i
   //create object to hold codes while we are updating them
   let codes = {};
   //get the rows matching this isolate
-  let sql = `SELECT ISOID, STATUSCODE FROM seq_samples where RUNID = ${run}`;
+  let sql = `SELECT ISOID, STATUSCODE FROM seq_samples where RUNID = '${run}'`;
   db.all(sql,(err,rows)=>{
     if(err){
       console.log(err);
