@@ -168,12 +168,12 @@ if exit_status == 0:
 else:
     print("Error", exit_status)
 
-#update bucky-tr
-print("Checking for Bucky-TR updates on {}".format(host))
-stdin,stdout,stderr = ssh.exec_command("cd bucky-tr && git pull origin")
+#grab pipeline
+print("Get Bucky-TR on {}".format(host))
+stdin,stdout,stderr = ssh.exec_command("git clone https://github.com/nwflorek/bucky-tr.git")
 exit_status = stdout.channel.recv_exit_status()          # Blocking call
 if exit_status == 0:
-    print ("Updated Bucky-TR")
+    print ("Got Bucky-TR pipeline")
 else:
     print("Error", exit_status)
 
