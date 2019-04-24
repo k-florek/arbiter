@@ -1,0 +1,11 @@
+extends navbar
+block content
+  div(style='margin:50px')
+    .row(style='margin-bottom:20px')
+      if(message)
+        form.form-signin(action = "/adduser" method = "POST" class = "form-signup")
+          h4.h4.mb-3.font-weight-normal #{message}
+          input(name = "username" type = "text" required autofocus placeholder = "User ID" class = "form-control",style="margin-bottom:10px")
+          input(name = "password_1" type = "password" required placeholder = "Password" class = "form-control",style="margin-bottom:10px")
+          input(name = "password_2" type = "password" required placeholder = "Password" class = "form-control",style="margin-bottom:10px")
+          button(type = "Submit" class = "btn btn-lg btn-primary btn-block") Create User

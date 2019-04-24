@@ -27,9 +27,10 @@ html
                   button.btn.btn-dark(type="button") Options
                 .dropdown-menu(aria-labelledby='navbarDropdown')
                   a.dropdown-item(href='#') Change Password
-                  .dropdown-divider
-                  a.dropdown-item(href='#') Add User
-                  a.dropdown-item(href='#') Delete User
+                  if username == 'admin'
+                    .dropdown-divider
+                    a.dropdown-item(href='adduser') Add User
+                    a.dropdown-item(href='#') Delete User
           li.nav-item
             a.nav-link(href='logout')
               button.btn.btn-dark(type="button") Logout: #{username}
