@@ -1,7 +1,7 @@
 const sqlite = require('sqlite3');
 const fs = require('fs');
 const path = require('path');
-const config = require('./config.json');
+const config = require('../config.json');
 
 const run_directory = config.run_dir;
 

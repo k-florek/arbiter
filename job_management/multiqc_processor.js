@@ -1,6 +1,6 @@
 const config = require('../config.json');
 const child = require('child_process');
-const exist = require('../ensureExists');
+const exist = require('../skyseq_js/ensureExists');
 
 const run_directory = config.run_dir;
 

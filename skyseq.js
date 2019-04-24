@@ -1,14 +1,14 @@
 const express = require('express');
 //local modules
-const updatedb = require('./updatedb');
-const getruns = require('./get_runs');
-const getiso = require('./get_iso');
-const scaniso = require('./scan_iso');
+const updatedb = require('./skyseq_js/updatedb');
+const getruns = require('./skyseq_js/get_runs');
+const getiso = require('./skyseq_js/get_iso');
+const scaniso = require('./skyseq_js/scan_iso');
 const js = require('./job_management/job_manager');
-const jobQueue = require('./get_jobQueue');
-const getAR = require('./get_ar');
+const jobQueue = require('./skyseq_js/get_jobQueue');
+const getAR = require('./skyseq_js/get_ar');
 
-//standard modules
+//third-party modules
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const sqlite = require('sqlite3');
