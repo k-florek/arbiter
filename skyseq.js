@@ -19,6 +19,8 @@ const path = require('path');
 
 //configuration file
 const config = require('./config.json');
+//database configuration file
+const database = require('./database.json');
 
 //setup redis database for job management
 var client = redis.createClient();
@@ -30,44 +32,29 @@ let server = require('http').Server(app);
 io = require('socket.io').listen(server);
 
 //open the database
-//if new database initialize the tables
-db = new sqlite.Database(path.join(config.db_path,'skyseq.db'), (err) => {
-  if (err) {
-    return console.error(err.message);
-  }
-  let sql = `CREATE TABLE if not exists seq_runs (ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    MACHINE TEXT NOT NULL,
-    DATE DATE NOT NULL,
-    PATH TEXT UNIQUE NOT NULL,
-    FASTQC TEXT,
-    KRAKEN TEXT,
-    AR TEXT)`;
-  db.run(sql, (err) => {
-    if (err) {
-      return console.error(err.message);
-    }
-    console.log('Created seq_runs table.');
-  });
-  sql = `CREATE TABLE if not exists seq_samples (ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    RUNID TEXT NOT NULL,
-    ISOID TEXT UNIQUE NOT NULL,
-    STATUSCODE TEXT NOT NULL,
-    READ1 TEXT UNIQUE NOT NULL,
-    READ2 TEXT UNIQUE NOT NULL,
-    FASTQC1 TEXT,
-    FASTQC2 TEXT,
-    KRAKEN TEXT,
-    SALTYPE TEXT,
-    STREPTYPE TEXT,
-    ECOLITYPE TEXT)`;
-  db.run(sql,(err) => {
-    if(err) {
+let env = process.argv[2] || 'dev';
+switch (env) {
 
-    }
-    console.log('Created seq_samples table.');
-  });
-  console.log('Connected to the SQlite database.');
-});
+    case 'dev':
+        db = new sqlite.Database(path.join(database.dev.filename), (err) => {
+          if (err) {
+            return console.error(err.message);
+          }
+          console.log('Connected to the SQlite database.');
+        });
+      break;
+
+    case 'prod':
+        db = new sqlite.Database(path.join(database.prod.filename), (err) => {
+          if (err) {
+            return console.error(err.message);
+          }
+          console.log('Connected to the SQlite database.');
+        });
+      break;
+}
+
+
 //on terminate cleanup
 nodeCleanup(function (exitCode,signal){
   //close the database

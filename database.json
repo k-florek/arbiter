@@ -1,7 +1,12 @@
 {
   "dev": {
     "driver": "sqlite3",
-    "filename": "db/seq_runs.db",
+    "filename": "db/seq_runs_dev.db",
+    "sql-file" : true
+  },
+  "prod": {
+    "driver": "sqlite3",
+    "filename": "db/seq_runs_prod.db",
     "sql-file" : true
   }
 }
