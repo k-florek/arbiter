@@ -12,9 +12,9 @@ html
     link(href='/css/signin.css', rel='stylesheet')
   body.text-center
     if(message)
-      form.form-signin(action = "/login" method = "POST" class = "form-signin")
+      form.form-signin(action = "/signup" method = "POST" class = "form-signup")
         h1.h3.mb-3.font-weight-normal #{message}
-        input(name = "user" type = "text" required autofocus placeholder = "User ID" class = "form-control")
-        input(name = "password" type = "password" required placeholder = "Password" class = "form-control")
-        button(type = "Submit" class = "btn btn-lg btn-primary btn-block") Login
-        a.nav-link(href='/signup') Sign Up Here
+        input(name = "username" type = "text" required autofocus placeholder = "User ID" class = "form-control")
+        input(name = "password_1" type = "password" required placeholder = "Password" class = "form-control")
+        input(name = "password_2" type = "password" required placeholder = "Password" class = "form-control")
+        button(type = "Submit" class = "btn btn-lg btn-primary btn-block") SignUp

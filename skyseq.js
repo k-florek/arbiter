@@ -1,4 +1,15 @@
+
+//third-party modules
 const express = require('express');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const sqlite = require('sqlite3');
+const nodeCleanup = require('node-cleanup');
+const fs = require('fs-extra');
+const redis = require('redis');
+const path = require('path');
+
 //local modules
 const updatedb = require('./skyseq_js/updatedb');
 const getruns = require('./skyseq_js/get_runs');
@@ -7,15 +18,7 @@ const scaniso = require('./skyseq_js/scan_iso');
 const js = require('./job_management/job_manager');
 const jobQueue = require('./skyseq_js/get_jobQueue');
 const getAR = require('./skyseq_js/get_ar');
-
-//third-party modules
-const session = require('express-session');
-const bodyParser = require('body-parser');
-const sqlite = require('sqlite3');
-const nodeCleanup = require('node-cleanup');
-const fs = require('fs-extra');
-const redis = require('redis');
-const path = require('path');
+const login = require('./skyseq_js/login');
 
 //configuration file
 const config = require('./config.json');
@@ -73,41 +76,80 @@ app.set('views', path.join(__dirname,'views'));
 app.set('view engine', 'pug');
 app.locals.pretty = true;
 
-//start session
-app.use(session({secret: "123456",resave: true,saveUninitialized: true}));
+// initialize cookie-parser to allow us access the cookies stored in the browser.
+app.use(cookieParser());
+
+// initialize express-session to allow us track the logged-in user across sessions
+app.use(session({
+  key: 'user_sid',
+  secret: "the most secret of secrets",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {expires: 600000}
+}));
+// This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
+// This usually happens when you stop your express server after login, your cookie still remains saved in the browser.
+app.use((req, res, next) => {
+    if (req.cookies.user_sid && !req.session.user) {
+        res.clearCookie('user_sid');
+    }
+    next();
+});
 
 //set public folder
 app.use(express.static(path.join(__dirname,'public')));
 
 //authentication
-function checkAuth(req,res,next){
-  if(!req.session.user_id){
-    //temp skip login
-    //req.session.user_id = 'cddbact';
-    //res.redirect('/login');
-    res.redirect('/login');
-  } else {
-    next();
-  }
+var checkAuth = (req,res,next) => {
+  if (req.session.user && req.cookies.user_sid) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
 }
 
-//login function TODO: change to more secure format
-app.post('/login', function (req, res) {
-  var post = req.body;
-  if (post.user === 'cddbacti' && post.password === '465') {
-    req.session.user_id = 'cddbact';
-    res.redirect('/');
-  } else {
-    res.render('login',{message:'Bad Username or Password'});
-  }
-});
+//user sign up
+app.route('/signup')
+    .get( (req, res) => {
+        res.render('signup',{message:'Please enter Username and Password'});
+    })
+    .post( (req, res) => {
+        if (req.body.password_1 != req.body.password_2) {
+          res.render('signup',{message:'Passwords don\'t match'});
+        }
+        login.addUser(db,{
+            name: req.body.username,
+            password: req.body.password_1
+        })
+        .then(user => {
+            res.redirect('/login');
+        })
+        .catch(error => {
+            res.redirect('/signup');
+        });
+    })
 
-app.get('/login', function (req, res) {
-  res.render('login',{message:'Please sign in'});
-});
+//user login
+app.route('/login')
+  .get( (req, res) => {
+    res.render('login',{message:'Please sign in'});
+  })
+  .post( (req, res) => {
+    let user_login = {name:req.body.user,password:req.body.password}
+    login.findUser(db,user_login)
+      .then(status => {
+        if (status){
+          req.session.user = req.body.user;
+          res.redirect('/');
+        } else {
+          res.render('login',{message:'Bad Username or Password'});
+        }
+      });
+  })
+
 
 app.get('/logout', function (req,res) {
-  delete req.session.user_id;
+  res.clearCookie('user_sid');
   res.redirect('/login');
 });
 
@@ -132,6 +174,7 @@ app.get('/ar_results/:runid',checkAuth, function(req,res){
   let runid = req.params.runid;
   getAR.getAR('ar',res,runid)
 });
+
 app.get('/ar_results/:runid/:isoid',checkAuth, function(req,res){
   let runid = req.params.runid;
   let isoid = req.params.isoid;
