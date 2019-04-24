@@ -155,7 +155,8 @@ app.get('/logout', function (req,res) {
 
 //Home route
 app.get('/',checkAuth, function(req, res){
-  getruns.getRuns('index',res);
+  user = req.session.user;
+  getruns.getRuns('index',res,user);
 });
 
 //update database

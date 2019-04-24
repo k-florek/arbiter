@@ -2,7 +2,7 @@ const sqlite = require('sqlite3');
 
 module.exports.getRuns = getRuns;
 
-function getRuns (page,res) {
+function getRuns (page,res,username) {
   function errors(err){
     if (err) {
       return console.error(err.message);
@@ -13,6 +13,6 @@ function getRuns (page,res) {
   //select items
   db.all(sql, (err,rows)=>{
     errors(err);
-    res.render(page,{runs:rows});
+    res.render(page,{runs:rows,username});
   });
 }
