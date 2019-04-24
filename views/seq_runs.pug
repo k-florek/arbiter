@@ -1,0 +1,70 @@
+extends navbar
+
+block content
+  script().
+    $(document).ready(function () {
+      var runTable = $('#seqruns').DataTable({
+        "pageLength": 20,
+        "lengthMenu": [10,20,50,100],
+        "dom": "<'row'<'col'rt>> <'row'<'col'i><'col'p><'col'l>>",
+        "order": [[0,"desc"]],
+        "columns": [
+          null,
+          null,
+          { "orderable": false },
+          { "orderable": false },
+          { "orderable": false },
+          { "orderable": false },
+          { "orderable": false }
+        ]
+      });
+      $('#searchText').keyup(function(){
+        runTable.search($(this).val()).draw();
+      });
+    });
+  .skyseq-data-container
+    table#seqruns.table.table-hover
+      thead
+        tr
+          th.dt-center(style="text-align: center")
+            h5 Date
+          th.dt-center(style="text-align: center")
+            h5 Machine
+          th
+          th
+          th
+          th
+          th
+      tbody
+        each run, i in runs
+          tr
+            td.dt-center(style="text-align: center")
+              h5= run.DATE
+            td.dt-center(style="text-align: center")
+              h5= run.MACHINE
+            td.dt-center(style="text-align: center")
+              if run.FASTQC
+                a(href="/results/"+run.MACHINE+"_"+run.DATE+"/multiqc_report.html") 
+                  button.btn.btn-success(type="button") MultiQC
+              else 
+                a(href="#") 
+                  button.btn.btn-light(type="button") MultiQC
+            td.dt-center(style="text-align: center")
+              a(href="#") 
+                button.btn.btn-light(type="button") Kraken
+            td.dt-center(style="text-align: center")
+              if run.AR
+                a(href="/ar_results/"+run.MACHINE+"_"+run.DATE) 
+                  button.btn.btn-success(type="button") AR
+              else
+                a(href="#")
+                  button.btn.btn-light(type="button") AR
+            td.dt-center(style="text-align: center")
+              a(href="/status/"+run.MACHINE+"_"+run.DATE) 
+                button.btn.btn-info(type="button") Show
+            //td.dt-center(style="text-align: center")
+              a(href="#") 
+                button.btn.btn-info(type="button") Edit
+            td.dt-center(style="text-align: center")
+              a(href="/delete/"+run.MACHINE+"/"+run.DATE)
+                button.btn.btn-danger(type="button") Delete

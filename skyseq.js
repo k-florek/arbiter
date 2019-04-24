@@ -87,6 +87,7 @@ app.use(session({
   saveUninitialized: false,
   cookie: {expires: 600000}
 }));
+
 // This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
 // This usually happens when you stop your express server after login, your cookie still remains saved in the browser.
 app.use((req, res, next) => {
@@ -101,6 +102,7 @@ app.use(express.static(path.join(__dirname,'public')));
 
 //authentication
 var checkAuth = (req,res,next) => {
+  //check if session.user and cookie sid exist if not send to login
   if (req.session.user && req.cookies.user_sid) {
         next();
     } else {
@@ -108,11 +110,13 @@ var checkAuth = (req,res,next) => {
     }
 }
 
-//user sign up
+//user sign up routing
 app.route('/signup')
+    //load page for user signup
     .get( (req, res) => {
         res.render('signup',{message:'Please enter Username and Password'});
     })
+    //submit data to add user
     .post( (req, res) => {
         if (req.body.password_1 != req.body.password_2) {
           res.render('signup',{message:'Passwords don\'t match'});
@@ -147,18 +151,34 @@ app.route('/login')
       });
   })
 
-
+//logout current user
 app.get('/logout', function (req,res) {
   res.clearCookie('user_sid');
   res.redirect('/login');
 });
 
-//Home route
+//home dashboard route
 app.get('/',checkAuth, function(req, res){
-  user = req.session.user;
-  getruns.getRuns('index',res,user);
+  username = req.session.user;
+  res.render('index',{username});
 });
 
+//-----------main dashboard routing-------------------
+
+//list completed sequencing runs
+app.get('/seqruns',checkAuth, function(req, res){
+  user = req.session.user;
+  getruns.getRuns('seq_runs',res,user);
+});
+
+//list current job queue
+app.get('/job_queue',checkAuth,function(req,res){
+  jobQueue.getJobStatus('job_queue',res);
+});
+
+
+//old routes, keeping until updated
+/*
 //update database
 app.get('/updatedb',checkAuth, function(req, res){
   updatedb.update('index',res);
@@ -180,11 +200,6 @@ app.get('/ar_results/:runid/:isoid',checkAuth, function(req,res){
   let runid = req.params.runid;
   let isoid = req.params.isoid;
   getAR.getAR('ar',res,runid,isoid)
-});
-
-//show job queue
-app.get('/job_queue',checkAuth,function(req,res){
-  jobQueue.getJobStatus('job_queue',res);
 });
 
 //update run isolates
@@ -238,7 +253,7 @@ app.get('/status/:runid/delete/:isoid', function(req,res){
     });
   });
 });
-
+*/
 server.listen(port,function(){
   console.log('SkySeq started on port: '+port);
 });
