@@ -85,7 +85,7 @@ app.use(session({
   secret: "the most secret of secrets",
   resave: false,
   saveUninitialized: false,
-  cookie: {expires: 600000}
+  cookie: {expires: 60000 * 60 * 1}
 }));
 
 // This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
@@ -176,6 +176,15 @@ app.get('/job_queue',checkAuth,function(req,res){
   jobQueue.getJobStatus('job_queue',res);
 });
 
+//reagent kits
+app.route('/add_kit')
+  .get(checkAuth,(req,res) => {
+    res.render('add_kit');
+  })
+  //submit data to add user
+  .post( (req, res) => {
+    res.render('add_kit');
+  })
 
 //old routes, keeping until updated
 /*
