@@ -12,12 +12,12 @@ const path = require('path');
 
 //local modules
 const updatedb = require('./skyseq_js/updatedb');
-const getruns = require('./skyseq_js/get_runs');
-const getiso = require('./skyseq_js/get_iso');
+const rd = require('./skyseq_js/read_data');
+const wd = require('./skyseq_js/write_data');
+
 const scaniso = require('./skyseq_js/scan_iso');
 const js = require('./job_management/job_manager');
 const jobQueue = require('./skyseq_js/get_jobQueue');
-const getAR = require('./skyseq_js/get_ar');
 const login = require('./skyseq_js/login');
 
 //configuration file
@@ -168,7 +168,7 @@ app.get('/',checkAuth, function(req, res){
 //list completed sequencing runs
 app.get('/seqruns',checkAuth, function(req, res){
   user = req.session.user;
-  getruns.getRuns('seq_runs',res,user);
+  rd.getRuns('seq_runs',res);
 });
 
 //list current job queue
