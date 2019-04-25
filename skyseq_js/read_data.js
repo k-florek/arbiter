@@ -1,15 +1,21 @@
+/*
+Functions to read data from the SQL database
+Author: Kelsey Florek
+*/
 module.exports.getRuns = getRuns;
 module.exports.getKits = getKits;
 module.exports.getAR = getAR;
 module.exports.getIso = getRunIso;
 
+//error handeling function
+function errors(err){
+  if (err) {
+    return console.error(err.message);
+  }
+}
+
 //--------- getKits ---------
 function getKits (page,res,db) {
-  function errors(err){
-    if (err) {
-      return console.error(err.message);
-    }
-  }
   //setup select command
   let sql = `SELECT * FROM qc_kits ORDER BY ACTIVE`;
   //select items

@@ -183,7 +183,11 @@ app.route('/add_kit')
   })
   //submit data to add user
   .post( (req, res) => {
-    res.render('add_kit');
+    let formData = req.body;
+    wd.addKits(db,formData)
+      .then(()=>{
+        res.render('add_kit');
+      });
   })
 
 //old routes, keeping until updated

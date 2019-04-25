@@ -30,7 +30,7 @@ block content
         form#add_kit(action = "/add_kit" method = "POST")
           .form-group
             label(for='kit_name') Kit Name
-            select#kitname.form-control
+            select#kitname.form-control(name = "kit_name")
               option(selected) Choose...
               option Qubit
               option Qubit High Sensitivity
@@ -46,60 +46,60 @@ block content
           .form-row
             .form-group.col-md-6
               label(for='kit_lot') Lot
-              input#kitlot.form-control(type='text' placeholder='Lot')
+              input#kitlot.form-control(type='text' placeholder='Lot' name = "kit_lot")
             .form-group.col-md-6
               label(for='kit_expire') Expiration Date
-              input#kitexpire.form-control(type='text' placeholder='YYMMDD')
+              input#kitexpire.form-control(type='text' placeholder='YYMMDD' name = "kit_expire")
                 
           .form-row#reagent_atm(style="display: none")
             .form-group.col-md-4
               label(for='reagent_0_name') Reagent
-              input#reagent0name.form-control-plaintext(placeholder='ATM')
+              input#reagent0name.form-control-plaintext(readonly value='ATM' name = "reagent_0_name")
             .form-group.col-md-4
               label(for='reagent_0_lot') Lot
-              input#reagent0lot.form-control(placeholder='Lot')
+              input#reagent0lot.form-control(placeholder='Lot' name='reagent_0_lot')
             .form-group.col-md-4
               label(for='reagent_0_expire') Expiration Date
-              input#reagent0expire.form-control(type='text' placeholder='YYMMDD')
+              input#reagent0expire.form-control(type='text' placeholder='YYMMDD' name='reagent_0_expire')
           .form-row#reagent_nt(style="display: none")
             .form-group.col-md-4
               label(for='reagent_1_name') Reagent
-              input#reagent1name.form-control-plaintext(placeholder='NT')
+              input#reagent1name.form-control-plaintext(readonly value='NT' name='reagent_1_name')
             .form-group.col-md-4
               label(for='reagent_1_lot') Lot
-              input#reagent1lot.form-control(placeholder='Lot')
+              input#reagent1lot.form-control(placeholder='Lot' name='reagent_1_lot')
             .form-group.col-md-4
               label(for='reagent_1_expire') Expiration Date
-              input#reagent1expire.form-control(type='text' placeholder='YYMMDD')
+              input#reagent1expire.form-control(type='text' placeholder='YYMMDD' name='reagent_1_expire')
           .form-row#reagent_npm(style="display: none")
             .form-group.col-md-4
               label(for='reagent_2_name') Reagent
-              input#reagent2name.form-control-plaintext(placeholder='NPM')
+              input#reagent2name.form-control-plaintext(readonly value='NPM' name='reagent_2_name')
             .form-group.col-md-4
               label(for='reagent_2_lot') Lot
-              input#reagent2lot.form-control(placeholder='Lot')
+              input#reagent2lot.form-control(placeholder='Lot' name='reagent_2_lot')
             .form-group.col-md-4
               label(for='reagent_2_expire') Expiration Date
-              input#reagent2expire.form-control(type='text' placeholder='YYMMDD')
+              input#reagent2expire.form-control(type='text' placeholder='YYMMDD' name='reagent_2_expire')
           .form-row#reagent_rsb(style="display: none")
             .form-group.col-md-4
               label(for='reagent_3_name') Reagent
-              input#reagent3name.form-control-plaintext(placeholder='RSB')
+              input#reagent3name.form-control-plaintext(readonly value='RSB' name='reagent_3_name')
             .form-group.col-md-4
               label(for='reagent_3_lot') Lot
-              input#reagent3lot.form-control(placeholder='Lot')
+              input#reagent3lot.form-control(placeholder='Lot' name='reagent_3_lot')
             .form-group.col-md-4
               label(for='reagent_3_expire') Expiration Date
-              input#reagent3expire.form-control(type='text' placeholder='YYMMDD')
+              input#reagent3expire.form-control(type='text' placeholder='YYMMDD' name='reagent_3_expire')
           .form-row#reagent_td(style="display: none")
             .form-group.col-md-4
               label(for='reagent_4_name') Reagent
-              input#reagent4name.form-control-plaintext(placeholder='TD')
+              input#reagent4name.form-control-plaintext(readonly value='TD' name='reagent_4_name')
             .form-group.col-md-4
               label(for='reagent_4_lot') Lot
-              input#reagent4lot.form-control(placeholder='Lot')
+              input#reagent4lot.form-control(placeholder='Lot' name='reagent_4_lot')
             .form-group.col-md-4
               label(for='reagent_4_expire') Expiration Date
-              input#reagent4expire.form-control(type='text' placeholder='YYMMDD')
+              input#reagent4expire.form-control(type='text' placeholder='YYMMDD' name='reagent_4_expire')
           
           button.btn.btn-primary(type='submit') Submit

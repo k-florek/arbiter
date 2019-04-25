@@ -1,3 +1,8 @@
+/*
+Get information about the status of current jubes in the queue
+Author: Kelsey Florek
+*/
+
 const Queue = require('bull');
 
 //job manager queues
