@@ -18,7 +18,7 @@ const wd = require('./skyseq_js/write_data');
 const scaniso = require('./skyseq_js/scan_iso');
 const js = require('./job_management/job_manager');
 const jobQueue = require('./skyseq_js/get_jobQueue');
-const login = require('./skyseq_js/login');
+const login = require('./skyseq_js/users');
 
 //configuration file
 const config = require('./config.json');
@@ -121,7 +121,7 @@ app.route('/adduser')
         if (req.body.password_1 != req.body.password_2) {
           res.render('adduser',{message:'Passwords don\'t match'});
         }
-        login.addUser(db,{
+        login.addUser({
             name: req.body.username,
             password: req.body.password_1
         })
@@ -140,7 +140,7 @@ app.route('/login')
   })
   .post( (req, res) => {
     let user_login = {name:req.body.user,password:req.body.password}
-    login.findUser(db,user_login)
+    login.findUser(user_login)
       .then(status => {
         if (status){
           req.session.user = req.body.user;
@@ -184,7 +184,7 @@ app.route('/add_kit')
   //submit data to add user
   .post( (req, res) => {
     let formData = req.body;
-    wd.addKits(db,formData)
+    wd.addKits(formData)
       .then(()=>{
         res.render('add_kit');
       });

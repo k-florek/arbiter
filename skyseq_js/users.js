@@ -3,8 +3,10 @@ const bcrypt = require('bcrypt');
 
 module.exports.addUser = addUser;
 module.exports.findUser = findUser;
+module.exports.getUsers = getUsers;
+module.exports.deleteUser = deleteUser;
 
-function addUser (database,user) {
+function addUser (user) {
   const salt = bcrypt.genSaltSync();
   user.password = bcrypt.hashSync(user.password, salt);
 
@@ -22,7 +24,7 @@ function addUser (database,user) {
   });
 };
 
-function findUser (database,user) {
+function findUser (user) {
   //setup select command
   let sql = `SELECT * FROM users WHERE username = '${user.name}'`;
   //find user
@@ -40,3 +42,31 @@ function findUser (database,user) {
     });
   });
 };
+
+function getUsers () {
+  //setup select command
+  let sql = `SELECT * FROM users`;
+  //find user
+  return new Promise(function(resolve, reject) {
+    db.all(sql, (err,rows)=>{
+      if (err) {
+        reject(err.message);
+      }
+      resolve(rows);
+    });
+  });
+};
+
+function deleteUser (user) {
+  //setup select command
+  let sql = `DELETE FROM users WHERE username=?`;
+  //find user
+  return new Promise(function(resolve, reject) {
+    db.all(sql,[user.name], (err,rows)=>{
+      if (err) {
+        reject(err.message);
+      }
+      resolve(true);
+    });
+  });
+}
