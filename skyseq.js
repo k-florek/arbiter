@@ -90,14 +90,13 @@ app.use(session({
 
 // This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
 // This usually happens when you stop your express server after login, your cookie still remains saved in the browser.
-/*
 app.use((req, res, next) => {
     if (req.cookies.user_sid && !req.session.user) {
         res.clearCookie('user_sid');
     }
     next();
 });
-*/
+
 //set public folder
 app.use(express.static(path.join(__dirname,'public')));
 
@@ -110,6 +109,7 @@ var checkAuth = (req,res,next) => {
         res.redirect('/login');
     }
 }
+
 
 //-----------user routing-------------------
 //user sign up routing
@@ -171,14 +171,15 @@ app.route('/user_list')
     users.deleteUser(username);
   });
 
-//home dashboard route
+
+//-----------home dashboard route-------------------
 app.get('/',checkAuth, (req, res) => {
   username = req.session.user;
   res.render('index',{username});
 });
 
-//-----------main dashboard routing-------------------
 
+//-----------main dashboard routing-------------------
 //list completed sequencing runs
 app.route('/seq_runs')
   .get(checkAuth, (req, res) => {
