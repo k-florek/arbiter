@@ -111,15 +111,15 @@ var checkAuth = (req,res,next) => {
 }
 
 //user sign up routing
-app.route('/adduser')
+app.route('/add_user')
     //load page for adding a user
     .get( (req, res) => {
-        res.render('adduser',{message:'Please enter Username and Password'});
+        res.render('add_user',{message:'Please enter Username and Password'});
     })
     //submit data to add user
     .post( (req, res) => {
         if (req.body.password_1 != req.body.password_2) {
-          res.render('adduser',{message:'Passwords don\'t match'});
+          res.render('add_user',{message:'Passwords don\'t match'});
         }
         login.addUser({
             name: req.body.username,
@@ -129,7 +129,7 @@ app.route('/adduser')
             res.redirect('/');
         })
         .catch(error => {
-            res.redirect('/adduser');
+            res.redirect('/add_user');
         });
     })
 
