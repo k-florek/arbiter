@@ -22,15 +22,15 @@ html
           li.nav-item.active
             a.nav-link(href='/')
               button.btn.btn-dark(type="button") Home
-              li.nav-item.dropdown
-                a#navbarDropdown.nav-link.dropdown-toggle(href='#', role='button', data-toggle='dropdown')
-                  button.btn.btn-dark(type="button") Options
-                .dropdown-menu(aria-labelledby='navbarDropdown')
-                  a.dropdown-item(href='#') Change Password
-                  if username == 'admin'
-                    .dropdown-divider
-                    a.dropdown-item(href='adduser') Add User
-                    a.dropdown-item(href='#') Delete User
+          li.nav-item.dropdown
+            a#navbarDropdown.nav-link.dropdown-toggle(href='#', role='button', data-toggle='dropdown')
+              button.btn.btn-dark(type="button") Options
+            .dropdown-menu(aria-labelledby='navbarDropdown')
+              a.dropdown-item(href='#') Change Password
+              if username == 'admin'
+                .dropdown-divider
+                a.dropdown-item(href='add_user') Add User
+                a.dropdown-item(href='user_list') User List
           li.nav-item
             a.nav-link(href='logout')
               button.btn.btn-dark(type="button") Logout: #{username}
