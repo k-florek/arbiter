@@ -18,7 +18,7 @@ const wd = require('./skyseq_js/write_data');
 const scaniso = require('./skyseq_js/scan_iso');
 const js = require('./job_management/job_manager');
 const jobQueue = require('./skyseq_js/get_jobQueue');
-const login = require('./skyseq_js/users');
+const users = require('./skyseq_js/users');
 
 //configuration file
 const config = require('./config.json');
@@ -90,13 +90,14 @@ app.use(session({
 
 // This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
 // This usually happens when you stop your express server after login, your cookie still remains saved in the browser.
+/*
 app.use((req, res, next) => {
     if (req.cookies.user_sid && !req.session.user) {
         res.clearCookie('user_sid');
     }
     next();
 });
-
+*/
 //set public folder
 app.use(express.static(path.join(__dirname,'public')));
 
@@ -110,18 +111,19 @@ var checkAuth = (req,res,next) => {
     }
 }
 
+//-----------user routing-------------------
 //user sign up routing
 app.route('/add_user')
     //load page for adding a user
-    .get( (req, res) => {
+    .get(checkAuth, (req, res) => {
         res.render('add_user',{message:'Please enter Username and Password'});
     })
     //submit data to add user
-    .post( (req, res) => {
+    .post(checkAuth, (req, res) => {
         if (req.body.password_1 != req.body.password_2) {
           res.render('add_user',{message:'Passwords don\'t match'});
         }
-        login.addUser({
+        users.addUser({
             name: req.body.username,
             password: req.body.password_1
         })
@@ -140,7 +142,7 @@ app.route('/login')
   })
   .post( (req, res) => {
     let user_login = {name:req.body.user,password:req.body.password}
-    login.findUser(user_login)
+    users.findUser(user_login)
       .then(status => {
         if (status){
           req.session.user = req.body.user;
@@ -157,8 +159,20 @@ app.get('/logout', function (req,res) {
   res.redirect('/login');
 });
 
+app.route('/user_list')
+  .get(checkAuth,(req,res) => {
+    users.getUsers()
+      .then(users => {
+        res.render('user_list',{users:JSON.stringify(users)});
+      });
+  })
+  .post(checkAuth,(req,res) =>{
+    let username = req.body.username;
+    users.deleteUser(username);
+  });
+
 //home dashboard route
-app.get('/',checkAuth, function(req, res){
+app.get('/',checkAuth, (req, res) => {
   username = req.session.user;
   res.render('index',{username});
 });
@@ -166,23 +180,25 @@ app.get('/',checkAuth, function(req, res){
 //-----------main dashboard routing-------------------
 
 //list completed sequencing runs
-app.get('/seqruns',checkAuth, function(req, res){
-  user = req.session.user;
-  rd.getRuns('seq_runs',res);
-});
+app.route('/seq_runs')
+  .get(checkAuth, (req, res) => {
+    user = req.session.user;
+    rd.getRuns('seq_runs',res);
+  })
 
 //list current job queue
-app.get('/job_queue',checkAuth,function(req,res){
-  jobQueue.getJobStatus('job_queue',res);
-});
+app.route('/job_queue')
+  .get(checkAuth, (req,res) => {
+    jobQueue.getJobStatus('job_queue',res);
+  })
 
 //reagent kits
 app.route('/add_kit')
-  .get(checkAuth,(req,res) => {
+  .get(checkAuth, (req,res) => {
     res.render('add_kit');
   })
   //submit data to add user
-  .post( (req, res) => {
+  .post(checkAuth, (req, res) => {
     let formData = req.body;
     wd.addKits(formData)
       .then(()=>{

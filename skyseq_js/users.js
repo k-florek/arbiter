@@ -45,14 +45,18 @@ function findUser (user) {
 
 function getUsers () {
   //setup select command
-  let sql = `SELECT * FROM users`;
+  let sql = `SELECT username FROM users`;
   //find user
   return new Promise(function(resolve, reject) {
     db.all(sql, (err,rows)=>{
       if (err) {
         reject(err.message);
       }
-      resolve(rows);
+      let dataOut = [];
+      for (let i=0;i<rows.length;i++){
+        dataOut.push([rows[i].username])
+      }
+      resolve(dataOut);
     });
   });
 };
@@ -62,7 +66,7 @@ function deleteUser (user) {
   let sql = `DELETE FROM users WHERE username=?`;
   //find user
   return new Promise(function(resolve, reject) {
-    db.all(sql,[user.name], (err,rows)=>{
+    db.all(sql,[user], (err,rows)=>{
       if (err) {
         reject(err.message);
       }
