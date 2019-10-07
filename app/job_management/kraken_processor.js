@@ -1,4 +1,4 @@
-const config = require('../configs/config.json');
+const config = require('../../configs/config.json');
 const child = require('child_process');
 const exist = require('../ensureExists');
 

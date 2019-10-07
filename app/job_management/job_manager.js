@@ -2,7 +2,7 @@ const Queue = require('bull');
 const path = require('path');
 
 const scu = require('../status_code_updater');
-const config = require('../configs/config.json');
+const config = require('../../configs/config.json');
 
 
 //fastqc queue
