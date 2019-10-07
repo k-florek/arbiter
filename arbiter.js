@@ -1,3 +1,8 @@
+//Arbiter web application
+//Sequencing QC and workflow management application
+//Author Kelsey Florek
+//email kelsey.florek@slh.wisc.edu
+
 
 //third-party modules
 const express = require('express');

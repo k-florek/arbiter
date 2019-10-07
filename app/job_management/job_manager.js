@@ -1,16 +1,16 @@
+
+
 const Queue = require('bull');
 const path = require('path');
-
 const scu = require('../status_code_updater');
 const config = require('../../configs/config.json');
-
 
 //fastqc queue
 let fastqcQueue = new Queue('fastqc');
 //kraken queue
 let krakenQueue = new Queue('kraken');
-//bucky pipeline for typing/serotyping
-let buckyQueue = new Queue('bucky');
+//typing/serotyping queue
+let typeQueue = new Queue('type');
 //queue for running multiqc
 let multiqcQueue = new Queue('multiqc');
 
@@ -173,24 +173,24 @@ krakenQueue.on('failed', function(job, err){
 //###########################
 
 //start processing things in the bucky queue
-buckyQueue.process(1,require('./bucky_processor'));
+typeQueue.process(1,require('./bucky_processor'));
 
 //actions for bucky queue events
-buckyQueue.on('completed', function(job,result){
+typeQueue.on('completed', function(job,result){
   //do something on completion
   console.log('Completed bucky job:',job.data['run_id']);
   job.remove();
 });
-buckyQueue.on('active',function(job,jobPromise){
+typeQueue.on('active',function(job,jobPromise){
   //do something when job has started
   console.log('Started bucky job:',job.data['run_id']);
 });
-buckyQueue.on('error', function(error) {
+typeQueue.on('error', function(error) {
   // An error occured.
   console.log(error);
   job.remove();
 });
-buckyQueue.on('failed', function(job, err){
+typeQueue.on('failed', function(job, err){
   // A job failed with reason `err`!
   console.log(err)
   job.remove();

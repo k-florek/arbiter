@@ -4,7 +4,7 @@
   "description": "Sequencing QC and workflow system",
   "main": "arbiter.js",
   "scripts": {
-    "start": "node arbiter"
+    "start": "node --use_strict arbiter"
   },
   "author": "Kelsey Florek",
   "license": "ISC",
