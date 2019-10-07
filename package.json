@@ -1,10 +1,10 @@
 {
-  "name": "skyseq",
+  "name": "arbiter",
   "version": "0.0.1",
-  "description": "Sequencing QC management system",
-  "main": "skyseq.js",
+  "description": "Sequencing QC and workflow system",
+  "main": "arbiter.js",
   "scripts": {
-    "start": "node skyseq"
+    "start": "node arbiter"
   },
   "author": "Kelsey Florek",
   "license": "ISC",

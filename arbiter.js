@@ -11,19 +11,19 @@ const redis = require('redis');
 const path = require('path');
 
 //local modules
-const updatedb = require('./skyseq_js/updatedb');
-const rd = require('./skyseq_js/read_data');
-const wd = require('./skyseq_js/write_data');
+const updatedb = require('./app/updatedb');
+const rd = require('./app/read_data');
+const wd = require('./app/write_data');
 
-const scaniso = require('./skyseq_js/scan_iso');
-const js = require('./job_management/job_manager');
-const jobQueue = require('./skyseq_js/get_jobQueue');
-const users = require('./skyseq_js/users');
+const scaniso = require('./app/scan_iso');
+const js = require('./app/job_management/job_manager');
+const jobQueue = require('./app/get_jobQueue');
+const users = require('./app/users');
 
 //configuration file
-const config = require('./config.json');
+const config = require('./configs/config.json');
 //database configuration file
-const database = require('./database.json');
+const database = require('./configs/database.json');
 
 //setup redis database for job management
 var client = redis.createClient();

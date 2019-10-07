@@ -5,5 +5,5 @@ test_dir/
 public/results/
 lib/
 job_submission/
-skyseq_py/__pycache*
+lib_py/__pycache*
 __pycache*
