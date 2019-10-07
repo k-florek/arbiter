@@ -1,7 +1,7 @@
 //functions for scanning directories for new runs
 const fs = require('fs');
 const path = require('path');
-const config = require('../config.json');
+const config = require('../configs/config.json');
 
 module.exports.scanForRuns = scanForRuns
 

@@ -1,8 +1,8 @@
 const Queue = require('bull');
 const path = require('path');
 
-const scu = require('../skyseq_js/status_code_updater');
-const config = require('../config.json');
+const scu = require('../status_code_updater');
+const config = require('../configs/config.json');
 
 
 //fastqc queue
